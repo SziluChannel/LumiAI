@@ -4,7 +4,9 @@
 ## Bevezetés
 
 A projekt célja egy olyan intelligens rendszer létrehozása, amely segítséget nyújt a látássérülteknek a mindennapi életben való eligazodásban, különösen a vizuális információk felismerésében és értelmezésében.  
-A rendszer célja, hogy a kamera által rögzített vizuális környezetet elemezze, azonosítsa a fontos elemeket (például tárgyakat, embereket, feliratokat, akadályokat), majd ezeket hangalapú formában továbbítsa a felhasználónak.  
+A rendszer célja, hogy a kamera által rögzített vizuális környezetet elemezze, azonosítsa a fontos elemeket (például tárgyakat, embereket, feliratokat, akadályokat), majd ezeket hangalapú formában továbbítsa a felhasználónak.
+Ez a megoldás hozzájárul ahhoz, hogy a látássérültek önállóbban és biztonságosabban tudjanak közlekedni, vásárolni, vagy más mindennapi tevékenységeket végezni.
+
 
 ### *2. rész – Rendszerfunkciók, környezet és interfészek*
 
