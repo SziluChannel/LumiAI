@@ -46,6 +46,22 @@ A rendszer architektúrája moduláris felépítésű, így a különböző komp
 Az adatáramlás a rendszer működésének alapja.  
 A modulok közötti kommunikáció eseményvezérelt, így minden lépés meghatározott sorrendben történik.
 
+### Folyamatleírás:
+
+1. A felhasználó **hangparancsot** ad, például: „Mit látok magam előtt?”.  
+2. A **mikrofon** rögzíti a hangot, és továbbítja az STT modulnak.  
+3. Az **STT modul** felismeri és szöveggé alakítja a hangot.  
+4. A **vezérlő logika** elemzi a szöveget, meghatározza a feladat típusát.  
+5. A rendszer aktiválja a **kamera modult**, amely képet készít a környezetről.  
+6. A kép előfeldolgozása megtörténik (méret, fény, kontraszt beállítás).  
+7. A kép **base64 formátumban** vagy **multipart form-data** struktúrában elküldésre kerül a Gemini Live API-nak.  
+8. A **Gemini Live API** mesterséges intelligenciája elemzi a képet és leírja annak tartalmát.  
+9. Az API **szöveges választ** küld vissza a rendszernek, például: „Egy asztalt és egy laptopot látok.”  
+10. A válasz szöveges formában megérkezik az alkalmazásba.  
+11. A **TTS modul** hangos formába alakítja a választ.  
+12. A felhasználó **hangos visszajelzést** kap: „Egy asztalt és egy laptopot látsz.”  
+
+
 ---
 
 
