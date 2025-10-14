@@ -148,6 +148,10 @@ Indításkor és leállításkor több automatikus folyamat zajlik le a hibament
 
 5. A rendszer hangos üzenetet küld: „A LumiAI leállt. Viszontlátásra!”
 
+## 1.5. Hibakezelés és biztonság
+
+A rendszer minden moduljában külön hibakezelő mechanizmus működik.
+
 
 ### *2. rész – Felhasználói interakciók, funkciók és kezelési folyamatok*
 
