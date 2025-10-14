@@ -238,9 +238,33 @@ Az alkalmazásnak minimalizálnia kell az akkumulátor- és adathasználatot.
 
 #### *3.2. Biztonság és adatvédelem*
 
-* Képek titkosított HTTPS kapcsolaton keresztül kerülnek az API-ra.
-* A képek feldolgozás után törlődnek a készülékről.
-* Nincs személyes adatgyűjtés (adatvédelmi nyilatkozat a beállításokban).
+A felhasználói bizalom elengedhetetlen, ezért a magánszféra védelme a legmagasabb prioritást élvezi.
+
+*   **Adatátvitel:** Minden kommunikáció a kliens és a Gemini Live API között kötelezően **TLS 1.3 titkosítással ellátott HTTPS** csatornán keresztül történik.
+*   **Adatkezelési politika:** Az alkalmazás "zero-knowledge" elven működik. A képi és hangi adatok **kizárólag a feldolgozás idejére**, a készülék memóriájában léteznek. A feldolgozás után sem a szerveren, sem a kliens eszközön nem kerülnek tárolásra.
+*   **Anonimitás:** Az alkalmazás nem igényel regisztrációt, bejelentkezést, és nem gyűjt semmilyen személyazonosításra alkalmas adatot (PII). A használat teljesen anonim.
+
+```mermaid
+graph TD
+    A[Felhasználó képet készít] --> B{Adat a memóriában};
+    B --> C[Titkosított HTTPS feltöltés];
+    C --> D[Gemini API feldolgozza];
+    D --> E{Válasz megérkezik};
+    E --> F[Adat törlése a memóriából];
+    subgraph "LumiAI App"
+        A
+        B
+        C
+        E
+        F
+    end
+    subgraph "Google Cloud"
+        D
+    end
+```
+[![](https://mermaid.ink/img/pako:eNplkM1qg0AUhV9luGsT8mN-tFAwmqSBLgKVLhqzmNSJEUdHxhFaJQ-TZRZdBfoC82IdJ01tqSBzLn73nOPU8MpCAjYEWcRxfkC-F2RIPc5mQegBF1UmT1ReUCLPORHNUVTyQ2xRp3OPZrUTYoEwSkkqLzyWpx3OjndXh5lG3I0fi4QVaocJgR58f_2E9oQK-anec7H9pl1Ne5slSeMsRs561VAhoxGrKnyjPE3N62dVSnVTuZE884RUcXKLnWtksdHNVAqnKoX86Sgv9GZYlLvrfwfwWKaxs0JOngdw_ajvoZWzVrqtnLdycZUkC_-ZLxmLKEEuZWX42977WQEDIh6HYAteEgNSwlPcjFA3SADiQFISgK1kiHnSmBzVTo6zF8bS2xpnZXQAe49poaYyV5dAvBirGi2iwgh3WZkJsPs9U3uAXcObGvtm1xwORtZgrI5hf2oZ8A62OegOJ6Y1GVpTazIYW-bRgEqn9rrTyej4BXKDuks?type=png)](https://mermaid.live/edit#pako:eNplkM1qg0AUhV9luGsT8mN-tFAwmqSBLgKVLhqzmNSJEUdHxhFaJQ-TZRZdBfoC82IdJ01tqSBzLn73nOPU8MpCAjYEWcRxfkC-F2RIPc5mQegBF1UmT1ReUCLPORHNUVTyQ2xRp3OPZrUTYoEwSkkqLzyWpx3OjndXh5lG3I0fi4QVaocJgR58f_2E9oQK-anec7H9pl1Ne5slSeMsRs561VAhoxGrKnyjPE3N62dVSnVTuZE884RUcXKLnWtksdHNVAqnKoX86Sgv9GZYlLvrfwfwWKaxs0JOngdw_ajvoZWzVrqtnLdycZUkC_-ZLxmLKEEuZWX42977WQEDIh6HYAteEgNSwlPcjFA3SADiQFISgK1kiHnSmBzVTo6zF8bS2xpnZXQAe49poaYyV5dAvBirGi2iwgh3WZkJsPs9U3uAXcObGvtm1xwORtZgrI5hf2oZ8A62OegOJ6Y1GVpTazIYW-bRgEqn9rrTyej4BXKDuks)
+
+---
 
 #### *3.3. Használhatóság*
 
