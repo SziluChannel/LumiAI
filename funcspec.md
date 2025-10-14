@@ -67,6 +67,10 @@ A modulok közötti kommunikáció eseményvezérelt, így minden lépés meghat
 - Hibakezelés beépítve: ha a hálózat megszakad, a rendszer hangosan jelzi („A kapcsolat megszakadt.”).  
 - Az adatok feldolgozása titkosított csatornán történik, így a személyes információk védelme biztosított.
 
+## 1.3. Kommunikációs interfészek
+
+A rendszer több különböző interfészen keresztül kommunikál, mind külső, mind belső szinten.
+
 
 
 
