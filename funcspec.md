@@ -71,7 +71,17 @@ A modulok közötti kommunikáció eseményvezérelt, így minden lépés meghat
 
 A rendszer több különböző interfészen keresztül kommunikál, mind külső, mind belső szinten.
 
-
+### 1.3.1. Gemini Live API
+- A **Gemini Live API** egy felhőalapú szolgáltatás, amely képfelismerést és leírásgenerálást végez.  
+- A kommunikáció **HTTPS** vagy **WebSocket** alapon zajlik.  
+- A képadatot az alkalmazás **base64** vagy **multipart/form-data** formátumban továbbítja.  
+- A válasz JSON formátumban érkezik vissza, amely tartalmazza a kép elemzését, leírását és esetleges metaadatokat.  
+- Példa egy tipikus válaszra:
+  ```json
+  {
+    "description": "Egy férfi ül egy asztalnál, előtte egy laptop.",
+    "confidence": 0.95
+  }
 
 
 ---
