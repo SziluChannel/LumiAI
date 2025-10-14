@@ -113,6 +113,11 @@ A rendszer több különböző interfészen keresztül kommunikál, mind külső
 - Ez az architektúra lehetővé teszi az aszinkron működést és a valós idejű válaszokat.
 ---
 
+## 1.4. Rendszerindítás és leállítás
+
+A rendszer működése során fontos a stabilitás és a megbízhatóság.
+Indításkor és leállításkor több automatikus folyamat zajlik le a hibamentes működés érdekében.
+
 
 ### *2. rész – Felhasználói interakciók, funkciók és kezelési folyamatok*
 
