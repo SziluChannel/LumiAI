@@ -34,6 +34,11 @@ A projekt hozzájárulhat ahhoz is, hogy csökkenjen a gondozók terhelése, és
 
 ---
 
+## Felhasználói igények és elvárások
+
+A fejlesztés során kiemelt figyelmet kell fordítani a látássérült felhasználók speciális igényeire.  
+Az eszköz vagy alkalmazás használatának intuitívnak, gyorsnak és biztonságosnak kell lennie.
+
 
 ### *2. rész – Rendszerfunkciók, környezet és interfészek*
 
