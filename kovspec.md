@@ -73,6 +73,19 @@ Az eszköz vagy alkalmazás használatának intuitívnak, gyorsnak és biztonsá
 
 A fejlesztés célcsoportja több szinten értelmezhető.
 
+### 1. Elsődleges célcsoport:
+Teljesen vagy részlegesen látássérült személyek, akik önállóan szeretnének közlekedni, vásárolni, tanulni vagy dolgozni.  
+Ők a rendszer legfőbb felhasználói, akik számára az eszköz mindennapi segítséget nyújthat.  
+A különböző fokú látássérülésekhez igazodó testreszabási lehetőségek biztosítása kiemelten fontos.
+
+### 2. Másodlagos célcsoport:
+A látássérültek gondozói, családtagjai és segítői, akik a rendszer használatával könnyebben támogathatják szeretteik biztonságát és önállóságát.  
+Számukra a rendszer megkönnyítheti a felügyeletet és a kommunikációt is.
+
+### 3. Kiegészítő célcsoport:
+Oktatási intézmények, rehabilitációs központok és civil szervezetek, amelyek a látássérültek fejlesztését és társadalmi integrációját segítik.  
+A rendszer számukra oktatási vagy demonstrációs célokra is hasznos lehet.
+
 
 
 
