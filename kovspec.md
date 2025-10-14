@@ -69,6 +69,11 @@ Az eszköz vagy alkalmazás használatának intuitívnak, gyorsnak és biztonsá
 
 ---
 
+## Célcsoport
+
+A fejlesztés célcsoportja több szinten értelmezhető.
+
+
 
 
 ### *2. rész – Rendszerfunkciók, környezet és interfészek*
