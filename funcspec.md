@@ -96,7 +96,21 @@ A rendszer több különböző interfészen keresztül kommunikál, mind külső
 
 - A választott szolgáltatás a felhasználó beállításaitól és az internetkapcsolat elérhetőségétől függ.
 
+### 1.3.3. Belső API
 
+- A modulok közötti kommunikáció eseményalapú üzenetkezeléssel történik.
+
+- Minden modul saját eseményfigyelőt és feldolgozót tartalmaz.
+
+- Például:
+
+    - onSpeechRecognized() → elindítja a képfeldolgozást
+
+    - onImageProcessed() → elküldi az adatot az API-nak
+
+    - onResponseReceived() → aktiválja a TTS modult
+
+- Ez az architektúra lehetővé teszi az aszinkron működést és a valós idejű válaszokat.
 ---
 
 
