@@ -111,7 +111,7 @@ A rendszer több különböző interfészen keresztül kommunikál, mind külső
     - onResponseReceived() → aktiválja a TTS modult
 
 - Ez az architektúra lehetővé teszi az aszinkron működést és a valós idejű válaszokat.
----
+
 
 ## 1.4. Rendszerindítás és leállítás
 
@@ -151,6 +151,26 @@ Indításkor és leállításkor több automatikus folyamat zajlik le a hibament
 ## 1.5. Hibakezelés és biztonság
 
 A rendszer minden moduljában külön hibakezelő mechanizmus működik.
+
+- Hálózati hiba:
+
+    - Ha nincs internet, a rendszer automatikusan offline módba vált, vagy jelez:
+
+    - „Nincs internetkapcsolat, próbáld újra később.”
+
+- API válaszhiba:
+
+    - Ha a Gemini API nem elérhető, a rendszer cache-elt válaszokat vagy alapértelmezett üzenetet használ.
+
+- Adatvédelem:
+
+    - Minden adat titkosítva kerül továbbításra.
+
+    - Személyes képek és hangfelvételek nem kerülnek tárolásra, csak ideiglenesen a feldolgozás idejére.
+
+- Crash védelem:
+
+    - Az alkalmazás automatikusan újraindulhat, ha váratlan hiba történik.
 
 
 ### *2. rész – Felhasználói interakciók, funkciók és kezelési folyamatok*
