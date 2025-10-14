@@ -20,3 +20,16 @@ A LumiAI egy digitális segítőtárs, amelynek mindig kéznél kell lennie, és
 
 *   **Diszkréció és hatékonyság – "Ne merítse le a telefonomat."**
     *   A felhasználók egész nap maguknál hordják a telefonjukat, és számos más alkalmazást is használnak. A LumiAI nem merítheti le túlzottan az akkumulátort, és nem fogyaszthat feleslegesen sok mobiladatot. A háttérben futó folyamatokat optimalizálni kell, hogy az alkalmazás használata ne menjen a telefon általános használhatóságának rovására.
+
+#### **2. Egyszerű, természetes és stresszmentes használat (Használhatóság)**
+
+A LumiAI kezelőfelületének és működésének a lehető leginkább intuitívnak és a látássérült felhasználók igényeire szabottnak kell lennie.
+
+*   **Hangvezérlés – "Úgy beszélhessek hozzá, mint egy emberhez."**
+    *   A felhasználónak nem kell bonyolult parancsszavakat megtanulnia. Az alkalmazásnak értenie kell az egyszerű, hétköznapi nyelven megfogalmazott kéréseket, mint például: "Mi ez?", "Olvasd el ezt a szöveget!" vagy "Milyen színű ez a ruha?". A kommunikációnak párbeszédszerűnek kell lennie.
+
+*   **Egyértelmű visszajelzések – "Tudnom kell, mi történik."**
+    *   Minden felhasználói műveletre (pl. a kamera aktiválása) és rendszerállapot-változásra (pl. a kép elemzése folyamatban) érthető hangjelzésnek vagy finom rezgésnek kell érkeznie. Ez a folyamatos visszacsatolás biztonságérzetet ad, a felhasználó mindig tudja, hogy az alkalmazás "figyel rá" és dolgozik a kérésén.
+
+*   **Teljes körű akadálymentesség – "Minden funkciót el kell érnem."**
+    *   Az alkalmazásnak tökéletesen együtt kell működnie a mobiltelefonok beépített képernyőolvasó szoftvereivel (mint a VoiceOver vagy a TalkBack). Minden gombnak, beállítási lehetőségnek és szöveges tartalomnak megfelelően felcímkézettnek kell lennie, hogy a képernyőolvasóval navigáló felhasználók számára is teljes értékű élményt nyújtson.
