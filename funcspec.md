@@ -189,6 +189,10 @@ A rendszer célja, hogy a felhasználó számára a világ újra „hallhatóvá
 
 ### *3. rész – Nem funkcionális követelmények, biztonság, és fejlesztési keretek*
 
+Ez a fejezet részletezi azokat a kritikus követelményeket, amelyek az alkalmazás minőségét, megbízhatóságát és felhasználói élményét határozzák meg. Ezek a szempontok nem egy-egy funkcióhoz, hanem a rendszer egészének működéséhez kapcsolódnak.
+
+---
+
 #### *3.1. Teljesítmény és megbízhatóság*
 
 * Átlagos válaszidő: 1–2 másodperc kép elküldéstől a válaszig.
