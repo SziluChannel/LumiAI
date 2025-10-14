@@ -134,3 +134,6 @@ A felhasználóknak teljes biztonságban kell érezniük a személyes adataikat.
 
 *   **A képek bizalmas kezelése – "A környezetem a magánügyem."**
     *   A felhasználó által készített képek rendkívül személyes információkat tartalmazhatnak. Az alkalmazás garantálja, hogy ezek a képek csak és kizárólag az elemzés elvégzésének rövid idejére kerülnek feldolgozásra. Az elemzés után azonnal, visszavonhatatlanul törlődnek, és semmilyen formában nem kerülnek tárolásra sem a felhőben, sem a felhasználó telefonján.
+
+*   **Anonimitás – "A használati szokásaim csak rám tartoznak."**
+    *   Ha az alkalmazás a szolgáltatás javítása érdekében gyűjt is bármilyen használati statisztikát (pl. milyen típusú tárgyakat ismernek fel a leggyakrabban), ezeket az adatokat teljesen anonim módon kell kezelni. Semmilyen adat nem lehet visszavezethető egy konkrét személyre. A felhasználó személyazonossága mindvégig rejtve marad.
