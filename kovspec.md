@@ -86,6 +86,13 @@ Számukra a rendszer megkönnyítheti a felügyeletet és a kommunikációt is.
 Oktatási intézmények, rehabilitációs központok és civil szervezetek, amelyek a látássérültek fejlesztését és társadalmi integrációját segítik.  
 A rendszer számukra oktatási vagy demonstrációs célokra is hasznos lehet.
 
+## Összegzés
+
+A projekt célja, hogy a modern technológia eszközeivel valós segítséget nyújtson a látássérültek számára.  
+A rendszer a vizuális világot érthető és hozzáférhető módon közvetíti azoknak, akik számára a látás korlátozott vagy nem lehetséges.  
+A hangsúly az egyszerűségen, a biztonságon, az adatvédelemen és a valós idejű működésen van.  
+A fejlesztés nemcsak technológiai, hanem társadalmi értéket is képvisel, hiszen hozzájárul egy befogadóbb és akadálymentesebb világ megteremtéséhez.
+
 
 
 
