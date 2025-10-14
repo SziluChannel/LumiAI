@@ -41,6 +41,11 @@ A rendszer architektúrája moduláris felépítésű, így a különböző komp
    - Például: ha a felhasználó azt mondja, *„Mit látok?”*, akkor a kamera modult aktiválja, és elindítja a képfeldolgozást.  
    - A modul figyel a hibákra, eseményekre, és biztosítja a folyamatos működést.
 
+ ## 1.2. Adatáramlás
+
+Az adatáramlás a rendszer működésének alapja.  
+A modulok közötti kommunikáció eseményvezérelt, így minden lépés meghatározott sorrendben történik.
+
 ---
 
 
