@@ -172,6 +172,17 @@ A rendszer minden moduljában külön hibakezelő mechanizmus működik.
 
     - Az alkalmazás automatikusan újraindulhat, ha váratlan hiba történik.
 
+## Összegzés
+
+A rendszerarchitektúra úgy lett megtervezve, hogy a látássérültek számára megbízható, könnyen kezelhető és valós idejű segítséget nyújtson.
+A moduláris felépítés biztosítja a skálázhatóságot és a jövőbeni fejlesztések lehetőségét.
+A kommunikációs struktúra stabil, biztonságos és gyors adatáramlást garantál.
+A rendszer célja, hogy a felhasználó számára a világ újra „hallhatóvá” váljon – egyszerűen, biztonságosan és emberközpontúan.
+
+---
+
+
+
 
 ### *2. rész – Felhasználói interakciók, funkciók és kezelési folyamatok*
 
