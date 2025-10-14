@@ -39,6 +39,37 @@ A projekt hozzájárulhat ahhoz is, hogy csökkenjen a gondozók terhelése, és
 A fejlesztés során kiemelt figyelmet kell fordítani a látássérült felhasználók speciális igényeire.  
 Az eszköz vagy alkalmazás használatának intuitívnak, gyorsnak és biztonságosnak kell lennie.
 
+### A legfontosabb igények:
+
+1. **Egyszerű, hangalapú vezérlés:**  
+   A rendszernek teljes mértékben hangutasításokkal kezelhetőnek kell lennie.  
+   A hangfelismerésnek pontosnak és gyorsnak kell lennie, hogy a felhasználó természetes módon kommunikálhasson az eszközzel.
+
+2. **Valós idejű visszajelzés a kamera képéből:**  
+   A rendszernek képesnek kell lennie a környezet azonnali elemzésére és a releváns információk hangos közvetítésére.  
+   Ez különösen fontos közlekedés vagy akadálykerülés közben.
+
+3. **Offline és online működés:**  
+   Fontos, hogy a rendszer internetkapcsolat nélkül is használható legyen alapfunkcióiban.  
+   Az online mód pedig pontosabb felismerést és frissítéseket biztosíthat.
+
+4. **Adatvédelem és személyes adatok védelme:**  
+   A képi és hangadatok feldolgozása során biztosítani kell az adatbiztonságot és a GDPR-megfelelőséget.  
+   Az adatok nem kerülhetnek illetéktelen kezekbe, és a felhasználónak mindig tudnia kell, milyen információkat kezel a rendszer.
+
+5. **Könnyű telepítés és frissítés:**  
+   A rendszer legyen egyszerűen telepíthető és automatikusan frissíthető, minimális felhasználói beavatkozással.
+
+6. **Kompakt és kényelmes kialakítás:**  
+   Amennyiben a rendszer hardveres eszközt is tartalmaz, annak könnyen hordozhatónak és ergonomikusnak kell lennie.  
+   A hosszabb használat sem okozhat kényelmetlenséget.
+
+7. **Multinyelvű támogatás:**  
+   A rendszernek több nyelvet is kezelnie kell, különös tekintettel a magyar nyelvre és a természetes hangvisszaadásra.
+
+---
+
+
 
 ### *2. rész – Rendszerfunkciók, környezet és interfészek*
 
