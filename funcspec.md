@@ -83,6 +83,19 @@ A rendszer több különböző interfészen keresztül kommunikál, mind külső
     "confidence": 0.95
   }
 
+ 
+### 1.3.2. STT / TTS szolgáltatás
+
+- A beszédfelismeréshez és hangvisszaadáshoz a rendszer több szolgáltatást is integrálhat:
+
+    - Google Speech API – valós idejű és pontos felismerés.
+
+    - Whisper – offline működésre is alkalmas, nyílt forráskódú megoldás.
+
+    - Android / iOS natív API – egyszerű, gyors integráció.
+
+- A választott szolgáltatás a felhasználó beállításaitól és az internetkapcsolat elérhetőségétől függ.
+
 
 ---
 
