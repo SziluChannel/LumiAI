@@ -26,21 +26,13 @@ A rendszer segítségével a felhasználó képes lesz a környezetében lévő 
 3. **Felhasználói cél:**  
    Egyszerűen kezelhető, megbízható és könnyen hordozható megoldás biztosítása, amely nem igényel bonyolult beállításokat vagy műszaki ismereteket.
 
-### A célrendszer főbb elemei:
-
-1. **Alapvető cél:**  
-
-
-2. **Technológiai cél:**  
-
-
-3. **Felhasználói cél:**  
-
-
 4. **Társadalmi cél:**  
+   A látássérültek társadalmi integrációjának erősítése, az önbizalom növelése és a mindennapi tevékenységekben való részvétel elősegítése.
+
+A megrendelő célja, hogy a rendszer fejlesztésével és bevezetésével a látássérültek életminősége jelentősen javuljon.  
+A projekt hozzájárulhat ahhoz is, hogy csökkenjen a gondozók terhelése, és a felhasználók nagyobb önállóságot élvezhessenek a mindennapokban.
 
 ---
-
 
 
 ### *2. rész – Rendszerfunkciók, környezet és interfészek*
