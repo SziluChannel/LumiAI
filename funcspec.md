@@ -136,6 +136,18 @@ Indításkor és leállításkor több automatikus folyamat zajlik le a hibament
 
 6. A rendszer rövid hangos üzenetet mond: „A LumiAI készen áll a használatra.”
 
+#### Leállítási folyamat:
+
+1. A felhasználó hangutasítással leállíthatja az alkalmazást: „Lumi, állj le!”
+
+2. Az aktív folyamatok befejeződnek.
+
+3. Az adatok és a naplófájlok biztonságosan elmentésre kerülnek.
+
+4. A hálózati kapcsolat bontása megtörténik.
+
+5. A rendszer hangos üzenetet küld: „A LumiAI leállt. Viszontlátásra!”
+
 
 ### *2. rész – Felhasználói interakciók, funkciók és kezelési folyamatok*
 
