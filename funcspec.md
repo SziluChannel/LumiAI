@@ -195,9 +195,46 @@ Ez a fejezet részletezi azokat a kritikus követelményeket, amelyek az alkalma
 
 #### *3.1. Teljesítmény és megbízhatóság*
 
-* Átlagos válaszidő: 1–2 másodperc kép elküldéstől a válaszig.
-* Stabil működés gyenge hálózaton is (retry mechanizmus).
-* Lokális cache az utolsó 3 eredmény tárolására (gyors visszaolvasás).
+A LumiAI-nak egy azonnali és megbízható segédeszköznek kell lennie, amelyre a felhasználó bármilyen helyzetben számíthat. A teljesítménybeli elvárások a gyorsaságra, a stabilitásra és a hatékony erőforrás-használatra összpontosítanak.
+
+##### **3.1.1. Válaszidő**
+A rendszernek valós idejű visszajelzést kell adnia. A cél, hogy a felhasználó a hangutasítástól számítva **legfeljebb 2 másodpercen belül** megkapja a hangalapú leírást. Ez a kritikus időkeret biztosítja a zökkenőmentes interakciót és a magabiztos tájékozódást.
+
+*   **Feldolgozási lánc:** A 2 másodperces célidő a teljes folyamatot magában foglalja: hangutasítás felismerése, kamera aktiválása, kép készítése, kép előfeldolgozása, feltöltés a Gemini Live API-ra, API-válasz fogadása, és a szöveg felolvasása (TTS).
+*   **Optimalizálás:** A képkészítés után azonnali, kliensoldali előfeldolgozás történik (pl. méretezés 1024x768 felbontásra, JPEG tömörítés 85%-os minőséggel), hogy a feltöltendő adatmennyiség minimális legyen.
+
+```mermaid
+sequenceDiagram
+    participant User as Felhasználó
+    participant App as LumiAI App (Flutter)
+    participant Gemini as Gemini Live API
+
+    User->>App: Hangutasítás ("Mit látok?")
+    App->>App: STT feldolgozás
+    App->>App: Kamera aktiválása és kép készítése
+    App->>App: Kép előfeldolgozása (tömörítés)
+    App->>Gemini: Kép feltöltése (HTTPS request)
+    Gemini-->>App: Szöveges leírás (JSON response)
+    App->>App: TTS feldolgozás
+    App-->>User: Hangalapú válasz
+```
+
+[![](https://mermaid.ink/img/pako:eNp1kr9u2zAQxl-FuMkFHMN_lNjSkMJokSZt2gawuhRaDtZFJkxRKkkZrQw_RB7Bo4dMBTx0JfpeJSU7aCFUg8QDft93_O60hWWREkSg6VtFcklvOWYK80Qy95SoDF_yEqVhXzQphprdkFihrqXdC_uzi83L0lP3Vc7nd03VuxGVMaRedeF3lHPJPX863fMNsfnDXSJb2De9uL52NhG7RZlVBrV9NnavWS-Bj9wwYfemWL9O4GTv0LNgEcfskURaiKyonaQDfMCcFDJcG77xcfYamT1otraH0r907XsdNHWVniDx--lvf2Q9Y4-5PapW9s-N2oAnpVM5UjTerHcbxw8LpvwCtDmJWvziJUptjxvKSDNB9lk1-d8vPn9yKl0WUlM3fRwv_pPeEX6u7URRYGl_MZ_fbRX6kCmeQmRURX1w48nRl7D18gTMinJKIHLHFNU6gUTunMYt82tR5GeZKqpsBdEjCu2qqkzRnP-rF4RkSupNUUkD0Wg4bDwg2sJ3V46CQTAZX4bjK_eZjGZhH35AFIwHk2kQTifhLJyOr8Jg14e66ToczKaXuz-l9vyk?type=png)](https://mermaid.live/edit#pako:eNp1kr9u2zAQxl-FuMkFHMN_lNjSkMJokSZt2gawuhRaDtZFJkxRKkkZrQw_RB7Bo4dMBTx0JfpeJSU7aCFUg8QDft93_O60hWWREkSg6VtFcklvOWYK80Qy95SoDF_yEqVhXzQphprdkFihrqXdC_uzi83L0lP3Vc7nd03VuxGVMaRedeF3lHPJPX863fMNsfnDXSJb2De9uL52NhG7RZlVBrV9NnavWS-Bj9wwYfemWL9O4GTv0LNgEcfskURaiKyonaQDfMCcFDJcG77xcfYamT1otraH0r907XsdNHWVniDx--lvf2Q9Y4-5PapW9s-N2oAnpVM5UjTerHcbxw8LpvwCtDmJWvziJUptjxvKSDNB9lk1-d8vPn9yKl0WUlM3fRwv_pPeEX6u7URRYGl_MZ_fbRX6kCmeQmRURX1w48nRl7D18gTMinJKIHLHFNU6gUTunMYt82tR5GeZKqpsBdEjCu2qqkzRnP-rF4RkSupNUUkD0Wg4bDwg2sJ3V46CQTAZX4bjK_eZjGZhH35AFIwHk2kQTifhLJyOr8Jg14e66ToczKaXuz-l9vyk)
+
+##### **3.1.2. Hálózatkezelés és hibatűrés**
+Az alkalmazásnak instabil hálózati körülmények között is használhatónak kell maradnia.
+
+*   **Újrapróbálkozási mechanizmus (Retry):** Amennyiben a Gemini Live API hívás hálózati hiba miatt sikertelen, a rendszer automatikusan megkísérli a kapcsolat újrafelvételét kétszer, 3 másodperces időközönként. Ha a harmadik kísérlet is sikertelen, a felhasználó tiszta hangüzenetet kap: *"A kapcsolat instabil, kérlek, próbáld meg később."*
+*   **Időtúllépés (Timeout):** Az API hívásokra 5 másodperces időkorlát van beállítva. Ha ennyi idő alatt nem érkezik válasz, a kérés megszakításra kerül, és a felhasználó értesítést kap.
+*   **Offline jelzés:** Ha a készülék teljesen offline, az alkalmazás ezt azonnal érzékeli és hangüzenettel jelzi a felhasználónak, megakadályozva a felesleges próbálkozásokat.
+
+##### **3.1.3. Erőforrás-gazdálkodás**
+Az alkalmazásnak minimalizálnia kell az akkumulátor- és adathasználatot.
+
+*   **Akkumulátor:** A kamera és a processzor-intenzív műveletek csak a képfeldolgozás aktív ideje alatt futhatnak. Amikor az alkalmazás a háttérben van vagy várakozik, az energiafogyasztásának minimálisnak kell lennie.
+*   **Adathasználat:** Egy átlagos képfeltöltés mérete nem haladhatja meg a 200-300 KB-ot a kliensoldali tömörítésnek köszönhetően.
+
+---
 
 #### *3.2. Biztonság és adatvédelem*
 
