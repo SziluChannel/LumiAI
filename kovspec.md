@@ -127,3 +127,8 @@ A LumiAI kezelőfelületének és működésének a lehető leginkább intuitív
 
 *   **Teljes körű akadálymentesség – "Minden funkciót el kell érnem."**
     *   Az alkalmazásnak tökéletesen együtt kell működnie a mobiltelefonok beépített képernyőolvasó szoftvereivel (mint a VoiceOver vagy a TalkBack). Minden gombnak, beállítási lehetőségnek és szöveges tartalomnak megfelelően felcímkézettnek kell lennie, hogy a képernyőolvasóval navigáló felhasználók számára is teljes értékű élményt nyújtson.
+
+#### **3. A magánszféra tisztelete (Biztonság és Adatvédelem)**
+
+A felhasználóknak teljes biztonságban kell érezniük a személyes adataikat. Az alkalmazásnak a legszigorúbb adatvédelmi elveket kell követnie.
+
