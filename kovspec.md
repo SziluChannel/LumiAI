@@ -10,6 +10,11 @@ Ez a megoldás hozzájárul ahhoz, hogy a látássérültek önállóbban és bi
 A probléma gyökere abban rejlik, hogy a látássérült emberek jelentős hátrányt szenvednek a vizuális információkhoz való hozzáférés terén.  
 A környezetükből érkező információk nagy része vizuális jellegű, legyen szó közlekedési táblákról, feliratokról, emberek mozgásáról vagy tárgyak helyzetéről.  
 
+## Célrendszer
+
+A projekt fő célja, hogy a megrendelő (vagyis a látássérültek segítését célul kitűző szervezet, illetve maga a felhasználói közösség) számára olyan eszközt biztosítson, amely hatékonyan támogatja az önálló életvitelt.  
+A rendszer segítségével a felhasználó képes lesz a környezetében lévő tárgyakat, akadályokat, személyeket vagy akár feliratokat felismerni, és erről valós idejű hangos visszajelzést kapni.
+
 
 
 ### *2. rész – Rendszerfunkciók, környezet és interfészek*
