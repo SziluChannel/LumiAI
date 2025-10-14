@@ -15,6 +15,32 @@ A környezetükből érkező információk nagy része vizuális jellegű, legye
 A projekt fő célja, hogy a megrendelő (vagyis a látássérültek segítését célul kitűző szervezet, illetve maga a felhasználói közösség) számára olyan eszközt biztosítson, amely hatékonyan támogatja az önálló életvitelt.  
 A rendszer segítségével a felhasználó képes lesz a környezetében lévő tárgyakat, akadályokat, személyeket vagy akár feliratokat felismerni, és erről valós idejű hangos visszajelzést kapni.
 
+### A célrendszer főbb elemei:
+
+1. **Alapvető cél:**  
+   A látássérült emberek önálló életvitelének elősegítése a vizuális információk auditív formában történő közvetítésével.
+
+2. **Technológiai cél:**  
+   Olyan mesterséges intelligencián alapuló képfelismerő és beszédgeneráló rendszer megalkotása, amely valós időben működik, és képes alkalmazkodni a különböző környezeti feltételekhez.
+
+3. **Felhasználói cél:**  
+   Egyszerűen kezelhető, megbízható és könnyen hordozható megoldás biztosítása, amely nem igényel bonyolult beállításokat vagy műszaki ismereteket.
+
+### A célrendszer főbb elemei:
+
+1. **Alapvető cél:**  
+
+
+2. **Technológiai cél:**  
+
+
+3. **Felhasználói cél:**  
+
+
+4. **Társadalmi cél:**  
+
+---
+
 
 
 ### *2. rész – Rendszerfunkciók, környezet és interfészek*
