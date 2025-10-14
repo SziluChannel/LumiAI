@@ -282,11 +282,18 @@ A tervezés középpontjában a látássérült felhasználók egyedi igényei �
 
 #### *3.4. Fejlesztési keretek és technológiák*
 
-* *Fejlesztési nyelv:* Flutter / React Native (cross-platform).
-* *Gemini Live API integráció:* Google generatív multimodális API.
-* *STT/TTS modul:* Google Speech vagy Whisper API.
-* *Verziókezelés:* GitHub.
-* *Tesztelés:* egységtesztek a kommunikációs modulra, felhasználói teszt 3 látássérült személlyel.
+A technológiai stack kiválasztásánál a cross-platform képességek, a gyors fejlesztési ciklus és a megbízhatóság volt a fő szempont.
+
+*   **Kliensoldali keretrendszer:** **Flutter**. A választás oka a kiváló teljesítmény, a natív felhasználói élmény mindkét platformon, és a gazdag akadálymentesítési támogatás.
+*   **Képfelismerési API:** **Gemini Live API**. A Google multimodális modellje biztosítja a képek valós idejű, kontextuális elemzését és a természetes nyelvi leírások generálását.
+*   **Beszédfelismerés (STT) és Szövegfelolvasás (TTS):** Az operációs rendszerekbe (iOS/Android) integrált natív API-k használata a legalacsonyabb késleltetés és a legjobb rendszerintegráció érdekében.
+*   **Verziókezelés:** **Git**, a kód tárolása és a csapatmunka koordinálása a **GitHub** platformon történik.
+*   **Tesztelési stratégia:**
+    *   **Unit tesztek:** A hálózati kommunikációs és üzleti logikai rétegekre.
+    *   **Widget tesztek:** A Flutter komponensek helyes működésének ellenőrzésére.
+    *   **Felhasználói tesztelés (UAT):** A fejlesztési ciklus végén, legalább 5 látássérült felhasználó bevonásával, valós élethelyzetekben.
+
+---
 
 #### *3.5. Jövőbeli fejlesztési irányok*
 
