@@ -297,6 +297,8 @@ A technológiai stack kiválasztásánál a cross-platform képességek, a gyors
 
 #### *3.5. Jövőbeli fejlesztési irányok*
 
-* Tárgyfelismerés kiterjesztése cselekvésjavaslatra (pl. „Vigyázz, lépcső van előtted”).
-* Integráció navigációs appokkal.
-* Offline neurális modell beépítése.
+A rendszer architektúráját úgy kell kialakítani, hogy a jövőbeni bővítések könnyen integrálhatók legyenek.
+
+*   **Többnyelvű támogatás:** A szöveges konstansok központi helyre szervezése és a TTS/STT modulok nyelvi beállításainak dinamikus kezelése.
+*   **Kontextuális intelligencia:** GPS adatok integrálása a pontosabb leírások érdekében (pl. "Egy padot látsz a Városligetben").
+*   **Speciális módok:** Külön funkciók bevezetése specifikus feladatokra, mint például "Szövegolvasó mód", "Színfelismerő mód" vagy "Bankjegy-azonosító mód".
