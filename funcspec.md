@@ -189,3 +189,34 @@ A rendszer célja, hogy a felhasználó számára a világ újra „hallhatóvá
 
 ### *3. rész – Nem funkcionális követelmények, biztonság, és fejlesztési keretek*
 
+#### *3.1. Teljesítmény és megbízhatóság*
+
+* Átlagos válaszidő: 1–2 másodperc kép elküldéstől a válaszig.
+* Stabil működés gyenge hálózaton is (retry mechanizmus).
+* Lokális cache az utolsó 3 eredmény tárolására (gyors visszaolvasás).
+
+#### *3.2. Biztonság és adatvédelem*
+
+* Képek titkosított HTTPS kapcsolaton keresztül kerülnek az API-ra.
+* A képek feldolgozás után törlődnek a készülékről.
+* Nincs személyes adatgyűjtés (adatvédelmi nyilatkozat a beállításokban).
+
+#### *3.3. Használhatóság*
+
+* Akadálymentesítés: minden funkció hangalapon elérhető.
+* Egyszerű visszajelzések (pl. rezgés, hangjelzés).
+* Minimális vizuális felület, nagy gombok a segítők számára.
+
+#### *3.4. Fejlesztési keretek és technológiák*
+
+* *Fejlesztési nyelv:* Flutter / React Native (cross-platform).
+* *Gemini Live API integráció:* Google generatív multimodális API.
+* *STT/TTS modul:* Google Speech vagy Whisper API.
+* *Verziókezelés:* GitHub.
+* *Tesztelés:* egységtesztek a kommunikációs modulra, felhasználói teszt 3 látássérült személlyel.
+
+#### *3.5. Jövőbeli fejlesztési irányok*
+
+* Tárgyfelismerés kiterjesztése cselekvésjavaslatra (pl. „Vigyázz, lépcső van előtted”).
+* Integráció navigációs appokkal.
+* Offline neurális modell beépítése.
