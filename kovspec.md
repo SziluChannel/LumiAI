@@ -11,6 +11,7 @@ A probléma gyökere abban rejlik, hogy a látássérült emberek jelentős hát
 A környezetükből érkező információk nagy része vizuális jellegű, legyen szó közlekedési táblákról, feliratokról, emberek mozgásáról vagy tárgyak helyzetéről.  
 
 
+
 ### *2. rész – Rendszerfunkciók, környezet és interfészek*
 
 ### *3. rész – Nem funkcionális követelmények és projektkeretek*
