@@ -132,3 +132,5 @@ A LumiAI kezelőfelületének és működésének a lehető leginkább intuitív
 
 A felhasználóknak teljes biztonságban kell érezniük a személyes adataikat. Az alkalmazásnak a legszigorúbb adatvédelmi elveket kell követnie.
 
+*   **A képek bizalmas kezelése – "A környezetem a magánügyem."**
+    *   A felhasználó által készített képek rendkívül személyes információkat tartalmazhatnak. Az alkalmazás garantálja, hogy ezek a képek csak és kizárólag az elemzés elvégzésének rövid idejére kerülnek feldolgozásra. Az elemzés után azonnal, visszavonhatatlanul törlődnek, és semmilyen formában nem kerülnek tárolásra sem a felhőben, sem a felhasználó telefonján.
