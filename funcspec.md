@@ -61,6 +61,14 @@ A modulok közötti kommunikáció eseményvezérelt, így minden lépés meghat
 11. A **TTS modul** hangos formába alakítja a választ.  
 12. A felhasználó **hangos visszajelzést** kap: „Egy asztalt és egy laptopot látsz.”  
 
+### További részletek:
+
+- Az adatfolyam valós időben zajlik, a késleltetés minimalizálása érdekében.  
+- Hibakezelés beépítve: ha a hálózat megszakad, a rendszer hangosan jelzi („A kapcsolat megszakadt.”).  
+- Az adatok feldolgozása titkosított csatornán történik, így a személyes információk védelme biztosított.
+
+
+
 
 ---
 
