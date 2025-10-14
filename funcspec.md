@@ -266,11 +266,19 @@ graph TD
 
 ---
 
-#### *3.3. Használhatóság*
+#### *3.3. Használhatóság és akadálymentesség*
 
-* Akadálymentesítés: minden funkció hangalapon elérhető.
-* Egyszerű visszajelzések (pl. rezgés, hangjelzés).
-* Minimális vizuális felület, nagy gombok a segítők számára.
+A tervezés középpontjában a látássérült felhasználók egyedi igényei állnak.
+
+*   **Hang-első megközelítés:** Az alkalmazás minden funkciója elérhető és vezérelhető hangutasításokkal. A vizuális felület másodlagos, elsősorban a beállítások elvégzését és a látó segítők támogatását szolgálja.
+*   **Képernyőolvasó-kompatibilitás:** A **Flutter** keretrendszer beépített akadálymentesítési eszközeit (Semantics widget) használva az alkalmazás teljes mértékben kompatibilis az iOS (VoiceOver) és Android (TalkBack) képernyőolvasókkal. Minden vezérlőelemnek és szövegnek megfelelő címkéje van.
+*   **Haptikus és auditív visszajelzések:**
+    *   **Sikeres parancsértelmezés:** Rövid, pozitív hangjelzés.
+    *   **Kép készítése:** Finom rezgés.
+    *   **Feldolgozás vége:** Két rövid hangjelzés.
+    *   **Hiba:** Tompa, mélyebb hangjelzés.
+
+---
 
 #### *3.4. Fejlesztési keretek és technológiák*
 
