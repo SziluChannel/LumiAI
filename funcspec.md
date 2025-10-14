@@ -118,6 +118,24 @@ A rendszer több különböző interfészen keresztül kommunikál, mind külső
 A rendszer működése során fontos a stabilitás és a megbízhatóság.
 Indításkor és leállításkor több automatikus folyamat zajlik le a hibamentes működés érdekében.
 
+#### Indítási folyamat:
+
+1. Az alkalmazás elindul a háttérben.
+
+2. Ellenőrzi az internetkapcsolatot.
+
+3. Megvizsgálja, hogy a felhasználó engedélyezte-e a kamera és mikrofon hozzáférést.
+
+4. Ha valamelyik engedély hiányzik, a rendszer hangosan jelzi:
+
+    - „A mikrofonhoz nincs hozzáférés.”
+
+    - „Kérlek, engedélyezd a kamerát.”
+
+5. A modulok inicializálódnak: STT, TTS, hálózati kapcsolatok és API-k.
+
+6. A rendszer rövid hangos üzenetet mond: „A LumiAI készen áll a használatra.”
+
 
 ### *2. rész – Felhasználói interakciók, funkciók és kezelési folyamatok*
 
