@@ -96,7 +96,88 @@ A fejlesztés nemcsak technológiai, hanem társadalmi értéket is képvisel, h
 
 
 
-### *2. rész – Rendszerfunkciók, környezet és interfészek*
+## 2. Rendszerfunkciók, környezet és interfészek
+
+### 2.1 Rendszerfunkciók áttekintése
+
+A LumiAI rendszer fő funkciói a vizuális információk felismerésén, értelmezésén és azok audió formában történő visszaadásán alapulnak. A rendszer a következő alapvető funkciókat biztosítja:
+
+Objektumfelismerés: A kamera képén megjelenő tárgyak, akadályok, személyek azonosítása és verbális leírása.
+
+Szövegfelismerés (OCR): Feliratok, táblák, nyomtatott vagy kézzel írt szövegek felismerése és felolvasása.
+
+Környezeti elemzés: A felhasználó térbeli környezetének általános leírása, akadályok jelzése, irányok megadása.
+
+Interaktív kérdés-válasz: A felhasználó által feltett kérdések megértése (pl. „Mi van előttem?”, „Hol van az ajtó?”) és a vizuális információ alapján történő válaszadás.
+
+Hangalapú vezérlés: A teljes rendszer kezelésének támogatása természetes nyelvű hangutasításokkal.
+
+Offline mód: Alapvető felismerési funkciók működése internetkapcsolat nélkül is.
+
+### 2.2 Működési környezet
+
+A LumiAI mobil alkalmazásként kerül megvalósításra, amely az alábbi környezetekben működik:
+
+Mobilplatformok: Android és iOS operációs rendszerek támogatása.
+
+Hardverkövetelmények: Beépített kamera, mikrofon és hangszóró vagy fejhallgató-csatlakozás.
+
+Hálózati feltételek: Online mód esetén mobilinternet vagy Wi-Fi kapcsolat a fejlettebb felismerési modellekhez; offline mód esetén lokálisan futó modellek használata.
+
+Képernyőolvasó támogatás: VoiceOver (iOS) és TalkBack (Android) rendszerekkel való teljes kompatibilitás.
+
+### 2.3 Felhasználói interfészek
+#### 2.3.1 Hangalapú felhasználói felület
+
+A LumiAI elsődleges interfésze a beszédalapú kommunikáció. A rendszer folyamatosan figyeli a hangutasításokat, és párbeszédszerűen reagál:
+
+„Mi ez?” – tárgy vagy személy azonosítása.
+
+„Olvasd el!” – szövegfelismerés és felolvasás.
+
+„Merre mehetek?” – környezeti leírás és irányadás.
+
+#### 2.3.2 Minimális vizuális felület
+
+Látássérült felhasználók esetére a képernyő csak alap funkciókat jelenít meg nagy méretű, jól elkülönülő gombokkal:
+
+Kamera aktiválása
+
+Mikrofon engedélyezése / letiltása
+
+Beállítások (nyelv, hangsebesség, üzemmód)
+
+A vizuális felület kizárólag a képernyőolvasó rendszerek támogatására szolgál.
+
+#### 2.3.3 Rendszer-visszajelzések
+
+A visszajelzések három fő formában történnek:
+
+Hangüzenet: Minden eredmény vagy állapotváltozás audió formában közlésre kerül.
+
+Rezgés: Rövid, tapintható jelzés hibák vagy megerősítések esetén.
+
+Hangjelzés: Egyszerű hangok használata (pl. feldolgozás megkezdése, hiba jelzése).
+
+### 2.4 Külső interfészek
+
+Felhőalapú AI szolgáltatások: Online működés során fejlett képfelismerési és nyelvi modellek használata.
+
+Eszközszenzorok: Kamera, mikrofon, giroszkóp és egyéb szenzorok a kontextuális elemzéshez.
+
+Adatvédelmi modulok: GDPR-kompatibilis adatfeldolgozás és anonimizálás, lokális törlési műveletek.
+
+### 2.5 Hibakezelés és támogatás
+
+A rendszer célja a stresszmentes használat biztosítása, ezért minden hibára érthető válasszal reagál:
+
+„Nem látok megfelelő fényt, kérlek világosítsd meg a környezetet.”
+
+„Nincs internetkapcsolat. Offline módra váltok.”
+
+„Nem értettem a kérdést. Megismételnéd?”
+
+A felhasználó bármikor kérhet segítséget: „Mit tudsz csinálni?” parancs segítségével a rendszer felsorolja funkcióit.
 
 ### *3. rész – Nem funkcionális követelmények és projektkeretek*
 
