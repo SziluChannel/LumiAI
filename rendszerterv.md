@@ -234,6 +234,24 @@ Az alábbi ábra szemlélteti a folyamatot:
 
 
 ### **1.10. Fejlesztési és tesztelési szempontok**
+* **Unit tesztek:**
+
+  * STT → logika → TTS lánc helyes működése
+  * Hibák kezelése (offline mód, API timeout)
+* **Widget tesztek:**
+
+  * Hanggomb reagálás
+  * Kamera preview renderelése
+* **Felhasználói tesztek:**
+
+  * 3 látássérült résztvevő bevonásával
+* **Mérőszámok:**
+
+  * Átlagos válaszidő: < 2 másodperc
+  * STT felismerési pontosság: > 90%
+
+---
+
 
 
 ### **1.11. Összegzés**
