@@ -102,7 +102,7 @@ Az alábbi ábra szemlélteti a folyamatot:
      [Felhasználó]
             │
             ▼
-   🎤  Hangparancs ("Mit látok?")
+    Hangparancs ("Mit látok?")
             │
             ▼
    [STT modul] → Szöveges bemenet
@@ -111,16 +111,16 @@ Az alábbi ábra szemlélteti a folyamatot:
    [Logikai vezérlés] → "Kép lekérés"
             │
             ▼
-   📷  [Kamera modul] → Képkészítés
+    [Kamera modul] → Képkészítés
             │
             ▼
-   🌐  [Gemini API hívás] → Képanalízis
+   [Gemini API hívás] → Képanalízis
             │
             ▼
-   💬  [API válasz] → "Egy kutya áll előtted."
+    [API válasz] → "Egy kutya áll előtted."
             │
             ▼
-   🔊  [TTS modul] → Hangos válasz
+     [TTS modul] → Hangos válasz
             │
             ▼
         [Felhasználó]
@@ -255,6 +255,11 @@ Az alábbi ábra szemlélteti a folyamatot:
 
 
 ### **1.11. Összegzés**
+
+A rendszer felépítése moduláris, kiterjeszthető és platformfüggetlen.
+A kommunikáció biztonságos (HTTPS), az adatáramlás egyszerű, a felhasználói élmény akadálymentesített.
+A *LumiAI* frontend rétege így biztosítja az **ember–gépi interakció természetes, beszédalapú élményét**.
+
 
 
 
