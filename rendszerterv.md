@@ -437,15 +437,11 @@ sequenceDiagram
 ```
 [![](https://mermaid.ink/img/pako:eNp9krFu2zAQhl-F4JQCtiAbkmxrCJC6TZEiaIy46VBouZhXmTFFqtSpaGz4IfIIGTt0KtCpm5D3KhlJBVwD0UKR_L_7_yO54ysjkKe8wq816hW-kZBbKDLN3FeCJbmSJWhicyXRDVCxc1UToWVnZXksO6_1iqTRXgga1P0WLwrI8Vi5JGPdhhfOlalFv3CsfIeF1NILu7-zxUWmW10ba3h62hunzOg5KHWyk953AbROWcaDIMj4_lUL9doD7K1SqJ8e7NY5MeuPo6IAalozMhvncYR2eVOWIy1lrlHcWHXSWXVOnWZ44PRJVtUWQNwBgy2TAmXurLFiN9eXQ3oh4iVS81uRD7hpfpRInveQfXpQL3CvocIkcswvYVTzWB1J23NN2eJq-ZG5_Gnu8lggnBtN_tpPbtsSIIAIVNddix0293559YF9ax4VVFuXU2Hz0zrLCv4P6Kj28voD2TR_lPC97QRWKyvLtmB_d8zc3uGG6sIQH_DcSsFTsjUOeIG2AD_lO--RcVpjgRn3rAC7yXim945xj-mzMUWPWVPna55-AVW5WV261vrn_0-CWqCdm1oTT5MkfK7B0x3_ztPRNA6ScTKbjmaTKAnj0WTA793yLAzCOJnG4zieuCHaD_j22TUMklGUJHE8jUdRmMTReP8XyqAuuQ?type=png)](https://mermaid.live/edit#pako:eNp9krFu2zAQhl-F4JQCtiAbkmxrCJC6TZEiaIy46VBouZhXmTFFqtSpaGz4IfIIGTt0KtCpm5D3KhlJBVwD0UKR_L_7_yO54ysjkKe8wq816hW-kZBbKDLN3FeCJbmSJWhicyXRDVCxc1UToWVnZXksO6_1iqTRXgga1P0WLwrI8Vi5JGPdhhfOlalFv3CsfIeF1NILu7-zxUWmW10ba3h62hunzOg5KHWyk953AbROWcaDIMj4_lUL9doD7K1SqJ8e7NY5MeuPo6IAalozMhvncYR2eVOWIy1lrlHcWHXSWXVOnWZ44PRJVtUWQNwBgy2TAmXurLFiN9eXQ3oh4iVS81uRD7hpfpRInveQfXpQL3CvocIkcswvYVTzWB1J23NN2eJq-ZG5_Gnu8lggnBtN_tpPbtsSIIAIVNddix0293559YF9ax4VVFuXU2Hz0zrLCv4P6Kj28voD2TR_lPC97QRWKyvLtmB_d8zc3uGG6sIQH_DcSsFTsjUOeIG2AD_lO--RcVpjgRn3rAC7yXim945xj-mzMUWPWVPna55-AVW5WV261vrn_0-CWqCdm1oTT5MkfK7B0x3_ztPRNA6ScTKbjmaTKAnj0WTA793yLAzCOJnG4zieuCHaD_j22TUMklGUJHE8jUdRmMTReP8XyqAuuQ)
 
+#### 2.4. Skálázhatóság és Karbantartás
 
-* **Visszajelzés a kliensnek:**
-
-  * JSON válasz: `{ "description": "Egy kutya áll előtted." }`
-  * Kliens oldalon TTS átalakítás
-* **Későbbi bővítés:**
-
-  * Lokális modellek (TensorFlow Lite)
-  * API cache a költségek csökkentésére
+*   **Automatikus skálázódás:** A Cloud Functions alapértelmezetten akár 1000 egyidejű példányig is skálázódhat, ami bőségesen elegendő a kezdeti fázisban. A `concurrency` beállításokkal ez tovább finomhangolható.
+*   **Hidegindítás (Cold Start):** A teljesítmény optimalizálása érdekében a `minInstances` paraméter beállítható 1-re, hogy mindig legyen egy "meleg" függvény példány, csökkentve a késleltetést az első kérésnél egy inaktív időszak után.
+*   **Naplózás és Monitorozás:** A Cloud Functions automatikusan integrálódik a Google Cloud's operations suite-tal (korábban Stackdriver), amely részletes naplózást, monitorozást és riasztásokat biztosít a hibák és a teljesítményproblémák gyors azonosításához.
 
 ---
 ### 3. Integráció, biztonság, teljesítmény*
