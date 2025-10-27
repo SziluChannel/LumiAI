@@ -96,6 +96,38 @@ A rendszer **réteges architektúrát** követ:
 
 
 ### **1.4. Adatáramlás**
+Az alábbi ábra szemlélteti a folyamatot:
+
+```
+     [Felhasználó]
+            │
+            ▼
+   🎤  Hangparancs ("Mit látok?")
+            │
+            ▼
+   [STT modul] → Szöveges bemenet
+            │
+            ▼
+   [Logikai vezérlés] → "Kép lekérés"
+            │
+            ▼
+   📷  [Kamera modul] → Képkészítés
+            │
+            ▼
+   🌐  [Gemini API hívás] → Képanalízis
+            │
+            ▼
+   💬  [API válasz] → "Egy kutya áll előtted."
+            │
+            ▼
+   🔊  [TTS modul] → Hangos válasz
+            │
+            ▼
+        [Felhasználó]
+```
+
+---
+
 
 
 ### **1.5. Kommunikációs interfészek**
