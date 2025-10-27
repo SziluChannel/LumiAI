@@ -15,6 +15,40 @@ A megoldás **Flutter** alapú, tehát **cross-platform** (Android és iOS) tám
 ### **1.2. Rendszerarchitektúra**
 
 
+A rendszer **réteges architektúrát** követ:
+
+```
++----------------------------------------------------------+
+|                    FELHASZNÁLÓI INTERFÉSZ                |
+|  (Flutter UI, STT gomb, visszajelzések, kamera előnézet)|
++----------------------------▲-----------------------------+
+                             │
++----------------------------│-----------------------------+
+|            ALKALMAZÁSI LOGIKA / CONTROLLER               |
+|   - Parancsértelmezés                                     |
+|   - Állapotkezelés (Riverpod / Provider)                  |
+|   - Adatáramlás vezérlése STT–Camera–TTS között          |
++----------------------------▲-----------------------------+
+                             │
++----------------------------│-----------------------------+
+|           KOMMUNIKÁCIÓS MODUL / API CLIENT                |
+|   - Gemini Live API hívások (REST / HTTPS)                |
+|   - JSON feldolgozás, hibakezelés                         |
+|   - Offline cache (Hive / SharedPreferences)              |
++----------------------------▲-----------------------------+
+                             │
++----------------------------│-----------------------------+
+|           FELHŐSZOLGÁLTATÁSOK ÉS AI RÉTEG                |
+|   - Firebase Functions (proxy endpoint)                   |
+|   - Gemini Live multimodális modell (kép + szöveg input)  |
+|   - Auth + Storage + Naplózás                             |
++----------------------------------------------------------+
+```
+
+---
+
+
+
 ### **1.3. Modulstruktúra részletezve**
 
 ### **1.4. Adatáramlás**
