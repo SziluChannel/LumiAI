@@ -90,7 +90,43 @@ graph TD
     }
     ```
 
-    
+##### **2.2.4. Felhő beli függvények: `analyzeImage`**
+Ez a rendszer központi logikai egysége. TypeScript használatával fejlesztve a jobb típusbiztonság érdekében.
+
+*   **Függvény definíció (index.ts):**
+    ```typescript
+    import * as functions from "firebase-functions";
+    import { onCall, HttpsError } from "firebase-functions/v2/https";
+    import { initializeApp } from "firebase-admin/app";
+    import { getStorage } from "firebase-admin/storage";
+    import { GoogleAuth } from "google-auth-library";
+    // ... további importok
+
+    initializeApp();
+
+    export const analyzeImage = onCall(async (request) => {
+      // 1. Hitelesítés ellenőrzése
+      if (!request.auth) {
+        throw new HttpsError("unauthenticated", "A funkció hívásához hitelesítés szükséges.");
+      }
+      const uid = request.auth.uid;
+      const imagePath = request.data.imagePath;
+
+      // ... a logika többi része
+    });
+    ```
+*   **Folyamat részletesen:**
+    1.  **Hitelesítés és Adatvalidálás:** A `onCall` trigger automatikusan ellenőrzi a felhasználói tokent. A kód ezután validálja a bemeneti `imagePath` meglétét és formátumát.
+    2.  **Aláírt URL generálása:** A Firebase Admin SDK segítségével generál egy rövid élettartamú (pl. 5 perces) V4 aláírt URL-t a képhez. Ez biztonságosabb, mintha a fájlt nyilvánossá tennénk.
+        ```typescript
+        const bucket = getStorage().bucket();
+        const options = { version: "v4", action: "read", expires: Date.now() + 5 * 60 * 1000 };
+        const [signedUrl] = await bucket.file(imagePath).getSignedUrl(options);
+        ```
+    3.  **Gemini API hívás:** A `google-auth-library` segítségével a függvény automatikusan hitelesíti magát a Gemini API felé a futtató környezet szolgáltatásfiókjával. A Gemini API kulcs a `functions.config()` vagy a Secret Manager segítségével van biztonságosan kezelve.
+    4.  **Hibakezelés:** A `try...catch` blokkok kezelik a hálózati hibákat, a Gemini API által visszaadott hibakódokat (pl. 429 - túl sok kérés, 400 - rossz kérés), és a belső logikai hibákat. A kliens felé standardizált `HttpsError` objektumokat küld vissza.
+
+
 
 
 * **Visszajelzés a kliensnek:**
