@@ -51,6 +51,50 @@ A rendszer **réteges architektúrát** követ:
 
 ### **1.3. Modulstruktúra részletezve**
 
+
+#### 🔹 *Felhasználói modul*
+
+* Hangalapú parancsok kezelése (`speech_to_text` plugin).
+* Hangos visszajelzés (`flutter_tts`).
+* Egyszerű vizuális komponensek (nagy kontraszt, nagy gombok, rezgés minták).
+* UI szintek a látásállapot szerint:
+
+  * **Vak mód:** kizárólag hang + rezgés visszajelzés.
+  * **Gyengénlátó mód:** magas kontraszt, nagy betű, sötét mód.
+  * **Segítő mód:** teljes vizuális UI (képmegjelenítés, feliratok).
+
+#### 🔹 *Képfeldolgozó modul*
+
+* Kamera előnézet (hátsó kamera).
+* Automatikus fókusz és fényerő-beállítás.
+* Kép rögzítése, méretezése (max. 1024×1024 px).
+* Base64 kódolás a hálózati küldéshez.
+* Kép cache és időzített törlés.
+
+#### 🔹 *Kommunikációs modul*
+
+* HTTPS POST hívások a **Gemini API proxyhoz**.
+* Adatformátum:
+
+  ```json
+  {
+    "image": "<base64-encoded>",
+    "prompt": "Mit látok?"
+  }
+  ```
+* Hibakezelés (timeout, no response, offline fallback).
+* Retry mechanizmus 3 próbálkozással.
+
+#### 🔹 *Hangfeldolgozó modul*
+
+* STT: beszéd felismerése (Google Speech / Whisper).
+* TTS: hangos válaszlejátszás.
+* Hangsebesség, hangerő, nyelv beállítható.
+* Offline TTS fallback.
+
+---
+
+
 ### **1.4. Adatáramlás**
 
 
