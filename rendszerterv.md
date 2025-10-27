@@ -1,6 +1,265 @@
 ## LumiAI – Rendszerterv
-
 ### 1. Frontend (Flutter UI + interakció)
+
+
+### **1.1. Áttekintés**
+
+A *LumiAI* alkalmazás célja egy akadálymentes, mesterséges intelligenciával támogatott mobilalkalmazás fejlesztése látássérült felhasználók számára.
+A rendszer képes a felhasználó **hangalapú kérdéseit** értelmezni, **kameraképet rögzíteni**, azt **felhőalapú képfelismerő API-nak (Gemini Live)** továbbítani, majd a választ **természetes beszédhangon visszaadni**.
+
+A megoldás **Flutter** alapú, tehát **cross-platform** (Android és iOS) támogatással rendelkezik, és a háttérrendszerrel **HTTPS REST API**-n keresztül kommunikál.
+
+---
+ 
+
+### **1.2. Rendszerarchitektúra**
+
+
+A rendszer **réteges architektúrát** követ:
+
+```
++----------------------------------------------------------+
+|                    FELHASZNÁLÓI INTERFÉSZ                |
+|  (Flutter UI, STT gomb, visszajelzések, kamera előnézet)|
++----------------------------▲-----------------------------+
+                             │
++----------------------------│-----------------------------+
+|            ALKALMAZÁSI LOGIKA / CONTROLLER               |
+|   - Parancsértelmezés                                     |
+|   - Állapotkezelés (Riverpod / Provider)                  |
+|   - Adatáramlás vezérlése STT–Camera–TTS között          |
++----------------------------▲-----------------------------+
+                             │
++----------------------------│-----------------------------+
+|           KOMMUNIKÁCIÓS MODUL / API CLIENT                |
+|   - Gemini Live API hívások (REST / HTTPS)                |
+|   - JSON feldolgozás, hibakezelés                         |
+|   - Offline cache (Hive / SharedPreferences)              |
++----------------------------▲-----------------------------+
+                             │
++----------------------------│-----------------------------+
+|           FELHŐSZOLGÁLTATÁSOK ÉS AI RÉTEG                |
+|   - Firebase Functions (proxy endpoint)                   |
+|   - Gemini Live multimodális modell (kép + szöveg input)  |
+|   - Auth + Storage + Naplózás                             |
++----------------------------------------------------------+
+```
+
+---
+
+
+
+### **1.3. Modulstruktúra részletezve**
+
+
+#### 🔹 *Felhasználói modul*
+
+* Hangalapú parancsok kezelése (`speech_to_text` plugin).
+* Hangos visszajelzés (`flutter_tts`).
+* Egyszerű vizuális komponensek (nagy kontraszt, nagy gombok, rezgés minták).
+* UI szintek a látásállapot szerint:
+
+  * **Vak mód:** kizárólag hang + rezgés visszajelzés.
+  * **Gyengénlátó mód:** magas kontraszt, nagy betű, sötét mód.
+  * **Segítő mód:** teljes vizuális UI (képmegjelenítés, feliratok).
+
+#### 🔹 *Képfeldolgozó modul*
+
+* Kamera előnézet (hátsó kamera).
+* Automatikus fókusz és fényerő-beállítás.
+* Kép rögzítése, méretezése (max. 1024×1024 px).
+* Base64 kódolás a hálózati küldéshez.
+* Kép cache és időzített törlés.
+
+#### 🔹 *Kommunikációs modul*
+
+* HTTPS POST hívások a **Gemini API proxyhoz**.
+* Adatformátum:
+
+  ```json
+  {
+    "image": "<base64-encoded>",
+    "prompt": "Mit látok?"
+  }
+  ```
+* Hibakezelés (timeout, no response, offline fallback).
+* Retry mechanizmus 3 próbálkozással.
+
+#### 🔹 *Hangfeldolgozó modul*
+
+* STT: beszéd felismerése (Google Speech / Whisper).
+* TTS: hangos válaszlejátszás.
+* Hangsebesség, hangerő, nyelv beállítható.
+* Offline TTS fallback.
+
+---
+
+
+### **1.4. Adatáramlás**
+Az alábbi ábra szemlélteti a folyamatot:
+
+```
+     [Felhasználó]
+            │
+            ▼
+    Hangparancs ("Mit látok?")
+            │
+            ▼
+   [STT modul] → Szöveges bemenet
+            │
+            ▼
+   [Logikai vezérlés] → "Kép lekérés"
+            │
+            ▼
+    [Kamera modul] → Képkészítés
+            │
+            ▼
+   [Gemini API hívás] → Képanalízis
+            │
+            ▼
+    [API válasz] → "Egy kutya áll előtted."
+            │
+            ▼
+     [TTS modul] → Hangos válasz
+            │
+            ▼
+        [Felhasználó]
+```
+
+---
+
+
+
+### **1.5. Kommunikációs interfészek**
+
+| Modul        | Kapcsolat típusa   | Protokoll / API   | Formátum            | Leírás                                  |
+| ------------ | ------------------ | ----------------- | ------------------- | --------------------------------------- |
+| STT modul    | Nativ API / Google | Speech-to-Text    | JSON                | A felhasználó hangját szöveggé alakítja |
+| TTS modul    | Flutter plugin     | Text-to-Speech    | Audio stream        | Szöveges válasz felolvasása             |
+| Kamera modul | Flutter Camera     | Platform API      | Image file / base64 | Élőkép + képmentés                      |
+| Backend API  | HTTPS REST         | Firebase proxy    | JSON (POST)         | Képadat és prompt továbbítása           |
+| Cache modul  | Lokális            | Hive / SharedPref | Key-Value           | Beállítások, utolsó válaszok            |
+
+---
+
+
+### **1.6. Rendszerindítás és leállítás folyamata**
+
+**Indításkor:**
+
+1. Engedélykérések kezelése (kamera, mikrofon, hálózat).
+2. Internetkapcsolat ellenőrzése.
+3. Felhasználói mód betöltése (pl. látásszint).
+4. TTS: *„Üdvözöllek! Mit szeretnél tudni?”*
+5. Állapot inicializálás (cache betöltése).
+
+**Leállításkor:**
+
+
+1. Folyamatban lévő API-hívások megszakítása.
+2. Cache mentése.
+3. Kamera és mikrofon felszabadítása.
+4. TTS: *„Viszlát!”*
+5. Lokális log mentése (hibák, teljesítményadatok).
+
+---
+
+
+### **1.7. Hibakezelés és visszajelzések**
+| Szituáció            | Visszajelzés típusa | Példa üzenet                               |
+| -------------------- | ------------------- | ------------------------------------------ |
+| Nincs internet       | Hang                | „Nem tudok csatlakozni a szerverhez.”      |
+| Kép nem értelmezhető | Hang + rezgés       | „Sajnálom, nem tudtam felismerni a képet.” |
+| STT hiba             | Hang                | „Nem értettem, kérlek ismételd meg.”       |
+| API timeout          | Hang                | „A kapcsolat megszakadt, próbáld újra.”    |
+| Sikeres válasz       | Hang                | „Egy kutya áll előtted.”                   |
+
+---
+
+### **1.8. Teljes adatút szemléltetése**
+```
++---------------------------------------------------------+
+|                     MOBIL ALKALMAZÁS                    |
+|   (Flutter / Dart – felhasználói interakció + logika)   |
++---------------------------------------------------------+
+             │                         ▲
+             │                         │
+             ▼                         │
+     [Képkészítés, STT, TTS]           │
+             │                         │
+             ▼                         │
++---------------------------------------------------------+
+|            FIREBASE CLOUD FUNCTIONS (Proxy)             |
+|  - /analyze-image endpoint                               |
+|  - Hitelesítés + API key kezelés                         |
+|  - Hívás a Gemini Live API felé                          |
++---------------------------------------------------------+
+             │
+             ▼
++---------------------------------------------------------+
+|                    GEMINI LIVE API                       |
+|     (Képfeldolgozás + leírás generálás)                 |
++---------------------------------------------------------+
+             │
+             ▼
++---------------------------------------------------------+
+|              VISSZAVÁLASZ JSON                          |
+|  {"description": "Egy kutya áll előtted."}              |
++---------------------------------------------------------+
+             │
+             ▼
++---------------------------------------------------------+
+|          TTS modul (hangos kimenet)                     |
++---------------------------------------------------------+
+```
+
+---
+
+
+### **1.9. Technikai követelmények**
+* **Flutter SDK:** 3.24+
+* **Dart:** 3.x
+* **Célplatformok:** Android 10+, iOS 14+
+* **Függőségek:**
+
+  * `flutter_tts`
+  * `speech_to_text`
+  * `camera`
+  * `image_picker`
+  * `http`
+  * `riverpod`
+  * `hive`
+
+---
+
+
+### **1.10. Fejlesztési és tesztelési szempontok**
+* **Unit tesztek:**
+
+  * STT → logika → TTS lánc helyes működése
+  * Hibák kezelése (offline mód, API timeout)
+* **Widget tesztek:**
+
+  * Hanggomb reagálás
+  * Kamera preview renderelése
+* **Felhasználói tesztek:**
+
+  * 3 látássérült résztvevő bevonásával
+* **Mérőszámok:**
+
+  * Átlagos válaszidő: < 2 másodperc
+  * STT felismerési pontosság: > 90%
+
+---
+
+
+
+### **1.11. Összegzés**
+
+A rendszer felépítése moduláris, kiterjeszthető és platformfüggetlen.
+A kommunikáció biztonságos (HTTPS), az adatáramlás egyszerű, a felhasználói élmény akadálymentesített.
+A *LumiAI* frontend rétege így biztosítja az **ember–gépi interakció természetes, beszédalapú élményét**.
+
 
 
 
