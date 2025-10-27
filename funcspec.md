@@ -203,11 +203,11 @@ A felhasználói interakció egy egyszerű, többlépcsős folyamatra épül.
 
 ```mermaid
 flowchart LR
-    A[Felhasználó: "Lumi, ébredj!"] --> B[LumiAI aktiválódik]
+    A[Felhasználó: Lumi, ébredj!] --> B[LumiAI aktiválódik]
     B --> C[Hangparancs fogadása]
     C --> D[STT: beszéd szöveggé alakítása]
     D --> E[Vezérlő logika értelmezi a parancsot]
-    E --> F[Képfeldolgozó modul képet készít]
+    E --> F[Kép feldolgozó modul képet készít]
     F --> G[Gemini API elemzi a képet]
     G --> H[TTS: szöveg felolvasása]
     H --> I[Visszatérés várakozó módba]
