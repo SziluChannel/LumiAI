@@ -6,7 +6,7 @@
 
 ### 2. Backend + API integráció
 
-**Cél:** adatáramlás, kép-feldolgozás és AI válaszkezelés
+Ez a fejezet a LumiAI alkalmazás szerveroldali architektúráját és annak technikai megvalósítását részletezi. A backend teljes egészében a **Google Firebase** platformra épül, kihasználva annak szervermentes, skálázható és szorosan integrált szolgáltatásait. Ez a megközelítés minimalizálja az infrastruktúra menedzsmentjét, és lehetővé teszi a fejlesztői csapat számára, hogy az alapvető alkalmazáslogikára összpontosítson.
 
 * **Backend:** Firebase (Cloud Functions + Firestore)
 * **Fő komponensek:**
