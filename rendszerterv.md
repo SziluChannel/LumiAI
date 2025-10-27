@@ -1,6 +1,32 @@
 ## LumiAI – Rendszerterv
-
 ### 1. Frontend (Flutter UI + interakció)
+
+
+### **1.1. Áttekintés**
+
+### **1.2. Rendszerarchitektúra**
+
+
+### **1.3. Modulstruktúra részletezve**
+
+### **1.4. Adatáramlás**
+
+
+### **1.5. Kommunikációs interfészek**
+
+### **1.6. Rendszerindítás és leállítás folyamata**
+
+### **1.7. Hibakezelés és visszajelzések**
+
+### **1.8. Teljes adatút szemléltetése**
+
+
+### **1.9. Technikai követelmények**
+
+### **1.10. Fejlesztési és tesztelési szempontok**
+
+
+### **1.11. Összegzés**
 
 
 
