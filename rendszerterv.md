@@ -145,6 +145,25 @@ Az alábbi ábra szemlélteti a folyamatot:
 
 ### **1.6. Rendszerindítás és leállítás folyamata**
 
+**Indításkor:**
+
+1. Engedélykérések kezelése (kamera, mikrofon, hálózat).
+2. Internetkapcsolat ellenőrzése.
+3. Felhasználói mód betöltése (pl. látásszint).
+4. TTS: *„Üdvözöllek! Mit szeretnél tudni?”*
+5. Állapot inicializálás (cache betöltése).
+
+**Leállításkor:**
+
+1. Folyamatban lévő API-hívások megszakítása.
+2. Cache mentése.
+3. Kamera és mikrofon felszabadítása.
+4. TTS: *„Viszlát!”*
+5. Lokális log mentése (hibák, teljesítményadatok).
+
+---
+
+
 ### **1.7. Hibakezelés és visszajelzések**
 
 ### **1.8. Teljes adatút szemléltetése**
