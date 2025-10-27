@@ -386,6 +386,56 @@ Ez a rendszer központi logikai egysége. TypeScript használatával fejlesztve 
     4.  **Hibakezelés:** A `try...catch` blokkok kezelik a hálózati hibákat, a Gemini API által visszaadott hibakódokat (pl. 429 - túl sok kérés, 400 - rossz kérés), és a belső logikai hibákat. A kliens felé standardizált `HttpsError` objektumokat küld vissza.
 
 
+#### 2.3. Gemini API Integráció: Technikai Specifikációk
+
+*   **Modell:** `gemini-pro-vision`. Ez a modell képes képi és szöveges bemenetet egyszerre feldolgozni.
+*   **Végpont (Endpoint):** `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro-vision:generateContent`
+*   **Kérés törzse (Request Body):** A Cloud Function egy JSON payload-ot állít össze, amely tartalmazza a promptot és a kép adatait. A képet nem URL-ként, hanem base64 kódolt stringként küldjük el a megbízhatóság növelése érdekében.
+    ```json
+    {
+      "contents": [
+        {
+          "parts": [
+            { "text": "Írd le részletesen, mit látsz ezen a képen egy látássérült személy számára." },
+            {
+              "inline_data": {
+                "mime_type": "image/jpeg",
+                "data": "BASE64_ENCODED_IMAGE_STRING"
+              }
+            }
+          ]
+        }
+      ],
+      "generationConfig": {
+        "temperature": 0.4,
+        "topK": 32,
+        "topP": 1,
+        "maxOutputTokens": 4096,
+        "stopSequences": []
+      }
+    }
+    ```
+    *A base64 adathoz a Cloud Function letölti a képet a Storage-ból a generált aláírt URL segítségével.*
+*   **Válasz feldolgozása:** A Gemini API válaszából a `candidates[0].content.parts[0].text` útvonalon található szöveges leírást kell kinyerni.
+
+```mermaid
+sequenceDiagram
+    participant Client as Flutter App
+    participant Function as analyzeImage
+    participant Storage as Cloud Storage
+    participant Gemini as Gemini API
+
+    Client->>Function: onCall({imagePath: "..."})
+    Function->>Function: Ellenőrzi a request.auth tokent
+    Function->>Storage: getSignedUrl("...")
+    Storage-->>Function: Visszaadja az ideiglenes URL-t
+    Function->>Function: Letölti a képet az URL-ről
+    Function->>Function: Base64 kódolás
+    Function->>Gemini: POST ...:generateContent (base64 adattal)
+    Gemini-->>Function: JSON válasz a leírással
+    Function-->>Client: Visszaküldi a {description: "..."} objektumot
+```
+[![](https://mermaid.ink/img/pako:eNp9krFu2zAQhl-F4JQCtiAbkmxrCJC6TZEiaIy46VBouZhXmTFFqtSpaGz4IfIIGTt0KtCpm5D3KhlJBVwD0UKR_L_7_yO54ysjkKe8wq816hW-kZBbKDLN3FeCJbmSJWhicyXRDVCxc1UToWVnZXksO6_1iqTRXgga1P0WLwrI8Vi5JGPdhhfOlalFv3CsfIeF1NILu7-zxUWmW10ba3h62hunzOg5KHWyk953AbROWcaDIMj4_lUL9doD7K1SqJ8e7NY5MeuPo6IAalozMhvncYR2eVOWIy1lrlHcWHXSWXVOnWZ44PRJVtUWQNwBgy2TAmXurLFiN9eXQ3oh4iVS81uRD7hpfpRInveQfXpQL3CvocIkcswvYVTzWB1J23NN2eJq-ZG5_Gnu8lggnBtN_tpPbtsSIIAIVNddix0293559YF9ax4VVFuXU2Hz0zrLCv4P6Kj28voD2TR_lPC97QRWKyvLtmB_d8zc3uGG6sIQH_DcSsFTsjUOeIG2AD_lO--RcVpjgRn3rAC7yXim945xj-mzMUWPWVPna55-AVW5WV261vrn_0-CWqCdm1oTT5MkfK7B0x3_ztPRNA6ScTKbjmaTKAnj0WTA793yLAzCOJnG4zieuCHaD_j22TUMklGUJHE8jUdRmMTReP8XyqAuuQ?type=png)](https://mermaid.live/edit#pako:eNp9krFu2zAQhl-F4JQCtiAbkmxrCJC6TZEiaIy46VBouZhXmTFFqtSpaGz4IfIIGTt0KtCpm5D3KhlJBVwD0UKR_L_7_yO54ysjkKe8wq816hW-kZBbKDLN3FeCJbmSJWhicyXRDVCxc1UToWVnZXksO6_1iqTRXgga1P0WLwrI8Vi5JGPdhhfOlalFv3CsfIeF1NILu7-zxUWmW10ba3h62hunzOg5KHWyk953AbROWcaDIMj4_lUL9doD7K1SqJ8e7NY5MeuPo6IAalozMhvncYR2eVOWIy1lrlHcWHXSWXVOnWZ44PRJVtUWQNwBgy2TAmXurLFiN9eXQ3oh4iVS81uRD7hpfpRInveQfXpQL3CvocIkcswvYVTzWB1J23NN2eJq-ZG5_Gnu8lggnBtN_tpPbtsSIIAIVNddix0293559YF9ax4VVFuXU2Hz0zrLCv4P6Kj28voD2TR_lPC97QRWKyvLtmB_d8zc3uGG6sIQH_DcSsFTsjUOeIG2AD_lO--RcVpjgRn3rAC7yXim945xj-mzMUWPWVPna55-AVW5WV261vrn_0-CWqCdm1oTT5MkfK7B0x3_ztPRNA6ScTKbjmaTKAnj0WTA793yLAzCOJnG4zieuCHaD_j22TUMklGUJHE8jUdRmMTReP8XyqAuuQ)
 
 
 * **Visszajelzés a kliensnek:**
