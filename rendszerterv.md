@@ -132,6 +132,17 @@ Az alábbi ábra szemlélteti a folyamatot:
 
 ### **1.5. Kommunikációs interfészek**
 
+| Modul        | Kapcsolat típusa   | Protokoll / API   | Formátum            | Leírás                                  |
+| ------------ | ------------------ | ----------------- | ------------------- | --------------------------------------- |
+| STT modul    | Nativ API / Google | Speech-to-Text    | JSON                | A felhasználó hangját szöveggé alakítja |
+| TTS modul    | Flutter plugin     | Text-to-Speech    | Audio stream        | Szöveges válasz felolvasása             |
+| Kamera modul | Flutter Camera     | Platform API      | Image file / base64 | Élőkép + képmentés                      |
+| Backend API  | HTTPS REST         | Firebase proxy    | JSON (POST)         | Képadat és prompt továbbítása           |
+| Cache modul  | Lokális            | Hive / SharedPref | Key-Value           | Beállítások, utolsó válaszok            |
+
+---
+
+
 ### **1.6. Rendszerindítás és leállítás folyamata**
 
 ### **1.7. Hibakezelés és visszajelzések**
