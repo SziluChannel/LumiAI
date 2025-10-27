@@ -155,6 +155,7 @@ Az alábbi ábra szemlélteti a folyamatot:
 
 **Leállításkor:**
 
+
 1. Folyamatban lévő API-hívások megszakítása.
 2. Cache mentése.
 3. Kamera és mikrofon felszabadítása.
@@ -165,6 +166,15 @@ Az alábbi ábra szemlélteti a folyamatot:
 
 
 ### **1.7. Hibakezelés és visszajelzések**
+| Szituáció            | Visszajelzés típusa | Példa üzenet                               |
+| -------------------- | ------------------- | ------------------------------------------ |
+| Nincs internet       | Hang                | „Nem tudok csatlakozni a szerverhez.”      |
+| Kép nem értelmezhető | Hang + rezgés       | „Sajnálom, nem tudtam felismerni a képet.” |
+| STT hiba             | Hang                | „Nem értettem, kérlek ismételd meg.”       |
+| API timeout          | Hang                | „A kapcsolat megszakadt, próbáld újra.”    |
+| Sikeres válasz       | Hang                | „Egy kutya áll előtted.”                   |
+
+---
 
 ### **1.8. Teljes adatút szemléltetése**
 
