@@ -181,11 +181,147 @@ A rendszer célja, hogy a felhasználó számára a világ újra „hallhatóvá
 
 ---
 
+## *2. rész – Felhasználói interakciók, funkciók és kezelési folyamatok*
 
+A LumiAI működésének középpontjában a **hangalapú interakció** áll, amely lehetővé teszi, hogy a látássérült felhasználók természetes módon kommunikáljanak az alkalmazással.
+A rendszer minden funkciója a beszédre épül – nincs szükség vizuális visszajelzésre vagy menüalapú navigációra. A kommunikáció folyamata egyértelmű, körkörös logikát követ: **felhasználói kérés → rendszerfeldolgozás → válaszadás**.
 
+---
 
-### *2. rész – Felhasználói interakciók, funkciók és kezelési folyamatok*
+### 2.1. Alapvető felhasználói folyamat
 
+A felhasználói interakció egy egyszerű, többlépcsős folyamatra épül.
+
+#### Folyamatleírás:
+
+1. A felhasználó **aktiválja** a LumiAI-t (pl. „Lumi, ébredj!”).
+2. Az alkalmazás rövid hangjelzéssel jelzi, hogy készen áll a parancs fogadására.
+3. A felhasználó kimondja a parancsot (pl. „Mit látok magam előtt?”).
+4. A LumiAI feldolgozza a parancsot, képet készít és elemzi azt.
+5. Az elemzés után az alkalmazás **hangos választ** ad: „Egy asztalt és egy laptopot látsz.”
+6. A folyamat végén a rendszer visszatér várakozó állapotba, készen a következő parancsra.
+
+```mermaid
+flowchart LR
+    A[Felhasználó: "Lumi, ébredj!"] --> B[LumiAI aktiválódik]
+    B --> C[Hangparancs fogadása]
+    C --> D[STT: beszéd szöveggé alakítása]
+    D --> E[Vezérlő logika értelmezi a parancsot]
+    E --> F[Képfeldolgozó modul képet készít]
+    F --> G[Gemini API elemzi a képet]
+    G --> H[TTS: szöveg felolvasása]
+    H --> I[Visszatérés várakozó módba]
+```
+
+---
+
+### 2.2. Fő funkciók
+
+A LumiAI több, egymást kiegészítő funkciót kínál.
+Ezek a látássérültek számára leggyakrabban szükséges helyzetekre épülnek.
+
+| Funkció                           | Leírás                                                                               | Példa hangutasítás  | Válasz példa                              |
+| --------------------------------- | ------------------------------------------------------------------------------------ | ------------------- | ----------------------------------------- |
+| **Környezetleírás**               | Az alkalmazás lefotózza a környezetet és elmondja, mi található előtte.              | „Mit látok?”        | „Egy széket és egy asztalt látsz.”        |
+| **Tárgyfelismerés**               | Meghatároz egy konkrét tárgyat a felhasználó kérésére.                               | „Hol van a csésze?” | „A csésze az asztalon van, jobbra tőled.” |
+| **Szövegolvasás**                 | Felolvassa a kamerával látott nyomtatott szöveget.                                   | „Mit ír a papíron?” | „A dokumentum címe: Szerződés 2025.”      |
+| **Színfelismerés**                | Elemzi a látott képet és megmondja, milyen színt érzékel.                            | „Milyen színű ez?”  | „Ez világoskék.”                          |
+| **Emberfelismerés**               | Észleli, ha ember van a képen, és elmondja az alaphelyzetet.                         | „Van itt valaki?”   | „Egy nő áll előtted, mosolyog.”           |
+| **Segélyhívás / helyzetjelentés** | Képes automatikusan üzenetet küldeni vagy helymeghatározást adni vészhelyzet esetén. | „Segítség!”         | „Értesítem a segélyhívót.”                |
+
+---
+
+### 2.3. Rendszerállapotok és kezelési módok
+
+A LumiAI működése négy fő állapotra bontható.
+Az állapotok között az átmenetek események (pl. hangparancs, hálózati hiba) hatására történnek.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Alvó
+    Alvó --> Aktív : "Lumi, ébredj!"
+    Aktív --> Feldolgozás : "Mit látok?" / más parancs
+    Feldolgozás --> Visszajelzés : Képfeldolgozás és API-válasz kész
+    Visszajelzés --> Aktív : Hangos válasz elhangzott
+    Aktív --> Alvó : "Lumi, pihenj!"
+    Feldolgozás --> Hiba : API vagy hálózati hiba
+    Hiba --> Aktív : Automatikus újrapróbálkozás / hangjelzés után
+```
+
+#### Állapotok leírása:
+
+| Állapot               | Funkció                                        | Felhasználói visszajelzés               |
+| --------------------- | ---------------------------------------------- | --------------------------------------- |
+| **Alvó mód**          | Minimális energiahasználat, passzív várakozás. | Halk záróhang.                          |
+| **Aktív mód**         | Hangparancsok fogadása, gyors reagálás.        | Rövid „ping” hang, majd várakozás.      |
+| **Feldolgozási mód**  | Kép készítése, elemzés, API-hívás.             | Finom rezgés + feldolgozási hang.       |
+| **Visszajelzési mód** | Az AI által adott válasz felolvasása.          | TTS válasz, majd dupla rövid hang.      |
+| **Hibakezelési mód**  | Kapcsolati vagy feldolgozási hiba esetén.      | „A kapcsolat megszakadt, próbáld újra.” |
+
+---
+
+### 2.4. Felhasználói beállítások
+
+A LumiAI célja, hogy minimális vizuális beállítást igényeljen.
+Az alapfunkciók hangutasítással konfigurálhatók, de opcionálisan egy egyszerű, akadálymentes **beállítási felület** is elérhető.
+
+#### Beállítható paraméterek:
+
+* **Hangnyelv:** magyar / angol.
+* **Válaszstílus:** rövid vagy részletes leírás.
+* **Hangerő és sebesség:** a TTS visszajelzés tempója és hangereje.
+* **Haptikus visszajelzés:** be/ki.
+* **Offline mód engedélyezése:** Whisper STT és cache-elt válaszok használata internet nélkül.
+* **Adatküldési engedélyek:** a felhasználó dönthet, hogy a képeket csak feldolgozásra használja-e az alkalmazás.
+
+---
+
+### 2.5. Példák valós felhasználói szituációkra
+
+#### *Példa 1 – Beltéri tájékozódás*
+
+1. A felhasználó belép egy új helyiségbe.
+2. Kérdése: *„Lumi, mit látok?”*
+3. Válasz: *„Egy konyhában vagy. Balra egy asztal, rajta két csésze.”*
+
+#### *Példa 2 – Dokumentum felolvasása*
+
+1. A felhasználó a kamerát egy papírra irányítja.
+2. Parancs: *„Lumi, olvasd fel ezt.”*
+3. Válasz: *„A dokumentum címe: Szerződés, dátum: 2025. február 10.”*
+
+#### *Példa 3 – Segélyhívás*
+
+1. A felhasználó elesik és kimondja: *„Segítség!”*
+2. Az alkalmazás rögzíti a helyadatokat, és hangosan visszaigazolja:
+   *„Segélyhívást indítok. A tartózkodási helyedet elküldtem.”*
+
+---
+
+### 2.6. Hibaesetek és kezelési folyamatok
+
+A rendszernek mindig kiszámítható módon kell reagálnia a hibákra, különösen, ha a felhasználó nem látja a kijelzőt.
+
+| Hiba típusa                        | Rendszerreakció                     | Hangos visszajelzés                                       |
+| ---------------------------------- | ----------------------------------- | --------------------------------------------------------- |
+| **Nincs internet**                 | Offline mód aktiválása              | „Nincs kapcsolat, offline üzemmódra váltok.”              |
+| **API hiba**                       | Újrapróbálkozás 2×, majd hibaüzenet | „Nem sikerült elemezni a képet.”                          |
+| **Kamera hozzáférés hiányzik**     | Feldolgozás megszakad               | „A kamerához nincs hozzáférés.”                           |
+| **STT hiba / félreértett parancs** | Újrahang-felvétel                   | „Nem értettem pontosan, kérlek, ismételd meg.”            |
+| **Alacsony akkumulátor**           | Értesítés és energiatakarékos mód   | „Az akkumulátor alacsony, energiatakarékos módba váltok.” |
+
+---
+
+### 2.7. Felhasználói élmény összefoglalása
+
+A LumiAI interakciós modellje a **minimális kognitív terhelés** és **folyamatos hangalapú visszajelzés** elvére épül:
+
+* **Minden eseményhez tartozik akusztikus vagy haptikus jelzés.**
+* **A párbeszédes logika** (kérdés–válasz) emberi kommunikációs mintát követ.
+* **A hibák és várakozási állapotok is egyértelműen jelezve vannak.**
+* **Az alkalmazás mindig visszajelzést ad**, így a felhasználó sosem marad bizonytalanságban.
+
+---
 
 ### *3. rész – Nem funkcionális követelmények, biztonság, és fejlesztési keretek*
 
