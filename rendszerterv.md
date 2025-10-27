@@ -2,7 +2,7 @@
 ### 1. Frontend (Flutter UI + interakció)
 
 
-### **1.1. Áttekintés**
+#### **1.1. Áttekintés**
 
 A *LumiAI* alkalmazás célja egy akadálymentes, mesterséges intelligenciával támogatott mobilalkalmazás fejlesztése látássérült felhasználók számára.
 A rendszer képes a felhasználó **hangalapú kérdéseit** értelmezni, **kameraképet rögzíteni**, azt **felhőalapú képfelismerő API-nak (Gemini Live)** továbbítani, majd a választ **természetes beszédhangon visszaadni**.
@@ -12,7 +12,7 @@ A megoldás **Flutter** alapú, tehát **cross-platform** (Android és iOS) tám
 ---
  
 
-### **1.2. Rendszerarchitektúra**
+#### **1.2. Rendszerarchitektúra**
 
 
 A rendszer **réteges architektúrát** követ:
@@ -49,7 +49,7 @@ A rendszer **réteges architektúrát** követ:
 
 
 
-### **1.3. Modulstruktúra részletezve**
+#### **1.3. Modulstruktúra részletezve**
 
 
 #### 🔹 *Felhasználói modul*
@@ -95,7 +95,7 @@ A rendszer **réteges architektúrát** követ:
 ---
 
 
-### **1.4. Adatáramlás**
+#### **1.4. Adatáramlás**
 Az alábbi ábra szemlélteti a folyamatot:
 
 ```
@@ -130,7 +130,7 @@ Az alábbi ábra szemlélteti a folyamatot:
 
 
 
-### **1.5. Kommunikációs interfészek**
+#### **1.5. Kommunikációs interfészek**
 
 | Modul        | Kapcsolat típusa   | Protokoll / API   | Formátum            | Leírás                                  |
 | ------------ | ------------------ | ----------------- | ------------------- | --------------------------------------- |
@@ -143,7 +143,7 @@ Az alábbi ábra szemlélteti a folyamatot:
 ---
 
 
-### **1.6. Rendszerindítás és leállítás folyamata**
+#### **1.6. Rendszerindítás és leállítás folyamata**
 
 **Indításkor:**
 
@@ -165,7 +165,7 @@ Az alábbi ábra szemlélteti a folyamatot:
 ---
 
 
-### **1.7. Hibakezelés és visszajelzések**
+#### **1.7. Hibakezelés és visszajelzések**
 | Szituáció            | Visszajelzés típusa | Példa üzenet                               |
 | -------------------- | ------------------- | ------------------------------------------ |
 | Nincs internet       | Hang                | „Nem tudok csatlakozni a szerverhez.”      |
@@ -176,7 +176,7 @@ Az alábbi ábra szemlélteti a folyamatot:
 
 ---
 
-### **1.8. Teljes adatút szemléltetése**
+#### **1.8. Teljes adatút szemléltetése**
 ```
 +---------------------------------------------------------+
 |                     MOBIL ALKALMAZÁS                    |
@@ -216,7 +216,7 @@ Az alábbi ábra szemlélteti a folyamatot:
 ---
 
 
-### **1.9. Technikai követelmények**
+#### **1.9. Technikai követelmények**
 * **Flutter SDK:** 3.24+
 * **Dart:** 3.x
 * **Célplatformok:** Android 10+, iOS 14+
@@ -233,7 +233,7 @@ Az alábbi ábra szemlélteti a folyamatot:
 ---
 
 
-### **1.10. Fejlesztési és tesztelési szempontok**
+#### **1.10. Fejlesztési és tesztelési szempontok**
 * **Unit tesztek:**
 
   * STT → logika → TTS lánc helyes működése
@@ -254,7 +254,7 @@ Az alábbi ábra szemlélteti a folyamatot:
 
 
 
-### **1.11. Összegzés**
+#### **1.11. Összegzés**
 
 A rendszer felépítése moduláris, kiterjeszthető és platformfüggetlen.
 A kommunikáció biztonságos (HTTPS), az adatáramlás egyszerű, a felhasználói élmény akadálymentesített.
