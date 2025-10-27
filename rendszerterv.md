@@ -217,6 +217,21 @@ Az alábbi ábra szemlélteti a folyamatot:
 
 
 ### **1.9. Technikai követelmények**
+* **Flutter SDK:** 3.24+
+* **Dart:** 3.x
+* **Célplatformok:** Android 10+, iOS 14+
+* **Függőségek:**
+
+  * `flutter_tts`
+  * `speech_to_text`
+  * `camera`
+  * `image_picker`
+  * `http`
+  * `riverpod`
+  * `hive`
+
+---
+
 
 ### **1.10. Fejlesztési és tesztelési szempontok**
 
