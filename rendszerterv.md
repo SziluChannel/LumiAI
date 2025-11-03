@@ -444,4 +444,151 @@ sequenceDiagram
 *   **Naplózás és Monitorozás:** A Cloud Functions automatikusan integrálódik a Google Cloud's operations suite-tal (korábban Stackdriver), amely részletes naplózást, monitorozást és riasztásokat biztosít a hibák és a teljesítményproblémák gyors azonosításához.
 
 ---
-### 3. Integráció, biztonság, teljesítmény*
+
+## **3. Integráció, biztonság, teljesítmény**
+
+### **3.1. Integrációs architektúra**
+
+A rendszer integrációja három fő komponens együttműködésén alapul:
+a **mobilalkalmazás (Flutter)**, a **felhőalapú backend (Firebase + Cloud Functions)** és a **Gemini Live API**.
+
+Az architektúra célja, hogy a kliens oldali interakciók egyszerűek és valós idejűek legyenek, míg az erőforrás-igényes feldolgozás (képanalízis, AI-válasz generálás) a felhőben történjen.
+
+#### **Fő integrációs komponensek:**
+
+| Rendszerelem           | Integrációs mód                  | Leírás                                                     |
+| ---------------------- | -------------------------------- | ---------------------------------------------------------- |
+| **Flutter kliens**     | REST/HTTPS és callable functions | Hangalapú felület; képek feltöltése, API válaszok kezelése |
+| **Firebase Functions** | Proxy endpoint                   | Biztonságos köztes réteg a Gemini API és a kliens között   |
+| **Firebase Storage**   | SDK integráció                   | Képek ideiglenes tárolása, aláírt URL generálás            |
+| **Gemini Live API**    | HTTPS POST                       | Kép + prompt továbbítása multimodális AI feldolgozásra     |
+| **Firestore**          | SDK integráció                   | Naplózás, statisztikák, felhasználói beállítások           |
+
+---
+
+#### **3.1.1. Integrációs folyamat**
+
+A következő ábra mutatja a fő adatútvonalakat a komponensek között:
+
+```mermaid
+sequenceDiagram
+    participant User as Felhasználó
+    participant App as Flutter kliens
+    participant Firebase as Firebase Cloud
+    participant Gemini as Gemini Live API
+
+    User->>App: Hangutasítás ("Mit látok?")
+    App->>Firebase: Kép feltöltése Storage-ba
+    App->>Firebase: analyzeImage() függvény hívás
+    Firebase->>Gemini: Kép + prompt továbbítása
+    Gemini-->>Firebase: Szöveges leírás
+    Firebase-->>App: JSON válasz
+    App-->>User: TTS válasz („Egy asztalt és egy laptopot látsz.”)
+```
+
+Ez az architektúra **aszimmetrikus**: a kliens vékony, a feldolgozás a felhőben történik, ezzel csökken a mobil erőforrás-terhelése és növekszik a biztonság.
+
+---
+
+#### **3.1.2. Modulok közötti belső integráció**
+
+A Flutter-alkalmazáson belül az egyes modulok (STT, Kamera, TTS, Logika, API Client) **Riverpod állapotkezelőn** keresztül kommunikálnak.
+Ez lehetővé teszi az aszinkron adatáramlást és a hibatűrő eseménykezelést.
+
+```mermaid
+flowchart LR
+    A[STT modul] --> B[Vezérlő logika]
+    B --> C[Képfeldolgozó modul]
+    C --> D[API Client]
+    D --> E[Gemini API]
+    E --> D
+    D --> F[TTS modul]
+    F --> A
+```
+
+---
+
+### **3.2. Biztonsági architektúra**
+
+A LumiAI adatkezelése a **zero-knowledge** és **least privilege** elv alapján működik:
+a kliens kizárólag a saját munkamenetéhez szükséges minimális jogosultságokat kapja.
+
+#### **3.2.1. Autentikáció és hozzáférés**
+
+* **Firebase Authentication** biztosítja a hitelesítést anonim tokennel.
+* Minden kliens egyedi `UID`-t kap, amely azonosítja a tárolt adatokat.
+* A hozzáférési szabályok (Security Rules) garantálják, hogy:
+
+  * A felhasználó **csak a saját képeit** töltheti fel és törölheti.
+  * Olvasási hozzáférés a tárolt képekhez **csak a Cloud Function** számára engedélyezett.
+  * A képek **1 napon belül automatikusan törlődnek.**
+
+#### **3.2.2. Adatvédelem és kommunikáció**
+
+| Biztonsági elem | Technológia                          | Leírás                                                            |
+| --------------- | ------------------------------------ | ----------------------------------------------------------------- |
+| Adatátvitel     | **HTTPS (TLS 1.3)**                  | Teljes titkosítás a kliens és szerver között                      |
+| API hitelesítés | **Service Account + Secret Manager** | A Gemini API kulcs csak a Cloud Functions környezetében érhető el |
+| Adattárolás     | **Firestore + Storage**              | Szigorú hozzáférés-szabályok; minden kép privát                   |
+| Naplózás        | **Cloud Logging**                    | Anonimizált hibák és teljesítményadatok                           |
+
+---
+
+#### **3.2.3. Tipikus biztonsági forgatókönyv**
+
+1. Felhasználó hangutasítást ad.
+2. A kép a Storage-be kerül, zárt mappába (`/images/{uid}/timestamp.jpg`).
+3. A Function 5 perces aláírt URL-t kér a képhez.
+4. Az API feldolgozza az adatot, a képet **nem tárolja**.
+5. A feldolgozás után az URL lejár, a kép törlődik.
+
+Ez garantálja, hogy a személyes képi információk nem maradnak meg sem a kliens, sem a szerver oldalon.
+
+---
+
+### **3.3. Teljesítmény, skálázhatóság és hibatűrés**
+
+#### **3.3.1. Teljesítményoptimalizálás**
+
+* A kamera által készített kép előfeldolgozott (max. 1024×1024, JPEG 85%), így az átlagos feltöltés <300 KB.
+* A kommunikáció aszinkron: a felhasználó párhuzamosan kap haptikus és auditív visszajelzést.
+* A Gemini API-hívások `topK` és `temperature` paraméterei a gyors válaszidőre vannak optimalizálva.
+
+#### **3.3.2. Skálázhatóság**
+
+* A Firebase Functions automatikusan skálázódik a forgalomhoz.
+* A Storage és Firestore regionálisan redundáns.
+* A Gemini Live API felhőn keresztül nagy párhuzamossággal működik, így több ezer kérés is kezelhető párhuzamosan.
+
+#### **3.3.3. Hibatűrés és megbízhatóság**
+
+* **Retry mechanizmus:** 3 újrapróbálkozás hálózati hiba esetén.
+* **Timeout:** 5 másodperc után megszakítás és hangos visszajelzés („A kapcsolat megszakadt.”).
+* **Crash-védelem:** A kliens automatikus újraindítása a folyamat folytatásával.
+* **Offline fallback:** STT és TTS lokális modellekkel működik kapcsolat nélkül is.
+
+---
+
+#### **3.3.4. Teljesítménymonitorozás**
+
+A rendszer a Firebase Performance Monitoring és Cloud Logging modulokon keresztül méri a következő mutatókat:
+
+| Metrika                     | Célérték      |
+| --------------------------- | ------------- |
+| Átlagos válaszidő (STT→TTS) | < 2 másodperc |
+| API-hívás sikerarány        | > 98%         |
+| Hibás hívások aránya        | < 2%          |
+| Átlagos képátviteli idő     | < 600 ms      |
+| STT felismerési pontosság   | > 90%         |
+
+---
+
+### **3.4. Összegzés**
+
+A *LumiAI* integrációs architektúrája biztonságos, gyors és skálázható környezetet biztosít, amely:
+
+* szorosan integrálja a mobilalkalmazást és a felhőalapú AI szolgáltatásokat,
+* garantálja az adatvédelmet és az anonimitást,
+* biztosítja a valós idejű, természetes hangalapú élményt,
+* és hibatűrő módon alkalmazkodik az instabil hálózati környezetekhez.
+
