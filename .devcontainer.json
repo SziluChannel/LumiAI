@@ -1,0 +1,30 @@
+{
+  "name": "Flutter Development Container",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "runArgs": [
+    "--privileged",
+    "--device=/dev/kvm",
+    "--device=/dev/dri",
+    "-v", "/dev/bus/usb:/dev/bus/usb"
+  ],
+  "forwardPorts": [
+    8080,   // Flutter web default port
+    8081,   // ha van más szolgáltatás
+    5037    // adb
+  ],
+  "workspaceFolder": "/workspace",
+  "remoteUser": "ubuntu",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "Dart-Code.flutter",
+        "Dart-Code.dart-code"
+      ]
+    }
+  },
+  "containerEnv": {
+    "FLUTTER_SDK_ROOT": "/home/ubuntu/flutter"
+  }
+}
