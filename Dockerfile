@@ -36,13 +36,7 @@ RUN mkdir -p ${ANDROID_SDK_ROOT}/cmdline-tools && \
     rm commandlinetools.zip
 
 # Licenses és SDK csomagok telepítése (csak egyszer!)
-RUN yes | ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager --licenses && \
-    ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager \
-      "platform-tools" \
-      "platforms;android-35" \
-      "build-tools;35.0.0" \
-      "emulator" \
-      "system-images;android-35;google_apis;x86_64"
+RUN yes | ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager --licenses
 
 # --------------------------
 # Flutter telepítése a home könyvtárba + bashrc
