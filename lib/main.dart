@@ -1,15 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+// import 'package:flutter_dotenv/flutter_dotenv.dart'; // dotenv is not used in the current implementation
 import 'package:lumiai/src/minimal_ui.dart'; // Import the minimal UI
 import 'package:lumiai/src/partial_ui.dart'; // Import the partial UI
 
 Future<void> main() async {
-  await dotenv.load(fileName: ".env");
+  // await dotenv.load(fileName: ".env"); // Commented out as dotenv is not used
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  ThemeMode _currentThemeMode = ThemeMode.light; // Start with light theme
+
+  void _toggleThemeMode() {
+    setState(() {
+      _currentThemeMode = _currentThemeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +32,7 @@ class MyApp extends StatelessWidget {
         // Use a modern color scheme
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.blueAccent, // A modern primary color
-          brightness: Brightness.light, // Use light theme
+          brightness: Brightness.light, // Default to light theme
         ),
         useMaterial3: true,
         appBarTheme: const AppBarTheme(
