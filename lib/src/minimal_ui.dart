@@ -31,6 +31,9 @@ class MinimalFunctionalUI extends StatelessWidget {
                 // TODO: Implement object identification logic
                 _showVoicePrompt(context, 'Identify Object selected. Point your camera at an object.');
               },
+              buttonBackgroundColor: buttonBackgroundColor,
+              buttonTextColor: buttonTextColor,
+              buttonIconColor: buttonIconColor,
             ),
             // Large, high-contrast button for Text Reading
             _buildLargeButton(
@@ -41,6 +44,9 @@ class MinimalFunctionalUI extends StatelessWidget {
                 // TODO: Implement text reading logic
                 _showVoicePrompt(context, 'Read Text selected. Place text in front of the camera.');
               },
+              buttonBackgroundColor: buttonBackgroundColor,
+              buttonTextColor: buttonTextColor,
+              buttonIconColor: buttonIconColor,
             ),
             // Large, high-contrast button for Settings
             _buildLargeButton(
@@ -51,6 +57,9 @@ class MinimalFunctionalUI extends StatelessWidget {
                 // TODO: Implement basic settings logic
                 _showVoicePrompt(context, 'Settings selected. Adjust voice speed or volume.');
               },
+              buttonBackgroundColor: buttonBackgroundColor,
+              buttonTextColor: buttonTextColor,
+              buttonIconColor: buttonIconColor,
             ),
           ],
         ),
@@ -58,21 +67,21 @@ class MinimalFunctionalUI extends StatelessWidget {
     );
   }
 
-  Widget _buildLargeButton(BuildContext context, {required String label, required IconData icon, required VoidCallback onPressed}) {
+  Widget _buildLargeButton(BuildContext context, {required String label, required IconData icon, required VoidCallback onPressed, required Color buttonBackgroundColor, required Color buttonTextColor, required Color buttonIconColor}) {
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.8, // 80% of screen width
       height: MediaQuery.of(context).size.height * 0.2, // 20% of screen height
       child: ElevatedButton.icon(
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.blue, // High contrast button color
-          foregroundColor: Colors.white, // High contrast text/icon color
+          backgroundColor: buttonBackgroundColor, // Use theme-provided button background color
+          foregroundColor: buttonTextColor, // Use theme-provided button text color
           textStyle: const TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
           padding: const EdgeInsets.all(20),
         ),
-        icon: Icon(icon, size: 60),
+        icon: Icon(icon, size: 60, color: buttonIconColor), // Use theme-provided icon color
         label: Text(label),
         onPressed: onPressed,
       ),
@@ -86,6 +95,7 @@ class MinimalFunctionalUI extends StatelessWidget {
       SnackBar(
         content: Text('Voice Prompt: "$message"'),
         duration: const Duration(seconds: 2),
+        backgroundColor: Theme.of(context).colorScheme.primary.withAlpha(204), // Use theme primary color for snackbar
       ),
     );
     // TODO: Integrate actual text-to-speech (e.g., flutter_tts package)
