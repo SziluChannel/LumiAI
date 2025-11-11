@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:lumiai/src/minimal_ui.dart'; // Import the minimal UI
 import 'package:lumiai/src/partial_ui.dart'; // Import the partial UI
 
@@ -22,6 +21,23 @@ class MyApp extends StatelessWidget {
           brightness: Brightness.light, // Use light theme
         ),
         useMaterial3: true,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.white, // White AppBar background
+          foregroundColor: Colors.black87, // Darker text for contrast
+          elevation: 1.0, // Subtle shadow for depth
+          titleTextStyle: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            foregroundColor: Colors.white, // Text/icon color
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+          ),
+        ),
       ),
       home: const UIModeSwitcher(), // Set UIModeSwitcher as the home
     );
