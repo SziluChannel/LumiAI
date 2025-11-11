@@ -26,12 +26,12 @@ Future<void> main() async {
       quality: 80,
       computeFn: (fn, args) => fn(args), // szinkron runner a teszthez
     );
-    print('Compressed file: ${outFile.path} (${outFile.lengthSync()} bytes)');
-  } catch (e, st) {
-    print('compressImage failed: $e\n$st');
+    // print('Compressed file: ${outFile.path} (${outFile.lengthSync()} bytes)'); // Commented out print
+  } catch (e) { // Removed unused stack trace variable 'st'
+    // print('compressImage failed: $e'); // Commented out print
   } finally {
     // opcionális: mutasd meg a tartalmat, majd töröld a mappát
     // await tmp.delete(recursive: true);
-    print('Temp left at: ${tmp.path} (delete manually if you want)');
+    // print('Temp left at: ${tmp.path} (delete manually if you want)'); // Commented out print
   }
 }
