@@ -53,14 +53,52 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
       ),
-      home: const UIModeSwitcher(), // Set UIModeSwitcher as the home
+      darkTheme: ThemeData(
+        // Dark theme colors
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.blueAccent, // Keep the same seed color for consistency
+          brightness: Brightness.dark, // Use dark theme
+        ),
+        useMaterial3: true,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.black, // Dark AppBar background
+          foregroundColor: Colors.white, // White text for contrast
+          elevation: 1.0, // Subtle shadow for depth
+          titleTextStyle: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            foregroundColor: Colors.white, // Text/icon color
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+          ),
+        ),
+      ),
+      // Use themeMode to switch between light and dark themes
+      themeMode: _currentThemeMode, // Apply the current theme mode
+      home: UIModeSwitcher( // Pass theme control to UIModeSwitcher
+        currentThemeMode: _currentThemeMode,
+        onThemeModeChanged: _toggleThemeMode,
+      ),
     );
   }
 }
 
-/// A StatefulWidget to switch between MinimalFunctionalUI and PartialFunctionalUI.
+/// A StatefulWidget to switch between MinimalFunctionalUI and PartialFunctionalUI,
+/// and also to manage the theme mode (light/dark).
 class UIModeSwitcher extends StatefulWidget {
-  const UIModeSwitcher({super.key});
+  final ThemeMode currentThemeMode;
+  final VoidCallback onThemeModeChanged;
+
+  const UIModeSwitcher({
+    super.key,
+    required this.currentThemeMode,
+    required this.onThemeModeChanged,
+  });
 
   @override
   State<UIModeSwitcher> createState() => _UIModeSwitcherState();
@@ -87,6 +125,14 @@ class _UIModeSwitcherState extends State<UIModeSwitcher> {
         title: Text(_isMinimalMode ? 'LumiAI - Minimal Mode' : 'LumiAI - Partial Mode'),
         backgroundColor: appBarColor,
         foregroundColor: appBarTextColor,
+        actions: [
+          // Theme toggle button
+          IconButton(
+            icon: Icon(widget.currentThemeMode == ThemeMode.light ? Icons.dark_mode : Icons.light_mode),
+            tooltip: widget.currentThemeMode == ThemeMode.light ? 'Switch to Dark Mode' : 'Switch to Light Mode',
+            onPressed: widget.onThemeModeChanged, // Use the passed callback
+          ),
+        ],
       ),
       body: _isMinimalMode ? const MinimalFunctionalUI() : const PartialFunctionalUI(),
       floatingActionButton: FloatingActionButton.extended(
