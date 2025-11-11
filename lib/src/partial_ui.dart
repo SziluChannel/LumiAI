@@ -9,11 +9,14 @@ class PartialFunctionalUI extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.grey[900], // Dark background for contrast
+      color: Colors.white, // Modern, clean background
       padding: const EdgeInsets.all(16.0),
       child: ListView(
         children: [
           _buildSectionTitle(context, 'Object & Scene Recognition'),
+          _buildCard(
+            context,
+            children: [
           _buildButtonRow(
             context,
             buttons: [
@@ -34,6 +37,8 @@ class PartialFunctionalUI extends StatelessWidget {
                   // TODO: Implement scene description logic
                   _showVoicePrompt(context, 'Describe Scene selected. Analyzing your surroundings.');
                 },
+                  ),
+                ],
               ),
             ],
           ),
