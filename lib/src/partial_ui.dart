@@ -133,11 +133,28 @@ class PartialFunctionalUI extends StatelessWidget {
       child: Text(
         title,
         style: const TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.bold,
-          color: Colors.white, // High contrast text
+          fontSize: 22, // Slightly smaller for modern feel
+          fontWeight: FontWeight.w700, // Bolder weight
+          color: Colors.black87, // Darker, softer text color
         ),
-        textAlign: TextAlign.center,
+        textAlign: TextAlign.left, // Align left for a cleaner look
+      ),
+    );
+  }
+
+  Widget _buildCard(BuildContext context, {required List<Widget> children}) {
+    return Card(
+      elevation: 4.0, // Subtle shadow for depth
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12.0),
+      ),
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: children,
+        ),
       ),
     );
   }
