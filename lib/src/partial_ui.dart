@@ -45,6 +45,9 @@ class PartialFunctionalUI extends StatelessWidget {
           const SizedBox(height: 24),
 
           _buildSectionTitle(context, 'Text Assistance'),
+          _buildCard(
+            context,
+            children: [
           _buildButtonRow(
             context,
             buttons: [
@@ -68,9 +71,14 @@ class PartialFunctionalUI extends StatelessWidget {
               ),
             ],
           ),
+            ],
+          ),
           const SizedBox(height: 24),
 
           _buildSectionTitle(context, 'Navigation Aids'),
+          _buildCard(
+            context,
+            children: [
           _buildButtonRow(
             context,
             buttons: [
@@ -92,6 +100,8 @@ class PartialFunctionalUI extends StatelessWidget {
                   _showVoicePrompt(context, 'Explore Surroundings selected. Describing nearby points of interest.');
                 },
               ),
+            ],
+          ),
             ],
           ),
           const SizedBox(height: 24),
