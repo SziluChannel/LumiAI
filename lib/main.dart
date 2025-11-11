@@ -11,15 +11,15 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'LumiAI',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const UIModeSwitcher(), // Set UIModeSwitcher as the home
     );
   }
 }
@@ -29,13 +29,13 @@ class UIModeSwitcher extends StatefulWidget {
   const UIModeSwitcher({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<UIModeSwitcher> createState() => _UIModeSwitcherState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _UIModeSwitcherState extends State<UIModeSwitcher> {
+  bool _isMinimalMode = true; // Start with minimal mode by default
 
-  void _incrementCounter() {
+  void _toggleUIMode() {
     setState(() {
       _isMinimalMode = !_isMinimalMode;
     });
