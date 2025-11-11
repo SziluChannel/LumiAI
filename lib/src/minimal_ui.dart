@@ -8,8 +8,16 @@ class MinimalFunctionalUI extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Determine colors based on theme mode for consistency
+    final Color scaffoldBackgroundColor = Theme.of(context).scaffoldBackgroundColor;
+    // final Color sectionTitleColor = Theme.of(context).textTheme.titleLarge!.color!; // Removed unused variable
+    final Color buttonTextColor = Theme.of(context).primaryTextTheme.bodyLarge!.color!;
+    final Color buttonIconColor = Theme.of(context).primaryIconTheme.color!;
+    // Use theme primary color with opacity for button background
+    final Color buttonBackgroundColor = Theme.of(context).primaryColor.withAlpha(204);
+
     return Container(
-      color: Colors.black, // High contrast background
+      color: scaffoldBackgroundColor, // Use scaffold background color for consistency
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
