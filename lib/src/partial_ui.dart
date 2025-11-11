@@ -17,13 +17,14 @@ class PartialFunctionalUI extends StatelessWidget {
     final Color buttonBackgroundColor = Theme.of(context).primaryColor.withAlpha(204); // Use theme primary color with opacity
 
     return Container(
-      color: Colors.white, // Modern, clean background
+      color: scaffoldBackgroundColor, // Use scaffold background color for consistency
       padding: const EdgeInsets.all(16.0),
       child: ListView(
         children: [
-          _buildSectionTitle(context, 'Object & Scene Recognition'),
+          _buildSectionTitle(context, 'Object & Scene Recognition', sectionTitleColor),
           _buildCard(
             context,
+            cardBackgroundColor,
             children: [
               _buildButtonRow(
                 context,
@@ -36,6 +37,9 @@ class PartialFunctionalUI extends StatelessWidget {
                       // TODO: Implement object identification logic
                       _showVoicePrompt(context, 'Identify Object selected. Point your camera at an object.');
                     },
+                    buttonBackgroundColor: buttonBackgroundColor,
+                    buttonTextColor: buttonTextColor,
+                    buttonIconColor: buttonIconColor,
                   ),
                   _buildFeatureButton(
                     context,
@@ -45,6 +49,9 @@ class PartialFunctionalUI extends StatelessWidget {
                       // TODO: Implement scene description logic
                       _showVoicePrompt(context, 'Describe Scene selected. Analyzing your surroundings.');
                     },
+                    buttonBackgroundColor: buttonBackgroundColor,
+                    buttonTextColor: buttonTextColor,
+                    buttonIconColor: buttonIconColor,
                   ),
                 ],
               ),
@@ -52,9 +59,10 @@ class PartialFunctionalUI extends StatelessWidget {
           ),
           const SizedBox(height: 24),
 
-          _buildSectionTitle(context, 'Text Assistance'),
+          _buildSectionTitle(context, 'Text Assistance', sectionTitleColor),
           _buildCard(
             context,
+            cardBackgroundColor,
             children: [
               _buildButtonRow(
                 context,
@@ -67,6 +75,9 @@ class PartialFunctionalUI extends StatelessWidget {
                       // TODO: Implement document reading logic
                       _showVoicePrompt(context, 'Read Document selected. Place document in front of the camera.');
                     },
+                    buttonBackgroundColor: buttonBackgroundColor,
+                    buttonTextColor: buttonTextColor,
+                    buttonIconColor: buttonIconColor,
                   ),
                   _buildFeatureButton(
                     context,
@@ -76,6 +87,9 @@ class PartialFunctionalUI extends StatelessWidget {
                       // TODO: Implement barcode scanning logic
                       _showVoicePrompt(context, 'Scan Barcode selected. Position barcode in the frame.');
                     },
+                    buttonBackgroundColor: buttonBackgroundColor,
+                    buttonTextColor: buttonTextColor,
+                    buttonIconColor: buttonIconColor,
                   ),
                 ],
               ),
@@ -83,9 +97,10 @@ class PartialFunctionalUI extends StatelessWidget {
           ),
           const SizedBox(height: 24),
 
-          _buildSectionTitle(context, 'Navigation Aids'),
+          _buildSectionTitle(context, 'Navigation Aids', sectionTitleColor),
           _buildCard(
             context,
+            cardBackgroundColor,
             children: [
               _buildButtonRow(
                 context,
@@ -134,6 +149,9 @@ class PartialFunctionalUI extends StatelessWidget {
                   _showVoicePrompt(context, 'Settings selected. Accessing advanced customization options.');
                 },
                 isFullWidth: true, // Make settings button full width for prominence
+                buttonBackgroundColor: buttonBackgroundColor,
+                buttonTextColor: buttonTextColor,
+                buttonIconColor: buttonIconColor,
               ),
             ],
           ),
@@ -142,7 +160,7 @@ class PartialFunctionalUI extends StatelessWidget {
     );
   }
 
-  Widget _buildSectionTitle(BuildContext context, String title) {
+  Widget _buildSectionTitle(BuildContext context, String title, Color textColor) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
       child: Text(
@@ -150,7 +168,7 @@ class PartialFunctionalUI extends StatelessWidget {
         style: TextStyle(
           fontSize: 22, // Slightly smaller for modern feel
           fontWeight: FontWeight.w700, // Bolder weight
-          color: Colors.black87, // Darker, softer text color
+          color: textColor, // Use theme-provided text color
         ),
         textAlign: TextAlign.left, // Align left for a cleaner look
       ),
@@ -163,6 +181,7 @@ class PartialFunctionalUI extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12.0),
       ),
+      color: cardBackgroundColor, // Use theme-provided card color
       margin: const EdgeInsets.symmetric(vertical: 8.0),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -184,20 +203,20 @@ class PartialFunctionalUI extends StatelessWidget {
     );
   }
 
-  Widget _buildFeatureButton(BuildContext context, {required String label, required IconData icon, required VoidCallback onPressed, bool isFullWidth = false}) {
+  Widget _buildFeatureButton(BuildContext context, {required String label, required IconData icon, required VoidCallback onPressed, bool isFullWidth = false, required Color buttonBackgroundColor, required Color buttonTextColor, required Color buttonIconColor}) {
     return SizedBox(
       height: 100, // Slightly reduced height for a more compact modern look
       child: ElevatedButton.icon(
         style: ElevatedButton.styleFrom(
-          backgroundColor: Theme.of(context).primaryColor.withAlpha(204), // Use theme primary color with opacity
-          foregroundColor: Colors.white,
+          backgroundColor: buttonBackgroundColor, // Use theme-provided button background color
+          foregroundColor: buttonTextColor, // Use theme-provided button text color
           textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold), // Adjusted text size
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0), // Slightly less rounded corners
           ),
           padding: const EdgeInsets.all(12),
         ),
-        icon: Icon(icon, size: 36), // Slightly smaller icon
+        icon: Icon(icon, size: 36, color: buttonIconColor), // Slightly smaller icon with theme color
         label: Text(label, textAlign: TextAlign.center),
         onPressed: onPressed,
       ),
