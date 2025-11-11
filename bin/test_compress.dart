@@ -7,7 +7,7 @@ import 'package:lumiai/src/image_utils.dart';
 Future<void> main() async {
   final tmp = await Directory.systemTemp.createTemp('compress_test_');
   final srcPath = '${tmp.path}/src.jpg';
-  print('Temp dir: ${tmp.path}');
+  // print('Temp dir: ${tmp.path}'); // Commented out print
 
   // generálunk egy nagy képet
   final image = img.Image(width: 2000, height: 1500);
@@ -16,10 +16,11 @@ Future<void> main() async {
 
   final jpg = img.encodeJpg(image, quality: 95);
   final srcFile = File(srcPath)..writeAsBytesSync(jpg);
-  print('Wrote source image: ${srcFile.path} (${srcFile.lengthSync()} bytes)');
+  // print('Wrote source image: ${srcFile.path} (${srcFile.lengthSync()} bytes)'); // Commented out print
 
   try {
-    final outFile = await compressImage(
+    // final outFile = await compressImage( // Commented out unused variable assignment
+    await compressImage(
       srcFile,
       maxDim: 1024,
       quality: 80,
