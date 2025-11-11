@@ -8,6 +8,14 @@ class PartialFunctionalUI extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Determine colors based on theme mode for consistency
+    final Color scaffoldBackgroundColor = Theme.of(context).scaffoldBackgroundColor;
+    final Color cardBackgroundColor = Theme.of(context).cardColor;
+    final Color sectionTitleColor = Theme.of(context).textTheme.titleLarge!.color!; // Use titleLarge for section titles
+    final Color buttonTextColor = Theme.of(context).primaryTextTheme.bodyLarge!.color!;
+    final Color buttonIconColor = Theme.of(context).primaryIconTheme.color!;
+    final Color buttonBackgroundColor = Theme.of(context).primaryColor.withAlpha(204); // Use theme primary color with opacity
+
     return Container(
       color: Colors.white, // Modern, clean background
       padding: const EdgeInsets.all(16.0),
@@ -90,6 +98,9 @@ class PartialFunctionalUI extends StatelessWidget {
                       // TODO: Implement navigation assistance logic
                       _showVoicePrompt(context, 'Find My Way selected. Providing directional assistance.');
                     },
+                    buttonBackgroundColor: buttonBackgroundColor,
+                    buttonTextColor: buttonTextColor,
+                    buttonIconColor: buttonIconColor,
                   ),
                   _buildFeatureButton(
                     context,
@@ -99,6 +110,9 @@ class PartialFunctionalUI extends StatelessWidget {
                       // TODO: Implement surroundings exploration logic
                       _showVoicePrompt(context, 'Explore Surroundings selected. Describing nearby points of interest.');
                     },
+                    buttonBackgroundColor: buttonBackgroundColor,
+                    buttonTextColor: buttonTextColor,
+                    buttonIconColor: buttonIconColor,
                   ),
                 ],
               ),
@@ -109,6 +123,7 @@ class PartialFunctionalUI extends StatelessWidget {
           // Settings button, possibly more comprehensive
           _buildCard(
             context,
+            cardBackgroundColor,
             children: [
               _buildFeatureButton(
                 context,
@@ -132,7 +147,7 @@ class PartialFunctionalUI extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
       child: Text(
         title,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 22, // Slightly smaller for modern feel
           fontWeight: FontWeight.w700, // Bolder weight
           color: Colors.black87, // Darker, softer text color
@@ -142,7 +157,7 @@ class PartialFunctionalUI extends StatelessWidget {
     );
   }
 
-  Widget _buildCard(BuildContext context, {required List<Widget> children}) {
+  Widget _buildCard(BuildContext context, Color cardBackgroundColor, {required List<Widget> children}) {
     return Card(
       elevation: 4.0, // Subtle shadow for depth
       shape: RoundedRectangleBorder(
