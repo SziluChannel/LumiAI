@@ -63,10 +63,16 @@ class _UIModeSwitcherState extends State<UIModeSwitcher> {
 
   @override
   Widget build(BuildContext context) {
+    // Access theme colors for consistent styling
+    final theme = Theme.of(context);
+    final appBarColor = theme.appBarTheme.backgroundColor ?? theme.primaryColor;
+    final appBarTextColor = theme.appBarTheme.foregroundColor ?? Colors.white;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(_isMinimalMode ? 'LumiAI - Minimal Mode' : 'LumiAI - Partial Mode'),
-        backgroundColor: _isMinimalMode ? Colors.black : Colors.deepPurple,
+        backgroundColor: appBarColor,
+        foregroundColor: appBarTextColor,
       ),
       body: _isMinimalMode ? const MinimalFunctionalUI() : const PartialFunctionalUI(),
       floatingActionButton: FloatingActionButton.extended(
@@ -74,6 +80,8 @@ class _UIModeSwitcherState extends State<UIModeSwitcher> {
         label: Text(_isMinimalMode ? 'Switch to Partial UI' : 'Switch to Minimal UI'),
         icon: const Icon(Icons.swap_horiz),
         tooltip: 'Toggle UI Mode',
+        backgroundColor: theme.primaryColor, // Use theme primary color for FAB
+        foregroundColor: Colors.white,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
