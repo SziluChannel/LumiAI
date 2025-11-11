@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lumiai/src/tts_service.dart';
 
 /// Represents the UI for minimally functional visually impaired users.
 /// This UI focuses on extreme simplicity, large high-contrast buttons,
@@ -58,6 +59,18 @@ class MinimalFunctionalUI extends StatelessWidget {
                 _showVoicePrompt(context, 'Settings selected. Adjust voice speed or volume.');
               },
               buttonBackgroundColor: buttonBackgroundColor,
+              buttonTextColor: buttonTextColor,
+              buttonIconColor: buttonIconColor,
+            ),
+            _buildLargeButton(
+              context,
+              label: 'Test Voice',
+              icon: Icons.volume_up,
+              onPressed: () {
+                // This now works directly, just as you wanted!
+                ttsService.speak('This is a direct call to the global TTS service.');
+              },
+              buttonBackgroundColor: Colors.teal,
               buttonTextColor: buttonTextColor,
               buttonIconColor: buttonIconColor,
             ),
