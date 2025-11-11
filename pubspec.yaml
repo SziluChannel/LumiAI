@@ -35,6 +35,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   flutter_dotenv: ^6.0.0
+  gemini_live: ^0.1.0 # Added for Gemini Live API communication
 
   image: ^4.1.7
 
