@@ -7,8 +7,8 @@ class _TtsService {
   // Private constructor
   _TtsService() {
     _flutterTts.setLanguage("en-US");
-    _flutterTts.setSpeechRate(0.5);
-    _flutterTts.setPitch(1.0);
+    _flutterTts.setSpeechRate(0.8);
+    _flutterTts.setPitch(1.5);
   }
 
   Future<void> speak(String text) async {
