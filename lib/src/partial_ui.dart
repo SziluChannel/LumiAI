@@ -107,6 +107,9 @@ class PartialFunctionalUI extends StatelessWidget {
           const SizedBox(height: 24),
 
           // Settings button, possibly more comprehensive
+          _buildCard(
+            context,
+            children: [
           _buildFeatureButton(
             context,
             label: 'Settings',
@@ -119,12 +122,14 @@ class PartialFunctionalUI extends StatelessWidget {
           ),
         ],
       ),
+        ],
+      ),
     );
   }
 
   Widget _buildSectionTitle(BuildContext context, String title) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
       child: Text(
         title,
         style: const TextStyle(
@@ -149,18 +154,18 @@ class PartialFunctionalUI extends StatelessWidget {
 
   Widget _buildFeatureButton(BuildContext context, {required String label, required IconData icon, required VoidCallback onPressed, bool isFullWidth = false}) {
     return SizedBox(
-      height: 120, // Consistent button height
+      height: 100, // Slightly reduced height for a more compact modern look
       child: ElevatedButton.icon(
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.blueGrey[700], // Distinct button color
+          backgroundColor: Theme.of(context).primaryColor.withAlpha(204), // Use theme primary color with opacity
           foregroundColor: Colors.white,
-          textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold), // Adjusted text size
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(10.0), // Slightly less rounded corners
           ),
-          padding: const EdgeInsets.all(15),
+          padding: const EdgeInsets.all(12),
         ),
-        icon: Icon(icon, size: 40),
+        icon: Icon(icon, size: 36), // Slightly smaller icon
         label: Text(label, textAlign: TextAlign.center),
         onPressed: onPressed,
       ),
@@ -172,6 +177,7 @@ class PartialFunctionalUI extends StatelessWidget {
       SnackBar(
         content: Text('Voice Prompt: "$message"'),
         duration: const Duration(seconds: 2),
+        backgroundColor: Colors.blueGrey[800], // Darker snackbar
       ),
     );
     // TODO: Integrate actual text-to-speech (e.g., flutter_tts package)
