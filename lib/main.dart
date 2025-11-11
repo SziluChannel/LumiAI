@@ -16,7 +16,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'LumiAI',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        // Use a modern color scheme
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.blueAccent, // A modern primary color
+          brightness: Brightness.light, // Use light theme
+        ),
         useMaterial3: true,
       ),
       home: const UIModeSwitcher(), // Set UIModeSwitcher as the home
