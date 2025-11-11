@@ -17,26 +17,26 @@ class PartialFunctionalUI extends StatelessWidget {
           _buildCard(
             context,
             children: [
-          _buildButtonRow(
-            context,
-            buttons: [
-              _buildFeatureButton(
+              _buildButtonRow(
                 context,
-                label: 'Identify Object',
-                icon: Icons.camera_alt,
-                onPressed: () {
-                  // TODO: Implement object identification logic
-                  _showVoicePrompt(context, 'Identify Object selected. Point your camera at an object.');
-                },
-              ),
-              _buildFeatureButton(
-                context,
-                label: 'Describe Scene',
-                icon: Icons.landscape,
-                onPressed: () {
-                  // TODO: Implement scene description logic
-                  _showVoicePrompt(context, 'Describe Scene selected. Analyzing your surroundings.');
-                },
+                buttons: [
+                  _buildFeatureButton(
+                    context,
+                    label: 'Identify Object',
+                    icon: Icons.camera_alt,
+                    onPressed: () {
+                      // TODO: Implement object identification logic
+                      _showVoicePrompt(context, 'Identify Object selected. Point your camera at an object.');
+                    },
+                  ),
+                  _buildFeatureButton(
+                    context,
+                    label: 'Describe Scene',
+                    icon: Icons.landscape,
+                    onPressed: () {
+                      // TODO: Implement scene description logic
+                      _showVoicePrompt(context, 'Describe Scene selected. Analyzing your surroundings.');
+                    },
                   ),
                 ],
               ),
@@ -48,29 +48,29 @@ class PartialFunctionalUI extends StatelessWidget {
           _buildCard(
             context,
             children: [
-          _buildButtonRow(
-            context,
-            buttons: [
-              _buildFeatureButton(
+              _buildButtonRow(
                 context,
-                label: 'Read Document',
-                icon: Icons.description,
-                onPressed: () {
-                  // TODO: Implement document reading logic
-                  _showVoicePrompt(context, 'Read Document selected. Place document in front of the camera.');
-                },
+                buttons: [
+                  _buildFeatureButton(
+                    context,
+                    label: 'Read Document',
+                    icon: Icons.description,
+                    onPressed: () {
+                      // TODO: Implement document reading logic
+                      _showVoicePrompt(context, 'Read Document selected. Place document in front of the camera.');
+                    },
+                  ),
+                  _buildFeatureButton(
+                    context,
+                    label: 'Scan Barcode',
+                    icon: Icons.qr_code_scanner,
+                    onPressed: () {
+                      // TODO: Implement barcode scanning logic
+                      _showVoicePrompt(context, 'Scan Barcode selected. Position barcode in the frame.');
+                    },
+                  ),
+                ],
               ),
-              _buildFeatureButton(
-                context,
-                label: 'Scan Barcode',
-                icon: Icons.qr_code_scanner,
-                onPressed: () {
-                  // TODO: Implement barcode scanning logic
-                  _showVoicePrompt(context, 'Scan Barcode selected. Position barcode in the frame.');
-                },
-              ),
-            ],
-          ),
             ],
           ),
           const SizedBox(height: 24),
@@ -79,29 +79,29 @@ class PartialFunctionalUI extends StatelessWidget {
           _buildCard(
             context,
             children: [
-          _buildButtonRow(
-            context,
-            buttons: [
-              _buildFeatureButton(
+              _buildButtonRow(
                 context,
-                label: 'Find My Way',
-                icon: Icons.navigation,
-                onPressed: () {
-                  // TODO: Implement navigation assistance logic
-                  _showVoicePrompt(context, 'Find My Way selected. Providing directional assistance.');
-                },
+                buttons: [
+                  _buildFeatureButton(
+                    context,
+                    label: 'Find My Way',
+                    icon: Icons.navigation,
+                    onPressed: () {
+                      // TODO: Implement navigation assistance logic
+                      _showVoicePrompt(context, 'Find My Way selected. Providing directional assistance.');
+                    },
+                  ),
+                  _buildFeatureButton(
+                    context,
+                    label: 'Explore Surroundings',
+                    icon: Icons.explore,
+                    onPressed: () {
+                      // TODO: Implement surroundings exploration logic
+                      _showVoicePrompt(context, 'Explore Surroundings selected. Describing nearby points of interest.');
+                    },
+                  ),
+                ],
               ),
-              _buildFeatureButton(
-                context,
-                label: 'Explore Surroundings',
-                icon: Icons.explore,
-                onPressed: () {
-                  // TODO: Implement surroundings exploration logic
-                  _showVoicePrompt(context, 'Explore Surroundings selected. Describing nearby points of interest.');
-                },
-              ),
-            ],
-          ),
             ],
           ),
           const SizedBox(height: 24),
@@ -110,18 +110,18 @@ class PartialFunctionalUI extends StatelessWidget {
           _buildCard(
             context,
             children: [
-          _buildFeatureButton(
-            context,
-            label: 'Settings',
-            icon: Icons.settings,
-            onPressed: () {
-              // TODO: Implement advanced settings logic
-              _showVoicePrompt(context, 'Settings selected. Accessing advanced customization options.');
-            },
-            isFullWidth: true, // Make settings button full width for prominence
+              _buildFeatureButton(
+                context,
+                label: 'Settings',
+                icon: Icons.settings,
+                onPressed: () {
+                  // TODO: Implement advanced settings logic
+                  _showVoicePrompt(context, 'Settings selected. Accessing advanced customization options.');
+                },
+                isFullWidth: true, // Make settings button full width for prominence
+              ),
+            ],
           ),
-        ],
-      ),
         ],
       ),
     );
