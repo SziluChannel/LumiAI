@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-// import 'package:flutter_dotenv/flutter_dotenv.dart'; // dotenv is not used in the current implementation
+import 'package:flutter_dotenv/flutter_dotenv.dart'; // dotenv is not used in the current implementation
 import 'package:lumiai/src/minimal_ui.dart'; // Import the minimal UI
 import 'package:lumiai/src/partial_ui.dart'; // Import the partial UI
 
 Future<void> main() async {
-  // await dotenv.load(fileName: ".env"); // Commented out as dotenv is not used
+  await dotenv.load(fileName: ".env"); // Commented out as dotenv is not used
   runApp(const MyApp());
 }
 
