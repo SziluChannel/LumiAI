@@ -4,7 +4,7 @@ import 'package:lumiai/src/minimal_ui.dart'; // Import the minimal UI
 import 'package:lumiai/src/partial_ui.dart'; // Import the partial UI
 
 Future<void> main() async {
-  //await dotenv.load(fileName: ".env");
+  await dotenv.load(fileName: ".env");
   runApp(const MyApp());
 }
 
