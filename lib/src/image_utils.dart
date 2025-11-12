@@ -1,129 +1,89 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
 import 'package:image/image.dart' as img;
 
-// --- Private Top-Level Worker ---
+// --- Isolate Workers ---
 
-/// A top-level function designed to run in an isolate via `compute`.
-///
-/// Decodes an image from a byte list, resizes it to fit within [maxDim],
-/// and re-encodes it as a JPEG with the given [quality].
-/// The arguments are passed as a map to comply with the `compute` function's
-/// single-argument requirement.
-Future<List<int>> _compressBytesIsolate(Map<String, dynamic> args) async {
-  final dynamic rawBytes = args['bytes'];
-  final Uint8List bytes = rawBytes is Uint8List
-      ? rawBytes
-      : Uint8List.fromList(List<int>.from(rawBytes as List));
-  final int maxDim = args['maxDim'] as int;
-  final int quality = args['quality'] as int;
-
-  final image = img.decodeImage(bytes);
+Future<List<int>> _compressDataIsolate(Map<String, dynamic> args) {
+  final Uint8List bytes = args['bytes'] as Uint8List;
+  var image = img.decodeImage(bytes);
   if (image == null) {
     throw Exception('Unable to decode image in isolate');
   }
+  final newImage = img.Image(
+    width: image.width,
+    height: image.height,
+    format: img.Format.uint8,
+    numChannels: 3,
+  );
+  newImage.clear(img.ColorRgb8(255, 255, 255));
+  img.compositeImage(newImage, image);
+  image = newImage;
 
   int newWidth = image.width;
   int newHeight = image.height;
-
   if (image.width >= image.height) {
-    if (image.width > maxDim) {
-      newWidth = maxDim;
-      newHeight = (image.height * maxDim / image.width).round();
+    if (image.width > (args['maxDim'] as int)) {
+      newWidth = args['maxDim'] as int;
+      newHeight = (image.height * (args['maxDim'] as int) / image.width)
+          .round();
     }
   } else {
-    if (image.height > maxDim) {
-      newHeight = maxDim;
-      newWidth = (image.width * maxDim / image.height).round();
+    if (image.height > (args['maxDim'] as int)) {
+      newHeight = args['maxDim'] as int;
+      newWidth = (image.width * (args['maxDim'] as int) / image.height).round();
     }
   }
-
   final resized = img.copyResize(
     image,
     width: newWidth,
     height: newHeight,
     interpolation: img.Interpolation.cubic,
   );
-
-  return img.encodeJpg(resized, quality: quality);
+  return Future.value(img.encodeJpg(resized, quality: args['quality'] as int));
 }
 
-// --- Public API ---
+Future<List<int>> _compressFileIsolate(Map<String, dynamic> args) async {
+  final String filePath = args['filePath'] as String;
+  final bytes = await File(filePath).readAsBytes();
+  return _compressDataIsolate({
+    'bytes': bytes,
+    'maxDim': args['maxDim'],
+    'quality': args['quality'],
+  });
+}
 
-/// A function signature for a "runner" that executes a worker function.
-///
-/// This allows for abstracting away the execution logic, enabling either
-/// direct synchronous calls for testing or using Flutter's `compute` for
-/// running in a background isolate.
-typedef ComputeFn =
-    Future<List<int>> Function(
-      Future<List<int>> Function(Map<String, dynamic>),
-      Map<String, dynamic>,
-    );
+// --- Public Functions ---
 
-/// Compresses image data from a [Uint8List].
-///
-/// This is the recommended platform-agnostic function for use in Flutter UIs,
-/// as it works with in-memory bytes and does not depend on `dart:io`.
-///
-/// - [bytes]: The raw image data to compress.
-/// - [maxDim]: The maximum dimension (width or height) for the output image.
-/// - [quality]: The JPEG quality for the output image, from 1 to 100.
-/// - [computeFn]: An optional runner. For Flutter apps, pass `compute` to run
-///   this in a background isolate and avoid blocking the UI.
-///
-/// Returns the compressed image data as a [Uint8List].
+/// Compresses image data from a [Uint8List]. Recommended for web.
 Future<Uint8List> compressImageBytes(
   Uint8List bytes, {
   int maxDim = 1024,
   int quality = 85,
-  ComputeFn? computeFn,
 }) async {
-  if (maxDim <= 0) {
-    throw ArgumentError.value(maxDim, 'maxDim', 'must be > 0');
-  }
   final q = quality.clamp(1, 100).toInt();
-  final runner = computeFn ?? (fn, args) async => await fn(args);
-
-  final outBytes = await runner(_compressBytesIsolate, {
+  // On web, compute is not as effective for this, so we run it directly.
+  // On mobile, we could use compute, but the path-based method is better.
+  final result = await _compressDataIsolate({
     'bytes': bytes,
     'maxDim': maxDim,
     'quality': q,
   });
-
-  if (outBytes is Uint8List) {
-    return outBytes;
-  }
-  return Uint8List.fromList(outBytes);
+  return Uint8List.fromList(result);
 }
 
-/// Compresses an image [File] by resizing and re-encoding it.
-///
-/// This function is suitable for server-side or command-line applications
-/// that work directly with the file system. For Flutter UI, prefer
-/// [compressImageBytes].
-///
-/// The output is written to a new file with a `_compressed.jpg` suffix.
-///
-/// Returns the [File] handle for the newly created compressed image.
-Future<File> compressImage(
-  File input, {
+/// Compresses an image from a [filePath]. Recommended for mobile/desktop.
+Future<Uint8List> compressImageFromPath(
+  String filePath, {
   int maxDim = 1024,
   int quality = 85,
-  ComputeFn? computeFn,
 }) async {
-  if (!await input.exists()) {
-    throw Exception('Input file does not exist: ${input.path}');
-  }
-  final bytes = await input.readAsBytes();
-  final compressed = await compressImageBytes(
-    bytes,
-    maxDim: maxDim,
-    quality: quality,
-    computeFn: computeFn,
-  );
-
-  final out = File('${input.path}_compressed.jpg');
-  await out.writeAsBytes(compressed);
-  return out;
+  final q = quality.clamp(1, 100).toInt();
+  final result = await compute(_compressFileIsolate, {
+    'filePath': filePath,
+    'maxDim': maxDim,
+    'quality': q,
+  });
+  return Uint8List.fromList(result);
 }

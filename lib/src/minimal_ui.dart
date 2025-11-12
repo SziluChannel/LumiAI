@@ -1,13 +1,13 @@
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lumiai/src/image_utils.dart';
 import 'package:lumiai/src/tts_service.dart';
+import 'package:http/http.dart' as http;
 
 /// Represents the UI for minimally functional visually impaired users.
-/// This UI focuses on extreme simplicity, large high-contrast buttons,
-/// minimal text, and extensive voice prompts/feedback.
 class MinimalFunctionalUI extends StatefulWidget {
   const MinimalFunctionalUI({super.key});
 
@@ -17,133 +17,274 @@ class MinimalFunctionalUI extends StatefulWidget {
 
 class _MinimalFunctionalUIState extends State<MinimalFunctionalUI> {
   bool _isLoading = false;
+  // Store the XFile object itself, which contains the path.
+  XFile? _fileForConfirmation;
+  // This new state variable will hold the success message.
+  // If it's not null, we show the success screen.
+  String? _processingResult;
 
-  /// This is the core logic for the "Identify Object" button.
-  Future<void> _identifyObject() async {
-    // 1. Provide voice feedback and enter loading state.
-    ttsService.speak('Opening camera to identify object.');
+  /// Resets all state variables to return to the main menu.
+  void _resetToMainMenu() {
     setState(() {
-      _isLoading = true;
+      _isLoading = false;
+      _fileForConfirmation = null;
+      _processingResult = null;
     });
+  }
 
+  /// Step 1: Captures an image and stores its file reference.
+  Future<void> _captureImageForConfirmation() async {
+    ttsService.speak('Opening camera.');
     try {
-      // 2. Open the camera.
       final picker = ImagePicker();
       final XFile? pickedFile = await picker.pickImage(
         source: ImageSource.camera,
       );
 
-      // 3. Handle case where user cancels.
       if (pickedFile == null) {
         ttsService.speak('Camera closed. No image taken.');
-        setState(() {
-          _isLoading = false;
-        });
         return;
       }
 
-      ttsService.speak('Image captured. Now processing.');
+      setState(() => _fileForConfirmation = pickedFile);
 
-      // 4. Read the image into memory.
-      final Uint8List imageBytes = await pickedFile.readAsBytes();
-
-      // 5. Compress the image using the function from image_utils.dart.
-      //    We pass `compute` to run it on a background thread on mobile.
-      final Uint8List compressedBytes = await compressImageBytes(
-        imageBytes,
-        computeFn: kIsWeb ? null : (fn, args) => compute(fn, args),
+      ttsService.speak(
+        'Photo captured. Please confirm to proceed, or retake the photo.',
       );
-
-      // 6. The image is now ready for the Gemini API.
-      //    For now, we'll just confirm with a voice prompt.
-      final originalSize = (imageBytes.lengthInBytes / 1024).round();
-      final compressedSize = (compressedBytes.lengthInBytes / 1024).round();
-      final successMessage =
-          'Processing complete. Image size reduced from $originalSize kilobytes to $compressedSize kilobytes. Ready for analysis.';
-      print(successMessage); // For developer logging
-      ttsService.speak(successMessage);
-
-      // TODO: In the next step, send 'compressedBytes' to the Gemini API.
     } catch (e) {
-      print('An error occurred: $e');
-      ttsService.speak('Sorry, an error occurred during the process.');
-    } finally {
-      // 7. Exit loading state.
-      setState(() {
-        _isLoading = false;
-      });
+      print('An error occurred during image capture: $e');
+      ttsService.speak('Sorry, an error occurred while opening the camera.');
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    // Determine colors based on theme mode for consistency
-    final Color scaffoldBackgroundColor = Theme.of(
-      context,
-    ).scaffoldBackgroundColor;
+  /// Step 2: Processes the confirmed image based on the platform.
+  Future<void> _processAndAnalyzeImage() async {
+    if (_fileForConfirmation == null) return;
+
+    // Set loading state and give the UI a moment to rebuild and show the spinner.
+    setState(() => _isLoading = true);
+    ttsService.speak('Processing image. Please wait.');
+    await Future.delayed(const Duration(milliseconds: 50));
+
+    try {
+      late final Uint8List compressedBytes;
+      final String path = _fileForConfirmation!.path;
+
+      // --- PLATFORM-AWARE LOGIC ---
+      if (kIsWeb) {
+        // On Web, fetch the bytes from the blob URL and use the byte-based compressor.
+        final response = await http.get(Uri.parse(path));
+        compressedBytes = await compressImageBytes(response.bodyBytes);
+      } else {
+        // On Mobile/Desktop, use the efficient path-based compressor.
+        compressedBytes = await compressImageFromPath(path);
+      }
+      // --- END OF PLATFORM-AWARE LOGIC ---
+
+      final originalSize = (await _fileForConfirmation!.length() / 1024)
+          .round();
+      final compressedSize = (compressedBytes.lengthInBytes / 1024).round();
+      final successMessage =
+          'Processing complete.\nOriginal size: $originalSize KB\nNew size: $compressedSize KB';
+
+      // Announce the result and update the state to show the success screen.
+      ttsService.speak('Processing complete. Image is ready for analysis.');
+      setState(() {
+        _processingResult = successMessage;
+        _isLoading = false; // Stop loading to show the success screen
+      });
+
+      // TODO: Send 'compressedBytes' to the Gemini API here.
+    } catch (e) {
+      print('An error occurred during processing: $e');
+      ttsService.speak('Sorry, an error occurred while processing the image.');
+      // On error, reset to the main menu.
+      _resetToMainMenu();
+    }
+    // The 'finally' block is removed from here to prevent premature state reset.
+  }
+
+  /// Builds the main menu UI with the primary action buttons.
+  Widget _buildMainMenu(BuildContext context) {
     final Color buttonTextColor = Theme.of(
       context,
     ).primaryTextTheme.bodyLarge!.color!;
     final Color buttonIconColor = Theme.of(context).primaryIconTheme.color!;
-    // Use theme primary color with opacity for button background
     final Color buttonBackgroundColor = Theme.of(
       context,
     ).primaryColor.withAlpha(204);
 
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        _buildLargeButton(
+          context,
+          label: 'Identify Object',
+          icon: Icons.camera_alt,
+          onPressed: _captureImageForConfirmation, // Calls Step 1
+          buttonBackgroundColor: buttonBackgroundColor,
+          buttonTextColor: buttonTextColor,
+          buttonIconColor: buttonIconColor,
+        ),
+        // Large, high-contrast button for Text Reading
+        _buildLargeButton(
+          context,
+          label: 'Read Text',
+          icon: Icons.text_fields,
+          onPressed: () {
+            ttsService.speak('Read Text selected.');
+          },
+          buttonBackgroundColor: buttonBackgroundColor,
+          buttonTextColor: buttonTextColor,
+          buttonIconColor: buttonIconColor,
+        ),
+        // Large, high-contrast button for Settings
+        _buildLargeButton(
+          context,
+          label: 'Settings',
+          icon: Icons.settings,
+          onPressed: () {
+            ttsService.speak('Settings selected.');
+          },
+          buttonBackgroundColor: buttonBackgroundColor,
+          buttonTextColor: buttonTextColor,
+          buttonIconColor: buttonIconColor,
+        ),
+      ],
+    );
+  }
+
+  /// Builds the confirmation UI after a photo has been taken.
+  Widget _buildConfirmationMenu(BuildContext context) {
+    final Color confirmColor = Colors.green.shade700;
+    final Color retakeColor = Colors.red.shade700;
+    final Color textColor = Colors.white;
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        // Display the captured image for low-vision or sighted users.
+        Expanded(
+          flex: 2,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            // --- START OF THE FIX ---
+            // Conditionally choose the correct Image widget based on the platform.
+            child: kIsWeb
+                ? Image.network(
+                    // Use Image.network for Web
+                    _fileForConfirmation!.path,
+                    fit: BoxFit.contain,
+                  )
+                : Image.file(
+                    // Use Image.file for Mobile/Desktop
+                    File(_fileForConfirmation!.path),
+                    fit: BoxFit.contain,
+                  ),
+            // --- END OF THE FIX ---
+          ),
+        ),
+        // Confirmation and Retake buttons
+        Expanded(
+          flex: 3,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _buildLargeButton(
+                context,
+                label: 'Confirm',
+                icon: Icons.check_circle,
+                onPressed: _processAndAnalyzeImage, // Calls Step 2
+                buttonBackgroundColor: confirmColor,
+                buttonTextColor: textColor,
+                buttonIconColor: textColor,
+              ),
+              _buildLargeButton(
+                context,
+                label: 'Retake',
+                icon: Icons.cancel,
+                onPressed: _captureImageForConfirmation, // Restarts Step 1
+                buttonBackgroundColor: retakeColor,
+                buttonTextColor: textColor,
+                buttonIconColor: textColor,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Builds the new success screen shown after processing is complete.
+  Widget _buildSuccessMenu(BuildContext context) {
+    final Color textColor = Theme.of(
+      context,
+    ).primaryTextTheme.bodyLarge!.color!;
+    final Color iconColor = Colors.green.shade400;
+    final Color buttonBackgroundColor = Theme.of(
+      context,
+    ).primaryColor.withAlpha(204);
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        // Success Icon
+        Icon(Icons.check_circle_outline, color: iconColor, size: 120),
+        // Result Text
+        if (_processingResult != null)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Text(
+              _processingResult!,
+              textAlign: TextAlign.center,
+              // Change the text color to black to ensure it's always visible.
+              style: TextStyle(color: Colors.black, fontSize: 24, height: 1.5),
+            ),
+          ),
+        _buildLargeButton(
+          context,
+          label: 'Main Menu',
+          icon: Icons.home,
+          onPressed: () {
+            ttsService.speak('Returning to main menu.');
+            _resetToMainMenu();
+          },
+          buttonBackgroundColor: buttonBackgroundColor,
+          buttonTextColor: textColor,
+          buttonIconColor: textColor,
+        ),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final Color scaffoldBackgroundColor = Theme.of(
+      context,
+    ).scaffoldBackgroundColor;
+
     return Container(
-      color:
-          scaffoldBackgroundColor, // Use scaffold background color for consistency
+      color: scaffoldBackgroundColor,
       child: Center(
-        // Show a loading indicator while processing, otherwise show buttons.
         child: _isLoading
             ? const CircularProgressIndicator(
                 strokeWidth: 6,
                 color: Colors.white,
               )
-            : Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  // Large, high-contrast button for Object Identification
-                  _buildLargeButton(
-                    context,
-                    label: 'Identify Object',
-                    icon: Icons.camera_alt,
-                    // The onPressed now calls our new logic function.
-                    onPressed: _identifyObject,
-                    buttonBackgroundColor: buttonBackgroundColor,
-                    buttonTextColor: buttonTextColor,
-                    buttonIconColor: buttonIconColor,
-                  ),
-                  // Large, high-contrast button for Text Reading
-                  _buildLargeButton(
-                    context,
-                    label: 'Read Text',
-                    icon: Icons.text_fields,
-                    onPressed: () {
-                      ttsService.speak('Read Text selected.');
-                    },
-                    buttonBackgroundColor: buttonBackgroundColor,
-                    buttonTextColor: buttonTextColor,
-                    buttonIconColor: buttonIconColor,
-                  ),
-                  // Large, high-contrast button for Settings
-                  _buildLargeButton(
-                    context,
-                    label: 'Settings',
-                    icon: Icons.settings,
-                    onPressed: () {
-                      ttsService.speak('Settings selected.');
-                    },
-                    buttonBackgroundColor: buttonBackgroundColor,
-                    buttonTextColor: buttonTextColor,
-                    buttonIconColor: buttonIconColor,
-                  ),
-                ],
-              ),
+            : _processingResult != null
+            ? _buildSuccessMenu(
+                context,
+              ) // If there's a result, show success screen.
+            : _fileForConfirmation != null
+            ? _buildConfirmationMenu(
+                context,
+              ) // Else, if there's a file, show confirmation.
+            : _buildMainMenu(context), // Otherwise, show the main menu.
       ),
     );
   }
 
+  // This helper function remains unchanged.
   Widget _buildLargeButton(
     BuildContext context, {
     required String label,
