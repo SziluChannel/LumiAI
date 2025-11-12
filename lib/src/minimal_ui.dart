@@ -1,11 +1,11 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lumiai/src/image_utils.dart';
 import 'package:lumiai/src/tts_service.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:path/path.dart' as p;
+import 'package:http/http.dart' as http;
 
 /// Represents the UI for minimally functional visually impaired users.
 class MinimalFunctionalUI extends StatefulWidget {
@@ -61,46 +61,47 @@ class _MinimalFunctionalUIState extends State<MinimalFunctionalUI> {
   Future<void> _processAndAnalyzeImage() async {
     if (_fileForConfirmation == null) return;
 
+    // Set loading state and give the UI a moment to rebuild and show the spinner.
     setState(() => _isLoading = true);
     ttsService.speak('Processing image. Please wait.');
     await Future.delayed(const Duration(milliseconds: 50));
 
-    String resultMessage; // This will hold either the success or error message.
-
     try {
-      final Directory appDir = await getApplicationDocumentsDirectory();
-      final String fileName = p.basename(_fileForConfirmation!.path);
-      final String safeFilePath = p.join(appDir.path, fileName);
-      final File originalFileHandle = File(_fileForConfirmation!.path);
+      late final Uint8List compressedBytes;
+      final String path = _fileForConfirmation!.path;
 
-      final originalSize = (await originalFileHandle.length() / 1024).round();
-      await originalFileHandle.copy(safeFilePath);
-
-      final compressedBytes = await compressImageFromPath(safeFilePath);
-      final compressedSize = (compressedBytes.lengthInBytes / 1024).round();
-
-      // On success, create the success message.
-      resultMessage =
-          'Success!\nOriginal size: $originalSize KB\nNew size: $compressedSize KB';
-      ttsService.speak('Processing complete.');
-
-      try {
-        await File(safeFilePath).delete();
-      } catch (e) {
-        print("Error deleting safe copy: $e");
+      // --- PLATFORM-AWARE LOGIC ---
+      if (kIsWeb) {
+        // On Web, fetch the bytes from the blob URL and use the byte-based compressor.
+        final response = await http.get(Uri.parse(path));
+        compressedBytes = await compressImageBytes(response.bodyBytes);
+      } else {
+        // On Mobile/Desktop, use the efficient path-based compressor.
+        compressedBytes = await compressImageFromPath(path);
       }
-    } catch (e) {
-      // On failure, create an error message.
-      print('An error occurred during processing: $e');
-      resultMessage = 'Processing Failed.\nPlease try again.';
-      ttsService.speak('Sorry, an error occurred.');
-    }
+      // --- END OF PLATFORM-AWARE LOGIC ---
 
-    // Finally, update the state to show the result screen with the message.
-    setState(() {
-      _processingResult = resultMessage;
-      _isLoading = false;
-    });
+      final originalSize = (await _fileForConfirmation!.length() / 1024)
+          .round();
+      final compressedSize = (compressedBytes.lengthInBytes / 1024).round();
+      final successMessage =
+          'Processing complete.\nOriginal size: $originalSize KB\nNew size: $compressedSize KB';
+
+      // Announce the result and update the state to show the success screen.
+      ttsService.speak('Processing complete. Image is ready for analysis.');
+      setState(() {
+        _processingResult = successMessage;
+        _isLoading = false; // Stop loading to show the success screen
+      });
+
+      // TODO: Send 'compressedBytes' to the Gemini API here.
+    } catch (e) {
+      print('An error occurred during processing: $e');
+      ttsService.speak('Sorry, an error occurred while processing the image.');
+      // On error, reset to the main menu.
+      _resetToMainMenu();
+    }
+    // The 'finally' block is removed from here to prevent premature state reset.
   }
 
   /// Builds the main menu UI with the primary action buttons.
@@ -214,35 +215,30 @@ class _MinimalFunctionalUIState extends State<MinimalFunctionalUI> {
     );
   }
 
-  /// Builds the result screen, showing success or failure.
-  Widget _buildResultMenu(BuildContext context) {
-    final bool isSuccess = _processingResult?.startsWith('Success') ?? false;
-
-    final Color textColor = Colors.black;
-    final Color iconColor = isSuccess
-        ? Colors.green.shade400
-        : Colors.red.shade400;
-    final IconData icon = isSuccess
-        ? Icons.check_circle_outline
-        : Icons.error_outline;
+  /// Builds the new success screen shown after processing is complete.
+  Widget _buildSuccessMenu(BuildContext context) {
+    final Color textColor = Theme.of(
+      context,
+    ).primaryTextTheme.bodyLarge!.color!;
+    final Color iconColor = Colors.green.shade400;
     final Color buttonBackgroundColor = Theme.of(
       context,
     ).primaryColor.withAlpha(204);
-    final Color buttonTextColor = Theme.of(
-      context,
-    ).primaryTextTheme.bodyLarge!.color!;
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        Icon(icon, color: iconColor, size: 120),
+        // Success Icon
+        Icon(Icons.check_circle_outline, color: iconColor, size: 120),
+        // Result Text
         if (_processingResult != null)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Text(
               _processingResult!,
               textAlign: TextAlign.center,
-              style: TextStyle(color: textColor, fontSize: 24, height: 1.5),
+              // Change the text color to black to ensure it's always visible.
+              style: TextStyle(color: Colors.black, fontSize: 24, height: 1.5),
             ),
           ),
         _buildLargeButton(
@@ -254,8 +250,8 @@ class _MinimalFunctionalUIState extends State<MinimalFunctionalUI> {
             _resetToMainMenu();
           },
           buttonBackgroundColor: buttonBackgroundColor,
-          buttonTextColor: buttonTextColor,
-          buttonIconColor: buttonTextColor,
+          buttonTextColor: textColor,
+          buttonIconColor: textColor,
         ),
       ],
     );
@@ -266,6 +262,7 @@ class _MinimalFunctionalUIState extends State<MinimalFunctionalUI> {
     final Color scaffoldBackgroundColor = Theme.of(
       context,
     ).scaffoldBackgroundColor;
+
     return Container(
       color: scaffoldBackgroundColor,
       child: Center(
@@ -275,10 +272,14 @@ class _MinimalFunctionalUIState extends State<MinimalFunctionalUI> {
                 color: Colors.white,
               )
             : _processingResult != null
-            ? _buildResultMenu(context) // Use the new result menu
+            ? _buildSuccessMenu(
+                context,
+              ) // If there's a result, show success screen.
             : _fileForConfirmation != null
-            ? _buildConfirmationMenu(context)
-            : _buildMainMenu(context),
+            ? _buildConfirmationMenu(
+                context,
+              ) // Else, if there's a file, show confirmation.
+            : _buildMainMenu(context), // Otherwise, show the main menu.
       ),
     );
   }
