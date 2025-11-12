@@ -37,6 +37,7 @@ dependencies:
   flutter_dotenv: ^6.0.0
   gemini_live: ^0.1.0 # Added for Gemini Live API communication
   flutter_tts: ^3.8.5
+  image_picker: ^1.0.7
 
   image: ^4.1.7
 
