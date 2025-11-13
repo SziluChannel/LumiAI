@@ -62,6 +62,9 @@ Future<Uint8List> compressImageBytes(
   int maxDim = 1024,
   int quality = 85,
 }) async {
+  if (maxDim <= 0) {
+    throw ArgumentError.value(maxDim, 'maxDim', 'must be > 0');
+  }
   final q = quality.clamp(1, 100).toInt();
   // On web, compute is not as effective for this, so we run it directly.
   // On mobile, we could use compute, but the path-based method is better.
