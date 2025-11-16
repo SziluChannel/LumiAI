@@ -61,7 +61,8 @@ class GeminiApiClient {
           systemInstruction: Content(
             parts: [
               Part(
-                text: "You are a helpful AI assistant. "
+                text:
+                    "You are a helpful AI assistant. "
                     "Your goal is to provide comprehensive, detailed, and well-structured answers. Always explain the background, key concepts, and provide illustrative examples. Do not give short or brief answers."
                     "**You must respond in the same language that the user uses for their question.** For example, if the user asks a question in Korean, you must reply in Korean. "
                     "If they ask in Japanese, reply in Japanese.",
@@ -86,7 +87,9 @@ class GeminiApiClient {
 
   Future<void> sendImageAndText(Uint8List imageBytes, String text) async {
     if (_session == null) {
-      throw Exception('GeminiLive session not connected. Call connect() first.');
+      throw Exception(
+        'GeminiLive session not connected. Call connect() first.',
+      );
     }
 
     final List<Part> parts = [];
@@ -105,9 +108,7 @@ class GeminiApiClient {
     _session!.sendMessage(
       LiveClientMessage(
         clientContent: LiveClientContent(
-          turns: [
-            Content(role: "user", parts: parts),
-          ],
+          turns: [Content(role: "user", parts: parts)],
           turnComplete: true,
         ),
       ),
@@ -116,7 +117,9 @@ class GeminiApiClient {
 
   Future<void> sendVoiceMessage(List<int> audioBytes) async {
     if (_session == null) {
-      throw Exception('GeminiLive session not connected. Call connect() first.');
+      throw Exception(
+        'GeminiLive session not connected. Call connect() first.',
+      );
     }
 
     _session!.sendMessage(
