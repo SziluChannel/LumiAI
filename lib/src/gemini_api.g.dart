@@ -49,7 +49,7 @@ final class GeminiApiClientProvider
   }
 }
 
-String _$geminiApiClientHash() => r'7fedce135379c0de26f683f89b3c18a8c987445d';
+String _$geminiApiClientHash() => r'4d81cd04d39f5da981908c7f2ca22a200f89d09b';
 
 @ProviderFor(geminiLiveMessages)
 const geminiLiveMessagesProvider = GeminiLiveMessagesProvider._();
@@ -91,4 +91,4 @@ final class GeminiLiveMessagesProvider
 }
 
 String _$geminiLiveMessagesHash() =>
-    r'45649e1b757d0d882089ffbe34bfa6ddfdd9eb87';
+    r'69abc652fff0263069e51503413cc61f1b9143ad';

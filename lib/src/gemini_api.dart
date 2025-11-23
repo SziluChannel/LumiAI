@@ -11,7 +11,7 @@ part 'gemini_api.g.dart'; // Generated file for Riverpod
 enum ResponseMode { text, audio }
 
 @Riverpod(keepAlive: true)
-GeminiApiClient geminiApiClient(GeminiApiClientRef ref) {
+GeminiApiClient geminiApiClient(Ref ref) {
   final client = GeminiApiClient();
   ref.onDispose(() {
     client.dispose();
@@ -20,7 +20,7 @@ GeminiApiClient geminiApiClient(GeminiApiClientRef ref) {
 }
 
 @Riverpod(keepAlive: true)
-Stream<LiveServerMessage> geminiLiveMessages(GeminiLiveMessagesRef ref) {
+Stream<LiveServerMessage> geminiLiveMessages(Ref ref) {
   final client = ref.watch(geminiApiClientProvider);
   return client.messageStream;
 }
