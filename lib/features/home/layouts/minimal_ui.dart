@@ -2,26 +2,30 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:lumiai/src/service/image_utils.dart';
-import 'package:lumiai/src/service/tts_service.dart';
+import 'package:lumiai/core/network/gemini_api.dart';
+import 'package:lumiai/core/services/image_utils.dart';
+import 'package:lumiai/core/services/tts_service.dart';
 import 'package:http/http.dart' as http;
 
 /// Represents the UI for minimally functional visually impaired users.
-class MinimalFunctionalUI extends StatefulWidget {
+class MinimalFunctionalUI extends ConsumerStatefulWidget {
   const MinimalFunctionalUI({super.key});
 
   @override
-  State<MinimalFunctionalUI> createState() => _MinimalFunctionalUIState();
+  ConsumerState<MinimalFunctionalUI> createState() =>
+      _MinimalFunctionalUIState();
 }
 
-class _MinimalFunctionalUIState extends State<MinimalFunctionalUI> {
+class _MinimalFunctionalUIState extends ConsumerState<MinimalFunctionalUI> {
   bool _isLoading = false;
   // Store the XFile object itself, which contains the path.
   XFile? _fileForConfirmation;
   // This new state variable will hold the success message.
   // If it's not null, we show the success screen.
   String? _processingResult;
+  String _statusMessage = '';
 
   /// Resets all state variables to return to the main menu.
   void _resetToMainMenu() {
@@ -62,7 +66,10 @@ class _MinimalFunctionalUIState extends State<MinimalFunctionalUI> {
     if (_fileForConfirmation == null) return;
 
     // Set loading state and give the UI a moment to rebuild and show the spinner.
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _statusMessage = 'Processing image...';
+    });
     ttsService.speak('Processing image. Please wait.');
     await Future.delayed(const Duration(milliseconds: 50));
 
@@ -79,18 +86,32 @@ class _MinimalFunctionalUIState extends State<MinimalFunctionalUI> {
         // On Mobile/Desktop, use the efficient path-based compressor.
         compressedBytes = await compressImageFromPath(path);
       }
+      setState(() => _statusMessage = 'Compressing image...');
       // --- END OF PLATFORM-AWARE LOGIC ---
-
-      final originalSize = (await _fileForConfirmation!.length() / 1024)
-          .round();
-      final compressedSize = (compressedBytes.lengthInBytes / 1024).round();
-      final successMessage =
-          'Processing complete.\nOriginal size: $originalSize KB\nNew size: $compressedSize KB';
 
       // Announce the result and update the state to show the success screen.
       ttsService.speak('Processing complete. Image is ready for analysis.');
+
+      // Send image to Gemini API
+      final geminiApi = ref.read(geminiApiClientProvider);
+      setState(() => _statusMessage = 'Connecting to Gemini...');
+      await geminiApi.connect();
+      setState(() => _statusMessage = 'Sending image for analysis...');
+      await geminiApi.sendImageAndText(compressedBytes, "Describe this image");
+
+      // Wait for the response
+      setState(() => _statusMessage = 'Waiting for response...');
+      final geminiResponse = await geminiApi.messageStream.firstWhere(
+        (message) => message.text != null,
+      );
+
+      final successMessage2 =
+          geminiResponse.text ?? "No description available.";
+
+      // Announce the result and update the state to show the success screen.
+      ttsService.speak(successMessage2);
       setState(() {
-        _processingResult = successMessage;
+        _processingResult = successMessage2;
         _isLoading = false; // Stop loading to show the success screen
       });
 
@@ -267,9 +288,19 @@ class _MinimalFunctionalUIState extends State<MinimalFunctionalUI> {
       color: scaffoldBackgroundColor,
       child: Center(
         child: _isLoading
-            ? const CircularProgressIndicator(
-                strokeWidth: 6,
-                color: Colors.white,
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const CircularProgressIndicator(
+                    strokeWidth: 6,
+                    color: Colors.white,
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    _statusMessage,
+                    style: const TextStyle(color: Colors.white, fontSize: 18),
+                  ),
+                ],
               )
             : _processingResult != null
             ? _buildSuccessMenu(
