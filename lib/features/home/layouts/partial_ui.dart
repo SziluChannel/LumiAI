@@ -1,236 +1,162 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../object_id/object_id_controller.dart';
+import '../../object_id/object_id_state.dart';
+import '../../shared/widgets/task_views.dart';
 
-/// Represents the UI for partially functional visually impaired users.
-/// This UI offers more functionality and options while maintaining accessibility
-/// principles, with slightly more detailed text and organized layouts.
-class PartialFunctionalUI extends StatelessWidget {
+class PartialFunctionalUI extends ConsumerWidget {
   const PartialFunctionalUI({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    // Determine colors based on theme mode for consistency
-    final Color scaffoldBackgroundColor = Theme.of(context).scaffoldBackgroundColor;
-    final Color cardBackgroundColor = Theme.of(context).cardColor;
-    final Color sectionTitleColor = Theme.of(context).textTheme.titleLarge!.color!; // Use titleLarge for section titles
-    final Color buttonTextColor = Theme.of(context).primaryTextTheme.bodyLarge!.color!;
-    final Color buttonIconColor = Theme.of(context).primaryIconTheme.color!;
-    final Color buttonBackgroundColor = Theme.of(context).primaryColor.withAlpha(204); // Use theme primary color with opacity
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Watch the Logic
+    final objectIdState = ref.watch(objectIdControllerProvider);
 
-    return Container(
-      color: scaffoldBackgroundColor, // Use scaffold background color for consistency
-      padding: const EdgeInsets.all(16.0),
-      child: ListView(
-        children: [
-          _buildSectionTitle(context, 'Object & Scene Recognition', sectionTitleColor),
-          _buildCard(
-            context,
-            cardBackgroundColor,
-            children: [
-              _buildButtonRow(
-                context,
-                buttons: [
-                  _buildFeatureButton(
-                    context,
-                    label: 'Identify Object',
-                    icon: Icons.camera_alt,
-                    onPressed: () {
-                      // TODO: Implement object identification logic
-                      _showVoicePrompt(context, 'Identify Object selected. Point your camera at an object.');
-                    },
-                    buttonBackgroundColor: buttonBackgroundColor,
-                    buttonTextColor: buttonTextColor,
-                    buttonIconColor: buttonIconColor,
-                  ),
-                  _buildFeatureButton(
-                    context,
-                    label: 'Describe Scene',
-                    icon: Icons.landscape,
-                    onPressed: () {
-                      // TODO: Implement scene description logic
-                      _showVoicePrompt(context, 'Describe Scene selected. Analyzing your surroundings.');
-                    },
-                    buttonBackgroundColor: buttonBackgroundColor,
-                    buttonTextColor: buttonTextColor,
-                    buttonIconColor: buttonIconColor,
-                  ),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 24),
+    // If we are doing a task, hijack the screen to show the task flow
+    // This ensures consistency between minimal and partial modes
+    if (objectIdState.status != ObjectIdStatus.idle) {
+      return Scaffold(
+        appBar: AppBar(title: Text("Processing...")),
+        body: _buildActiveTaskView(ref, objectIdState),
+      );
+    }
 
-          _buildSectionTitle(context, 'Text Assistance', sectionTitleColor),
-          _buildCard(
-            context,
-            cardBackgroundColor,
-            children: [
-              _buildButtonRow(
-                context,
-                buttons: [
-                  _buildFeatureButton(
-                    context,
-                    label: 'Read Document',
-                    icon: Icons.description,
-                    onPressed: () {
-                      // TODO: Implement document reading logic
-                      _showVoicePrompt(context, 'Read Document selected. Place document in front of the camera.');
-                    },
-                    buttonBackgroundColor: buttonBackgroundColor,
-                    buttonTextColor: buttonTextColor,
-                    buttonIconColor: buttonIconColor,
-                  ),
-                  _buildFeatureButton(
-                    context,
-                    label: 'Scan Barcode',
-                    icon: Icons.qr_code_scanner,
-                    onPressed: () {
-                      // TODO: Implement barcode scanning logic
-                      _showVoicePrompt(context, 'Scan Barcode selected. Position barcode in the frame.');
-                    },
-                    buttonBackgroundColor: buttonBackgroundColor,
-                    buttonTextColor: buttonTextColor,
-                    buttonIconColor: buttonIconColor,
-                  ),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 24),
-
-          _buildSectionTitle(context, 'Navigation Aids', sectionTitleColor),
-          _buildCard(
-            context,
-            cardBackgroundColor,
-            children: [
-              _buildButtonRow(
-                context,
-                buttons: [
-                  _buildFeatureButton(
-                    context,
-                    label: 'Find My Way',
-                    icon: Icons.navigation,
-                    onPressed: () {
-                      // TODO: Implement navigation assistance logic
-                      _showVoicePrompt(context, 'Find My Way selected. Providing directional assistance.');
-                    },
-                    buttonBackgroundColor: buttonBackgroundColor,
-                    buttonTextColor: buttonTextColor,
-                    buttonIconColor: buttonIconColor,
-                  ),
-                  _buildFeatureButton(
-                    context,
-                    label: 'Explore Surroundings',
-                    icon: Icons.explore,
-                    onPressed: () {
-                      // TODO: Implement surroundings exploration logic
-                      _showVoicePrompt(context, 'Explore Surroundings selected. Describing nearby points of interest.');
-                    },
-                    buttonBackgroundColor: buttonBackgroundColor,
-                    buttonTextColor: buttonTextColor,
-                    buttonIconColor: buttonIconColor,
-                  ),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 24),
-
-          // Settings button, possibly more comprehensive
-          _buildCard(
-            context,
-            cardBackgroundColor,
-            children: [
-              _buildFeatureButton(
-                context,
-                label: 'Settings',
-                icon: Icons.settings,
-                onPressed: () {
-                  // TODO: Implement advanced settings logic
-                  _showVoicePrompt(context, 'Settings selected. Accessing advanced customization options.');
-                },
-                isFullWidth: true, // Make settings button full width for prominence
-                buttonBackgroundColor: buttonBackgroundColor,
-                buttonTextColor: buttonTextColor,
-                buttonIconColor: buttonIconColor,
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
+    // Otherwise, show the fancy menu
+    return _buildMenu(context, ref);
   }
 
-  Widget _buildSectionTitle(BuildContext context, String title, Color textColor) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
-      child: Text(
-        title,
-        style: TextStyle(
-          fontSize: 22, // Slightly smaller for modern feel
-          fontWeight: FontWeight.w700, // Bolder weight
-          color: textColor, // Use theme-provided text color
+  Widget _buildActiveTaskView(WidgetRef ref, ObjectIdState state) {
+    final controller = ref.read(objectIdControllerProvider.notifier);
+
+    return switch (state.status) {
+      ObjectIdStatus.processing => const Center(
+        child: CircularProgressIndicator(),
+      ),
+      ObjectIdStatus.confirmingImage => ConfirmationView(
+        imageFile: state.imageFile!,
+        onRetake: controller.retakeImage,
+        onConfirm: controller.confirmAndAnalyze,
+      ),
+      ObjectIdStatus.success => ResultView(
+        text: state.resultText!,
+        onDone: controller.reset,
+      ),
+      ObjectIdStatus.error => Center(
+        child: Column(
+          children: [
+            Text("Error: ${state.errorMessage}"),
+            ElevatedButton(onPressed: controller.reset, child: Text("Close")),
+          ],
         ),
-        textAlign: TextAlign.left, // Align left for a cleaner look
       ),
-    );
+      _ => SizedBox.shrink(),
+    };
   }
 
-  Widget _buildCard(BuildContext context, Color cardBackgroundColor, {required List<Widget> children}) {
+  Widget _buildMenu(BuildContext context, WidgetRef ref) {
+    final objectIdController = ref.read(objectIdControllerProvider.notifier);
+
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        _SectionHeader(title: "Object & Scene"),
+        _FeatureCard(
+          children: [
+            _FeatureButton(
+              label: "Identify Object",
+              icon: Icons.camera_alt,
+              onPressed: objectIdController.captureImage, // Triggers the logic
+            ),
+            _FeatureButton(
+              label: "Describe Scene",
+              icon: Icons.landscape,
+              onPressed: () {
+                /* Add specific logic */
+              },
+            ),
+          ],
+        ),
+        const SizedBox(height: 20),
+        _SectionHeader(title: "Text Assistance"),
+        _FeatureCard(
+          children: [
+            _FeatureButton(
+              label: "Read Text",
+              icon: Icons.text_fields,
+              onPressed: () {
+                /* trigger text reader */
+              },
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+// --- styled widgets for Partial UI ---
+
+class _SectionHeader extends StatelessWidget {
+  final String title;
+  const _SectionHeader({required this.title});
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Text(title, style: Theme.of(context).textTheme.titleLarge),
+    );
+  }
+}
+
+class _FeatureCard extends StatelessWidget {
+  final List<Widget> children;
+  const _FeatureCard({required this.children});
+  @override
+  Widget build(BuildContext context) {
     return Card(
-      elevation: 4.0, // Subtle shadow for depth
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.0),
-      ),
-      color: cardBackgroundColor, // Use theme-provided card color
-      margin: const EdgeInsets.symmetric(vertical: 8.0),
+      elevation: 2,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: children,
         ),
       ),
     );
   }
+}
 
-  Widget _buildButtonRow(BuildContext context, {required List<Widget> buttons}) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: buttons.map((button) => Expanded(child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        child: button,
-      ))).toList(),
-    );
-  }
+class _FeatureButton extends StatelessWidget {
+  final String label;
+  final IconData icon;
+  final VoidCallback onPressed;
 
-  Widget _buildFeatureButton(BuildContext context, {required String label, required IconData icon, required VoidCallback onPressed, bool isFullWidth = false, required Color buttonBackgroundColor, required Color buttonTextColor, required Color buttonIconColor}) {
-    return SizedBox(
-      height: 100, // Slightly reduced height for a more compact modern look
-      child: ElevatedButton.icon(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: buttonBackgroundColor, // Use theme-provided button background color
-          foregroundColor: buttonTextColor, // Use theme-provided button text color
-          textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold), // Adjusted text size
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.0), // Slightly less rounded corners
-          ),
-          padding: const EdgeInsets.all(12),
+  const _FeatureButton({
+    required this.label,
+    required this.icon,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onPressed,
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        width: 120,
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        child: Column(
+          children: [
+            Icon(icon, size: 40, color: Theme.of(context).primaryColor),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ],
         ),
-        icon: Icon(icon, size: 36, color: buttonIconColor), // Slightly smaller icon with theme color
-        label: Text(label, textAlign: TextAlign.center),
-        onPressed: onPressed,
       ),
     );
-  }
-
-  void _showVoicePrompt(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Voice Prompt: "$message"'),
-        duration: const Duration(seconds: 2),
-        backgroundColor: Colors.blueGrey[800], // Darker snackbar
-      ),
-    );
-    // TODO: Integrate actual text-to-speech (e.g., flutter_tts package)
   }
 }
