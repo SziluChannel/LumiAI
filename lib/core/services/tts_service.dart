@@ -1,17 +1,19 @@
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-/// The singleton instance of the Text-to-Speech service.
-final ttsService = _TtsService();
+part 'tts_service.g.dart';
+
+@Riverpod(keepAlive: true)
+TtsService ttsService(Ref ref) {
+  return TtsService();
+}
 
 /// A service class to manage Text-to-Speech functionality.
-///
-/// This class is private and should not be instantiated directly.
-/// Use the global [ttsService] instance instead.
-class _TtsService {
+class TtsService {
   final FlutterTts _flutterTts = FlutterTts();
 
   /// Private constructor to initialize the TTS engine with default settings.
-  _TtsService() {
+  TtsService() {
     _flutterTts.setLanguage("en-US");
     _flutterTts.setSpeechRate(0.8);
     _flutterTts.setPitch(1.5);
