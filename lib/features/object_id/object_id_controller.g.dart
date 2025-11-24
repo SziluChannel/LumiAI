@@ -42,7 +42,7 @@ final class ObjectIdControllerProvider
 }
 
 String _$objectIdControllerHash() =>
-    r'c289ba717835e28386f3a197e41ddb271469b404';
+    r'8f35b2ba80efe414554fd5a6247b5f67afee6144';
 
 abstract class _$ObjectIdController extends $Notifier<ObjectIdState> {
   ObjectIdState build();

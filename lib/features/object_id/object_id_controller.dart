@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:typed_data';
 import 'package:image_picker/image_picker.dart';
+import 'package:lumiai/core/constants/app_prompts.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:lumiai/core/network/gemini_api.dart';
 import 'package:lumiai/core/services/tts_service.dart';
@@ -68,9 +69,9 @@ class ObjectIdController extends _$ObjectIdController {
       await gemini.connect();
 
       // 2. Send Data
-      await gemini.sendImageAndText(
-        imageBytes,
-        "Describe this image for a visually impaired user. Be descriptive but concise.",
+      await gemini.send(
+        imageBytes: imageBytes,
+        text: AppPrompts.identifyObject,
       );
 
       // 3. Listen to the Stream (Chunk by Chunk)

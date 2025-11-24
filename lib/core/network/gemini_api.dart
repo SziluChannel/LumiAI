@@ -3,6 +3,7 @@ import 'dart:convert'; // For base64Encode
 import 'dart:typed_data';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:gemini_live/gemini_live.dart';
+import 'package:lumiai/core/constants/app_prompts.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'gemini_api.g.dart'; // Generated file for Riverpod
@@ -32,6 +33,7 @@ class GeminiApiClient {
   ResponseMode _responseMode = ResponseMode.text; // Default response mode
 
   Stream<LiveServerMessage> get messageStream => _messageController.stream;
+  bool get isConnected => _session != null;
 
   GeminiApiClient() {
     final apiKey = dotenv.env['GEMINI_API_KEY'];
@@ -41,38 +43,31 @@ class GeminiApiClient {
     _genAI = GoogleGenAI(apiKey: apiKey);
   }
 
+  /// Establishes the WebSocket connection.
   Future<void> connect({ResponseMode mode = ResponseMode.text}) async {
+    // If already connected, close the previous session (allows switching modes)
     if (_session != null) {
-      await _session?.close();
-      _session = null;
+      await disconnect();
     }
 
-    _responseMode = mode; // Update the response mode
+    _responseMode = mode;
 
     try {
       _session = await _genAI.live.connect(
         LiveConnectParameters(
-          model: 'gemini-2.0-flash-live-001',
+          model: 'models/gemini-2.0-flash-live-001',
           config: GenerationConfig(
             responseModalities: _responseMode == ResponseMode.audio
                 ? [Modality.AUDIO]
                 : [Modality.TEXT],
           ),
           systemInstruction: Content(
-            parts: [
-              Part(
-                text:
-                    "You are a helpful AI assistant. "
-                    "Your goal is to provide comprehensive, detailed, and well-structured answers. Always explain the background, key concepts, and provide illustrative examples. Do not give short or brief answers."
-                    "**You must respond in the same language that the user uses for their question.** For example, if the user asks a question in Korean, you must reply in Korean. "
-                    "If they ask in Japanese, reply in Japanese.",
-              ),
-            ],
+            parts: [Part(text: AppPrompts.systemInstruction)],
           ),
           callbacks: LiveCallbacks(
             onOpen: () => print('✅ Connection opened'),
             onMessage: (LiveServerMessage message) {
-              _messageController.add(message); // Add message to stream
+              _messageController.add(message);
             },
             onError: (e, s) => print('🚨 Error: $e'),
             onClose: (code, reason) => print('🚪 Connection closed'),
@@ -85,7 +80,19 @@ class GeminiApiClient {
     }
   }
 
-  Future<void> sendImageAndText(Uint8List imageBytes, String text) async {
+  Future<void> disconnect() async {
+    await _session?.close();
+    _session = null;
+  }
+
+  /// Centralized method to send any combination of Text, Image, or Audio.
+  ///
+  /// Throws an exception if the session is not connected.
+  Future<void> send({
+    String? text,
+    Uint8List? imageBytes,
+    Uint8List? audioBytes,
+  }) async {
     if (_session == null) {
       throw Exception(
         'GeminiLive session not connected. Call connect() first.',
@@ -93,51 +100,46 @@ class GeminiApiClient {
     }
 
     final List<Part> parts = [];
-    if (text.isNotEmpty) {
+
+    // 1. Add Text
+    if (text != null && text.isNotEmpty) {
       parts.add(Part(text: text));
     }
-    parts.add(
-      Part(
-        inlineData: Blob(
-          mimeType: 'image/jpeg', // Assuming JPEG for images
-          data: base64Encode(imageBytes),
-        ),
-      ),
-    );
 
+    // 2. Add Image (JPEG assumed)
+    if (imageBytes != null) {
+      parts.add(
+        Part(
+          inlineData: Blob(
+            mimeType: 'image/jpeg',
+            data: base64Encode(imageBytes),
+          ),
+        ),
+      );
+    }
+
+    // 3. Add Audio (m4a assumed)
+    if (audioBytes != null) {
+      parts.add(
+        Part(
+          inlineData: Blob(
+            mimeType: 'audio/m4a',
+            data: base64Encode(audioBytes),
+          ),
+        ),
+      );
+    }
+
+    if (parts.isEmpty) {
+      print("⚠️ Warning: Attempted to send an empty message.");
+      return;
+    }
+
+    // 4. Send the constructed payload
     _session!.sendMessage(
       LiveClientMessage(
         clientContent: LiveClientContent(
           turns: [Content(role: "user", parts: parts)],
-          turnComplete: true,
-        ),
-      ),
-    );
-  }
-
-  Future<void> sendVoiceMessage(List<int> audioBytes) async {
-    if (_session == null) {
-      throw Exception(
-        'GeminiLive session not connected. Call connect() first.',
-      );
-    }
-
-    _session!.sendMessage(
-      LiveClientMessage(
-        clientContent: LiveClientContent(
-          turns: [
-            Content(
-              role: "user",
-              parts: [
-                Part(
-                  inlineData: Blob(
-                    mimeType: 'audio/m4a', // Assuming m4a for recorded audio
-                    data: base64Encode(Uint8List.fromList(audioBytes)),
-                  ),
-                ),
-              ],
-            ),
-          ],
           turnComplete: true,
         ),
       ),

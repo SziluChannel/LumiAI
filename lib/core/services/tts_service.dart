@@ -15,9 +15,10 @@ class TtsService {
   /// Private constructor to initialize the TTS engine with default settings.
   TtsService() {
     _flutterTts.setLanguage("en-US");
-    _flutterTts.setSpeechRate(0.8);
+    _flutterTts.setSpeechRate(1);
     _flutterTts.setPitch(1.5);
     _flutterTts.awaitSpeakCompletion(true);
+    _flutterTts.setVolume(1.0);
   }
 
   /// Speaks the given [text] using the device's TTS engine.
