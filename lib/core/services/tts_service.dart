@@ -17,6 +17,7 @@ class TtsService {
     _flutterTts.setLanguage("en-US");
     _flutterTts.setSpeechRate(0.8);
     _flutterTts.setPitch(1.5);
+    _flutterTts.awaitSpeakCompletion(true);
   }
 
   /// Speaks the given [text] using the device's TTS engine.

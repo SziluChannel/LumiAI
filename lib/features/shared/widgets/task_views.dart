@@ -51,37 +51,54 @@ class ConfirmationView extends StatelessWidget {
   }
 }
 
-/// Shows the result text
 class ResultView extends StatelessWidget {
   final String text;
   final VoidCallback onDone;
+  final bool isStreaming; // <--- NEW PARAMETER
 
-  const ResultView({super.key, required this.text, required this.onDone});
+  const ResultView({
+    super.key,
+    required this.text,
+    required this.onDone,
+    this.isStreaming = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(Icons.check_circle, size: 100, color: Colors.green),
-        SizedBox(height: 20),
-        Padding(
-          padding: const EdgeInsets.all(20.0),
+        // Visual indicator changes based on state
+        isStreaming
+            ? const CircularProgressIndicator() // Small spinner while typing
+            : const Icon(Icons.check_circle, size: 100, color: Colors.green),
+
+        const SizedBox(height: 20),
+
+        // The Scrollable Text Area
+        Expanded(
           child: SingleChildScrollView(
+            reverse: true, // Auto-scroll to bottom as new text arrives
+            padding: const EdgeInsets.all(20.0),
             child: Text(
               text,
-              style: TextStyle(fontSize: 24),
+              style: const TextStyle(fontSize: 24, height: 1.5),
               textAlign: TextAlign.center,
             ),
           ),
         ),
-        SizedBox(height: 40),
+
+        const SizedBox(height: 20),
+
+        // Button is disabled or hidden while streaming to prevent premature exit
+        // (Or you could change it to a "Stop" button)
         _BigButton(
-          label: "Done",
-          icon: Icons.home,
-          color: Colors.blue,
-          onTap: onDone,
+          label: isStreaming ? "Listening..." : "Done",
+          icon: isStreaming ? Icons.hearing : Icons.home,
+          color: isStreaming ? Colors.grey : Colors.blue,
+          onTap: isStreaming ? () {} : onDone, // No-op while streaming
         ),
+        const SizedBox(height: 20),
       ],
     );
   }

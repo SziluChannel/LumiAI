@@ -1,6 +1,13 @@
 import 'package:image_picker/image_picker.dart';
 
-enum ObjectIdStatus { idle, confirmingImage, processing, success, error }
+enum ObjectIdStatus {
+  idle,
+  confirmingImage,
+  processing, // Sending data / Waiting for first byte
+  streaming, // <--- NEW: Text is arriving chunk by chunk
+  success, // Turn complete
+  error,
+}
 
 class ObjectIdState {
   final ObjectIdStatus status;
@@ -15,7 +22,6 @@ class ObjectIdState {
     this.errorMessage,
   });
 
-  // Helper for copying state safely
   ObjectIdState copyWith({
     ObjectIdStatus? status,
     XFile? imageFile,

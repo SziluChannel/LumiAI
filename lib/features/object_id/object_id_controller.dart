@@ -1,111 +1,163 @@
-import 'package:flutter/foundation.dart'; // For kIsWeb
-import 'package:http/http.dart' as http;
+import 'dart:async';
+import 'dart:typed_data';
 import 'package:image_picker/image_picker.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:lumiai/core/network/gemini_api.dart'; // Adjust path
-import 'package:lumiai/core/services/image_utils.dart'; // Adjust path
-import 'package:lumiai/core/services/tts_service.dart'; // Adjust path
-
+import 'package:lumiai/core/network/gemini_api.dart';
+import 'package:lumiai/core/services/tts_service.dart';
 import 'object_id_state.dart';
 
 part 'object_id_controller.g.dart';
 
 @riverpod
 class ObjectIdController extends _$ObjectIdController {
+  StreamSubscription? _geminiSubscription;
+
+  // Buffers for smooth streaming
+  String _ttsBuffer = '';
+  final List<String> _ttsQueue = [];
+  bool _isSpeaking = false;
+
   @override
-  ObjectIdState build() => const ObjectIdState();
+  ObjectIdState build() {
+    // Clean up subscription if the provider is destroyed
+    ref.onDispose(() {
+      _geminiSubscription?.cancel();
+    });
+    return const ObjectIdState();
+  }
 
-  /// Step 1: Open Camera
+  // ... (captureImage and retakeImage remain the same) ...
   Future<void> captureImage() async {
-    final tts = ref.read(ttsServiceProvider); // Assuming you have a provider
-    tts.speak('Opening camera.');
-
+    final tts = ref.read(ttsServiceProvider);
     try {
       final picker = ImagePicker();
       final XFile? pickedFile = await picker.pickImage(
         source: ImageSource.camera,
       );
-
-      if (pickedFile == null) {
-        tts.speak('Camera closed. No image taken.');
-        return;
-      }
+      if (pickedFile == null) return;
 
       state = state.copyWith(
         status: ObjectIdStatus.confirmingImage,
         imageFile: pickedFile,
       );
-
       tts.speak('Photo captured. Confirm or Retake.');
     } catch (e) {
-      state = state.copyWith(
-        status: ObjectIdStatus.error,
-        errorMessage: e.toString(),
-      );
-      tts.speak('Error opening camera.');
+      /* Error handling */
     }
   }
 
-  /// Step 2: Retake
-  void retakeImage() {
-    captureImage();
-  }
+  void retakeImage() => captureImage();
 
-  /// Step 3: Confirm and Send to Gemini
+  /// Step 3: Stream Logic
   Future<void> confirmAndAnalyze() async {
     if (state.imageFile == null) return;
 
     final tts = ref.read(ttsServiceProvider);
     final gemini = ref.read(geminiApiClientProvider);
 
-    state = state.copyWith(status: ObjectIdStatus.processing);
-    tts.speak('Processing image. Please wait.');
+    // Initial Processing State
+    state = state.copyWith(status: ObjectIdStatus.processing, resultText: "");
+    _ttsBuffer = "";
+    _ttsQueue.clear();
+    tts.speak('Analyzing...');
 
     try {
-      // 1. Compress
-      late final Uint8List compressedBytes;
-      final String path = state.imageFile!.path;
+      final Uint8List imageBytes = await state.imageFile!.readAsBytes();
 
-      if (kIsWeb) {
-        final response = await http.get(Uri.parse(path));
-        compressedBytes = await compressImageBytes(response.bodyBytes);
-      } else {
-        compressedBytes = await compressImageFromPath(path);
-      }
-
-      // 2. Connect & Send
+      // 1. Connect
       await gemini.connect();
+
+      // 2. Send Data
       await gemini.sendImageAndText(
-        compressedBytes,
-        "Describe this image for a visually impaired user.",
+        imageBytes,
+        "Describe this image for a visually impaired user. Be descriptive but concise.",
       );
 
-      // 3. Wait for response
-      final response = await gemini.messageStream.firstWhere(
-        (msg) => msg.text != null && msg.text!.isNotEmpty,
-      );
+      // 3. Listen to the Stream (Chunk by Chunk)
+      _geminiSubscription?.cancel();
+      _geminiSubscription = gemini.messageStream.listen(
+        (message) {
+          // A. Handle Text Chunk
+          if (message.text != null && message.text!.isNotEmpty) {
+            _handleTextChunk(message.text!);
+          }
 
-      final result = response.text ?? "No description available.";
-
-      // 4. Update State
-      state = state.copyWith(
-        status: ObjectIdStatus.success,
-        resultText: result,
+          // B. Handle End of Turn
+          if (message.serverContent?.turnComplete ?? false) {
+            _finalizeStream();
+          }
+        },
+        onError: (e) {
+          state = state.copyWith(
+            status: ObjectIdStatus.error,
+            errorMessage: e.toString(),
+          );
+          tts.speak("Connection error.");
+        },
       );
-      tts.speak(result);
     } catch (e) {
       state = state.copyWith(
         status: ObjectIdStatus.error,
         errorMessage: e.toString(),
       );
-      tts.speak('An error occurred during processing.');
+      tts.speak('An error occurred.');
     }
   }
 
-  /// Step 4: Reset
-  void reset() {
-    state = const ObjectIdState(); // Reset to idle
+  void _handleTextChunk(String newChunk) {
+    // 1. Update UI immediately (Append text)
+    final currentText = state.resultText ?? "";
+    state = state.copyWith(
+      status: ObjectIdStatus.streaming, // Switch to streaming mode
+      resultText: currentText + newChunk,
+    );
+
+    // 2. Queue for TTS (Sentence Buffering)
+    _ttsBuffer += newChunk;
+
+    // Check for sentence endings (. ? ! \n)
+    // We look for punctuation followed by a space or end of string
+    if (RegExp(r'[.?!](\s|$)').hasMatch(_ttsBuffer)) {
+      _ttsQueue.add(_ttsBuffer);
+      _ttsBuffer = ""; // Clear buffer
+      _processTtsQueue(); // Trigger playback
+    }
+  }
+
+  Future<void> _processTtsQueue() async {
+    if (_isSpeaking || _ttsQueue.isEmpty) return;
+
+    _isSpeaking = true;
     final tts = ref.read(ttsServiceProvider);
-    tts.speak('Returning to main menu.');
+    final textToSpeak = _ttsQueue.removeAt(0);
+
+    // We await the speak completion to prevent overlap
+    // Note: Ensure your TtsService.speak returns a Future that completes when audio finishes
+    // If it doesn't, we might need a rough estimate delay based on word count.
+    await tts.speak(textToSpeak);
+
+    _isSpeaking = false;
+    _processTtsQueue(); // Recursive call for next item
+  }
+
+  void _finalizeStream() {
+    _geminiSubscription?.cancel();
+
+    // Flush remaining buffer to TTS
+    if (_ttsBuffer.isNotEmpty) {
+      _ttsQueue.add(_ttsBuffer);
+      _processTtsQueue();
+    }
+
+    state = state.copyWith(status: ObjectIdStatus.success);
+  }
+
+  void reset() {
+    _geminiSubscription?.cancel();
+    state = const ObjectIdState();
+    _ttsQueue.clear();
+    _isSpeaking = false;
+    ref.read(ttsServiceProvider).stop(); // Stop any ongoing speech
+    ref.read(ttsServiceProvider).speak('Returning to main menu.');
   }
 }

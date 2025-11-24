@@ -41,11 +41,13 @@ class MinimalFunctionalUI extends ConsumerWidget {
       );
     }
 
-    // 4. SUCCESS STATE
-    if (objectIdState.status == ObjectIdStatus.success) {
+    // 4. STREAMING OR SUCCESS STATE
+    if (objectIdState.status == ObjectIdStatus.success ||
+        objectIdState.status == ObjectIdStatus.streaming) {
       return ResultView(
-        text: objectIdState.resultText!,
+        text: objectIdState.resultText ?? "",
         onDone: objectIdController.reset,
+        isStreaming: objectIdState.status == ObjectIdStatus.streaming,
       );
     }
 
