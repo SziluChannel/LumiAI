@@ -78,6 +78,9 @@ class ObjectIdController extends _$ObjectIdController {
       _geminiSubscription?.cancel();
       _geminiSubscription = gemini.messageStream.listen(
         (message) {
+          print(
+            'Received transcription chunk: ${message.serverContent?.outputTranscription?.text}',
+          );
           // A. Handle Text Chunk
           if (message.text != null && message.text!.isNotEmpty) {
             _handleTextChunk(message.text!);

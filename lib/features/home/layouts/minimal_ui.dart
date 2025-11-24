@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lumiai/features/live_chat/ui/live_chat_screen.dart';
 import '../../object_id/object_id_controller.dart';
 import '../../object_id/object_id_state.dart';
 import '../../shared/widgets/task_views.dart';
@@ -46,8 +47,22 @@ class MinimalFunctionalUI extends ConsumerWidget {
         objectIdState.status == ObjectIdStatus.streaming) {
       return ResultView(
         text: objectIdState.resultText ?? "",
-        onDone: objectIdController.reset,
         isStreaming: objectIdState.status == ObjectIdStatus.streaming,
+        onDone: objectIdController.reset,
+
+        // Wire up the new feature here:
+        onDeepDive: () async {
+          final imageFile = objectIdState.imageFile;
+          if (imageFile != null) {
+            final bytes = await imageFile.readAsBytes();
+
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => LiveChatScreen(imageBytes: bytes),
+              ),
+            );
+          }
+        },
       );
     }
 

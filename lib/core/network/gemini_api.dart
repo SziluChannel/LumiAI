@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:gemini_live/gemini_live.dart';
 import 'package:lumiai/core/constants/app_prompts.dart';
+import 'package:lumiai/core/constants/gemini_live_models.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'gemini_api.g.dart'; // Generated file for Riverpod
@@ -55,12 +56,8 @@ class GeminiApiClient {
     try {
       _session = await _genAI.live.connect(
         LiveConnectParameters(
-          model: 'models/gemini-2.0-flash-live-001',
-          config: GenerationConfig(
-            responseModalities: _responseMode == ResponseMode.audio
-                ? [Modality.AUDIO]
-                : [Modality.TEXT],
-          ),
+          model: GeminiLiveModels.nativeText,
+          config: GenerationConfig(responseModalities: [Modality.AUDIO]),
           systemInstruction: Content(
             parts: [Part(text: AppPrompts.systemInstruction)],
           ),
@@ -69,8 +66,9 @@ class GeminiApiClient {
             onMessage: (LiveServerMessage message) {
               _messageController.add(message);
             },
-            onError: (e, s) => print('🚨 Error: $e'),
-            onClose: (code, reason) => print('🚪 Connection closed'),
+            onError: (e, s) => print('🚨 Error: $e, \n $s'),
+            onClose: (code, reason) =>
+                print('🚪 Connection closed code: $code, reason: $reason'),
           ),
         ),
       );
@@ -92,6 +90,7 @@ class GeminiApiClient {
     String? text,
     Uint8List? imageBytes,
     Uint8List? audioBytes,
+    String audioMimeType = 'audio/m4a', // Default to mobile format
   }) async {
     if (_session == null) {
       throw Exception(
@@ -123,7 +122,7 @@ class GeminiApiClient {
       parts.add(
         Part(
           inlineData: Blob(
-            mimeType: 'audio/m4a',
+            mimeType: audioMimeType, // Use the passed variable here
             data: base64Encode(audioBytes),
           ),
         ),

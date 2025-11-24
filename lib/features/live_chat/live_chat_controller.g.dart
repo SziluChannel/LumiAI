@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'object_id_controller.dart';
+part of 'live_chat_controller.dart';
 
 // **************************************************************************
 // RiverpodGenerator
@@ -9,53 +9,53 @@ part of 'object_id_controller.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(ObjectIdController)
-const objectIdControllerProvider = ObjectIdControllerProvider._();
+@ProviderFor(LiveChatController)
+const liveChatControllerProvider = LiveChatControllerProvider._();
 
-final class ObjectIdControllerProvider
-    extends $NotifierProvider<ObjectIdController, ObjectIdState> {
-  const ObjectIdControllerProvider._()
+final class LiveChatControllerProvider
+    extends $NotifierProvider<LiveChatController, LiveChatState> {
+  const LiveChatControllerProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'objectIdControllerProvider',
+        name: r'liveChatControllerProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$objectIdControllerHash();
+  String debugGetCreateSourceHash() => _$liveChatControllerHash();
 
   @$internal
   @override
-  ObjectIdController create() => ObjectIdController();
+  LiveChatController create() => LiveChatController();
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(ObjectIdState value) {
+  Override overrideWithValue(LiveChatState value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<ObjectIdState>(value),
+      providerOverride: $SyncValueProvider<LiveChatState>(value),
     );
   }
 }
 
-String _$objectIdControllerHash() =>
-    r'39eca96b81b4fc61c51d59178c13bfbed2d34472';
+String _$liveChatControllerHash() =>
+    r'249bea4627b3df39d54890a17668e105a1bcd4c1';
 
-abstract class _$ObjectIdController extends $Notifier<ObjectIdState> {
-  ObjectIdState build();
+abstract class _$LiveChatController extends $Notifier<LiveChatState> {
+  LiveChatState build();
   @$mustCallSuper
   @override
   void runBuild() {
     final created = build();
-    final ref = this.ref as $Ref<ObjectIdState, ObjectIdState>;
+    final ref = this.ref as $Ref<LiveChatState, LiveChatState>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<ObjectIdState, ObjectIdState>,
-              ObjectIdState,
+              AnyNotifier<LiveChatState, LiveChatState>,
+              LiveChatState,
               Object?,
               Object?
             >;
