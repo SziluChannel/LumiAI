@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lumiai/core/services/tts_service.dart'; // TTS import can remove later
 import '../../object_id/object_id_controller.dart';
 import '../../object_id/object_id_state.dart';
 import '../../shared/widgets/task_views.dart';
@@ -89,6 +90,23 @@ class PartialFunctionalUI extends ConsumerWidget {
             ),
           ],
         ),
+        // --- Added Debug Section ---
+        const SizedBox(height: 20),
+        _SectionHeader(title: "Debug"),
+        _FeatureCard(
+          children: [
+            _FeatureButton(
+              label: "Test TTS",
+              icon: Icons.record_voice_over,
+              onPressed: () {
+                ref
+                    .read(ttsServiceProvider)
+                    .speak("This is a test of the text to speech system.");
+              },
+            ),
+          ],
+        ),
+        //end of debug section
       ],
     );
   }

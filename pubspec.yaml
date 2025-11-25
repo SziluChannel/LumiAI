@@ -46,6 +46,7 @@ dependencies:
   path_provider: ^2.1.5
   permission_handler: ^12.0.1
   sound_stream: ^0.4.2
+  shared_preferences: ^2.5.3
 
 dev_dependencies:
   flutter_test:
