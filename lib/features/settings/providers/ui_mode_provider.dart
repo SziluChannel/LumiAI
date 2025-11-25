@@ -36,14 +36,18 @@ class UiModeController extends _$UiModeController {
   }
 
   void toggleMode() {
-    if (state == UiMode.standard) {
-      state = UiMode.simplified;
-    } else {
-      state = UiMode.standard;
+    if (state.hasValue) {
+      final currentMode = state.requireValue;
+      final newMode = currentMode == UiMode.standard
+          ? UiMode.simplified
+          : UiMode.standard;
+      _saveMode(newMode);
     }
   }
 
   void setMode(UiMode mode) {
-    state = mode;
+    if (state.hasValue) {
+      _saveMode(mode);
+    }
   }
 }
