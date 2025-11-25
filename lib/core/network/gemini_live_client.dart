@@ -1,9 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
+
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-// Add http package for the REST call
-import 'package:http/http.dart' as http;
 import 'package:lumiai/core/constants/gemini_live_params.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -12,83 +11,38 @@ import 'package:web_socket_channel/status.dart' as status;
 part 'gemini_live_client.g.dart';
 
 @Riverpod(keepAlive: true)
-GeminiLiveClient geminiLiveClient(Ref ref) {
-  final client = GeminiLiveClient();
-  ref.onDispose(() => client.dispose());
-  return client;
-}
-
-class GeminiLiveClient {
+class GeminiLiveClient extends _$GeminiLiveClient {
   WebSocketChannel? _channel;
   final _textController = StreamController<String>.broadcast();
   final _turnCompleteController = StreamController<bool>.broadcast();
 
+  // Configuration
   static const _baseUrl = GeminiLiveParams.webSocketEndpoint;
-  static const _modelName = GeminiLiveParams.nativeAudioModel;
+  static const _modelName = GeminiLiveParams.liveModel;
 
+  // Streams for external controllers
   Stream<String> get textStream => _textController.stream;
   Stream<bool> get turnCompleteStream => _turnCompleteController.stream;
   bool get isConnected => _channel != null;
 
+  @override
+  GeminiLiveClient build() {
+    // Automatically cleanup when the provider is destroyed
+    ref.onDispose(() {
+      dispose();
+    });
+    return this;
+  }
+
+  /// Connects to the Gemini Live WebSocket
   Future<void> connect() async {
     final apiKey = dotenv.env['GEMINI_API_KEY'];
     if (apiKey == null) throw Exception("Missing GEMINI_API_KEY");
 
+    // Close existing connection to ensure a clean state
     disconnect();
 
     print("🔌 Connecting to Gemini Live...");
-
-    // ---------------------------------------------------------
-    // 🔍 DEBUG: LIST AVAILABLE MODELS (REST API CALL)
-    // ---------------------------------------------------------
-    /*
-    try {
-      print("🔎 Querying API for supported models...");
-      final listUri = Uri.parse(
-        'https://generativelanguage.googleapis.com/v1beta/models?key=$apiKey',
-      );
-      final response = await http.get(listUri);
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        final models = data['models'] as List;
-        print(data);
-
-        print("\n=== 📋 MODELS SUPPORTING LIVE API (BidiGenerateContent) ===");
-        bool foundCurrent = false;
-
-        for (var m in models) {
-          final methods = List<String>.from(
-            m['supportedGenerationMethods'] ?? [],
-          );
-          // Filter for models that specifically support the Realtime/WebSocket protocol
-          if (methods.contains('BidiGenerateContent')) {
-            print("✅ ${m['name']}");
-            if (m['name'] == _modelName) foundCurrent = true;
-          }
-        }
-
-        if (!foundCurrent) {
-          print(
-            "\n⚠️ WARNING: Your configured model '$_modelName' was NOT found in the supported list above.",
-          );
-          print(
-            "   Please update GeminiLiveParams.nativeTextModel to one of the models listed above.\n",
-          );
-        } else {
-          print("=== End of List ===\n");
-        }
-      } else {
-        print(
-          "❌ Failed to list models: ${response.statusCode} - ${response.body}",
-        );
-      }
-    } catch (e) {
-      print("❌ Error checking models: $e");
-    }*/
-    // ---------------------------------------------------------
-    // END DEBUG
-    // ---------------------------------------------------------
-
     final uri = Uri.parse('$_baseUrl?key=$apiKey');
 
     try {
@@ -113,52 +67,88 @@ class GeminiLiveClient {
         },
         onDone: () {
           print("🛑 WebSocket Closed by Server");
-          if (_channel?.closeCode != null) {
-            print("   Code: ${_channel?.closeCode}");
-            print("   Reason: ${_channel?.closeReason}");
-          }
           disconnect();
         },
       );
 
+      // Send Handshake (Setup)
       final setupMsg = {
         "setup": {
           "model": _modelName,
           "generationConfig": {
-            "responseModalities": ["TEXT"],
+            "responseModalities": ["TEXT"], // We prefer Text for local TTS
             "speechConfig": {
               "voiceConfig": {
-                "prebuiltVoiceConfig": {"voiceName": "Aoede"},
+                "prebuiltVoiceConfig": {"voiceName": "Puck"},
               },
             },
           },
         },
       };
 
-      print("📤 Sending Setup with model: $_modelName");
+      print("📤 Sending Setup...");
       _sendJson(setupMsg);
     } catch (e) {
-      print("💥 Connection Failed (Handshake Error): $e");
+      print("💥 Connection Failed: $e");
       disconnect();
       rethrow;
     }
   }
 
-  void sendText(String text) {
+  /// Unified method to send Text, Images, and Audio in a single turn.
+  ///
+  /// [text] - Optional text prompt.
+  /// [imageBytes] - Optional JPEG image bytes.
+  /// [audioBytes] - Optional Audio bytes (defaults to 16k PCM if mimeType not provided).
+  /// [audioMimeType] - The mime type of the audio (e.g., 'audio/wav', 'audio/pcm;rate=16000').
+  void send({
+    String? text,
+    Uint8List? imageBytes,
+    Uint8List? audioBytes,
+    String audioMimeType = 'audio/pcm;rate=16000',
+  }) {
     if (_channel == null) {
       print("⚠️ Cannot send: Disconnected");
       return;
     }
 
+    final List<Map<String, dynamic>> parts = [];
+
+    // 1. Add Text
+    if (text != null && text.isNotEmpty) {
+      parts.add({"text": text});
+    }
+
+    // 2. Add Image
+    if (imageBytes != null) {
+      parts.add({
+        "inlineData": {
+          "mimeType": "image/jpeg",
+          "data": base64Encode(imageBytes),
+        },
+      });
+    }
+
+    // 3. Add Audio
+    if (audioBytes != null) {
+      parts.add({
+        "inlineData": {
+          "mimeType": audioMimeType,
+          "data": base64Encode(audioBytes),
+        },
+      });
+    }
+
+    if (parts.isEmpty) {
+      print("⚠️ Warning: Attempted to send empty payload.");
+      return;
+    }
+
+    // Send Client Content
     _sendJson({
       "clientContent": {
         "turns": [
-          {
-            "role": "user",
-            "parts": [
-              {"text": text},
-            ],
-          },
+          {"role": "user", "parts": parts},
         ],
         "turnComplete": true,
       },
@@ -177,12 +167,13 @@ class GeminiLiveClient {
   void _parseServerMessage(Map<String, dynamic> msg) {
     try {
       if (msg.containsKey('setupComplete')) {
-        print("✅ Setup Complete - Ready for interaction");
+        print("✅ Setup Complete - Ready");
       }
 
       if (msg.containsKey('serverContent')) {
         final content = msg['serverContent'];
 
+        // Extract Text
         if (content.containsKey('modelTurn')) {
           final parts = content['modelTurn']['parts'] as List;
           for (var part in parts) {
@@ -192,6 +183,7 @@ class GeminiLiveClient {
           }
         }
 
+        // Check for End of Turn
         if (content.containsKey('turnComplete') &&
             content['turnComplete'] == true) {
           _turnCompleteController.add(true);
@@ -204,14 +196,18 @@ class GeminiLiveClient {
 
   void disconnect() {
     if (_channel != null) {
-      _channel!.sink.close(status.normalClosure);
+      try {
+        _channel!.sink.close(status.normalClosure);
+      } catch (e) {
+        // Ignore errors during closing
+      }
       _channel = null;
     }
   }
 
   void dispose() {
     disconnect();
-    _textController.close();
-    _turnCompleteController.close();
+    if (!_textController.isClosed) _textController.close();
+    if (!_turnCompleteController.isClosed) _turnCompleteController.close();
   }
 }

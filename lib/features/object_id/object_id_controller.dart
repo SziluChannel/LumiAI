@@ -23,6 +23,7 @@ class ObjectIdController extends _$ObjectIdController {
     ref.onDispose(() {
       _textSubscription?.cancel();
       _turnSubscription?.cancel();
+      // We do NOT dispose the client here because it's shared
     });
     return const ObjectIdState();
   }
@@ -55,7 +56,9 @@ class ObjectIdController extends _$ObjectIdController {
     if (state.imageFile == null) return;
 
     final tts = ref.read(ttsServiceProvider);
-    final gemini = ref.read(geminiLiveClientProvider);
+
+    // 1. Get Shared Client
+    final client = ref.read(geminiLiveClientProvider.notifier);
 
     state = state.copyWith(status: ObjectIdStatus.processing, resultText: "");
     _ttsBuffer = "";
@@ -65,12 +68,14 @@ class ObjectIdController extends _$ObjectIdController {
     try {
       final Uint8List imageBytes = await state.imageFile!.readAsBytes();
 
-      // 1. Connect
-      await gemini.connect();
+      // 2. Connect
+      if (!client.isConnected) {
+        await client.connect();
+      }
 
-      // 2. Listen to Text (Chunks)
+      // 3. Listen to Text (Chunks)
       _textSubscription?.cancel();
-      _textSubscription = gemini.textStream.listen(
+      _textSubscription = client.textStream.listen(
         (textChunk) {
           if (textChunk.isNotEmpty) {
             _handleTextChunk(textChunk);
@@ -85,15 +90,14 @@ class ObjectIdController extends _$ObjectIdController {
         },
       );
 
-      // 3. Listen to Turn Complete (End of response)
+      // 4. Listen to Turn Complete
       _turnSubscription?.cancel();
-      _turnSubscription = gemini.turnCompleteStream.listen((_) {
+      _turnSubscription = client.turnCompleteStream.listen((_) {
         _finalizeStream();
       });
 
-      // 4. Send Image + Prompt
-      // This method now exists in the client!
-      gemini.sendText(AppPrompts.identifyObject);
+      // 5. Send Image + Prompt using Unified Method
+      client.send(imageBytes: imageBytes, text: AppPrompts.identifyObject);
     } catch (e) {
       state = state.copyWith(
         status: ObjectIdStatus.error,
@@ -111,8 +115,6 @@ class ObjectIdController extends _$ObjectIdController {
     );
 
     _ttsBuffer += newChunk;
-
-    // Split by sentence for smoother TTS
     if (RegExp(r'[.?!:\n](\s|$)').hasMatch(_ttsBuffer)) {
       _ttsQueue.add(_ttsBuffer);
       _ttsBuffer = "";
@@ -137,7 +139,6 @@ class ObjectIdController extends _$ObjectIdController {
     _textSubscription?.cancel();
     _turnSubscription?.cancel();
 
-    // Flush any remaining text in buffer
     if (_ttsBuffer.isNotEmpty) {
       _ttsQueue.add(_ttsBuffer);
       _processTtsQueue();

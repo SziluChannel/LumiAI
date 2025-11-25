@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:lumiai/core/network/gemini_live_client.dart'; // Manual Client
+import 'package:lumiai/core/network/gemini_live_client.dart';
 import 'package:lumiai/core/services/tts_service.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:record/record.dart';
@@ -11,7 +11,6 @@ part 'live_chat_controller.g.dart';
 
 @riverpod
 class LiveChatController extends _$LiveChatController {
-  late final GeminiLiveClient _geminiClient;
   late final AudioRecorder _audioRecorder;
   StreamSubscription? _audioStreamSub;
   StreamSubscription? _geminiStreamSub;
@@ -28,16 +27,15 @@ class LiveChatController extends _$LiveChatController {
 
   @override
   LiveChatState build() {
-    _geminiClient = GeminiLiveClient();
     _audioRecorder = AudioRecorder();
 
     ref.onDispose(() {
-      _geminiClient.dispose();
       _audioRecorder.dispose();
       _audioStreamSub?.cancel();
       _geminiStreamSub?.cancel();
       _amplitudeSubscription?.cancel();
       _amplitudeController.close();
+      // We DO NOT dispose the GeminiClient here because it is shared
     });
 
     return const LiveChatState();
@@ -45,15 +43,22 @@ class LiveChatController extends _$LiveChatController {
 
   Future<void> startSession() async {
     try {
-      // 1. Connect WebSocket
-      await _geminiClient.connect();
+      // 1. Get Shared Client
+      final client = ref.read(geminiLiveClientProvider.notifier);
 
-      // 2. Listen to Gemini Text Responses
-      _geminiStreamSub = _geminiClient.textStream.listen((text) {
+      // 2. Connect (if needed)
+      // Since it's shared, we only connect if disconnected to save resources
+      if (!client.isConnected) {
+        await client.connect();
+      }
+
+      // 3. Listen to Gemini Text Responses
+      _geminiStreamSub?.cancel();
+      _geminiStreamSub = client.textStream.listen((text) {
         _handleIncomingText(text);
       });
 
-      // 3. Start Microphone
+      // 4. Start Microphone
       await startRecording();
     } catch (e) {
       state = state.copyWith(
@@ -64,7 +69,6 @@ class LiveChatController extends _$LiveChatController {
   }
 
   Future<void> startRecording() async {
-    // Permission Check
     if (!await Permission.microphone.request().isGranted) return;
 
     state = state.copyWith(status: LiveChatStatus.listening);
@@ -74,13 +78,11 @@ class LiveChatController extends _$LiveChatController {
     _amplitudeSubscription = _audioRecorder
         .onAmplitudeChanged(const Duration(milliseconds: 100))
         .listen((amp) {
-          // Normalize -60dB (silence) to 0dB (loud) into 0.0 - 1.0 range
           final double normalized = ((amp.current + 60) / 60).clamp(0.0, 1.0);
           _amplitudeController.add(normalized);
         });
 
-    // 2. Start Audio Stream (Data)
-    // 16kHz PCM 16-bit is the raw format Gemini loves for real-time streaming
+    // 2. Start Audio Stream
     const config = RecordConfig(
       encoder: AudioEncoder.pcm16bits,
       sampleRate: 16000,
@@ -91,24 +93,22 @@ class LiveChatController extends _$LiveChatController {
 
     _audioStreamSub?.cancel();
     _audioStreamSub = stream.listen((data) {
-      // Stream Mic Audio directly to WebSocket!
-      _geminiClient.sendText("hello");
+      // Stream Mic Audio using the UNIFIED send() method
+      ref
+          .read(geminiLiveClientProvider.notifier)
+          .send(audioBytes: data, audioMimeType: 'audio/pcm;rate=16000');
     });
   }
 
   Future<void> stopRecording() async {
-    _amplitudeSubscription?.cancel(); // Stop visuals
-    await _audioStreamSub?.cancel(); // Stop sending data
-    await _audioRecorder.stop(); // Stop hardware mic
+    _amplitudeSubscription?.cancel();
+    await _audioStreamSub?.cancel();
+    await _audioRecorder.stop();
 
     state = state.copyWith(status: LiveChatStatus.processing);
   }
 
-  // =========================================================
-  // HANDLE INCOMING TEXT + TTS QUEUE
-  // =========================================================
   void _handleIncomingText(String newTextChunk) {
-    // 1. Update UI
     final currentText = (state.status == LiveChatStatus.processing)
         ? ""
         : (state.messages ?? "");
@@ -118,10 +118,7 @@ class LiveChatController extends _$LiveChatController {
       messages: currentText + newTextChunk,
     );
 
-    // 2. Buffer for TTS
     _ttsBuffer += newTextChunk;
-
-    // 3. Check for Sentence Endings
     if (RegExp(r'[.?!:\n](\s|$)').hasMatch(_ttsBuffer)) {
       _ttsQueue.add(_ttsBuffer.trim());
       _ttsBuffer = "";

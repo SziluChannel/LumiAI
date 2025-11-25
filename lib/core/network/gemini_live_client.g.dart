@@ -8,28 +8,12 @@ part of 'gemini_live_client.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// Riverpod Provider
-/// keepAlive: true is essential for WebSocket connections so they don't
-/// close automatically when the UI rebuilds.
 
-@ProviderFor(geminiLiveClient)
+@ProviderFor(GeminiLiveClient)
 const geminiLiveClientProvider = GeminiLiveClientProvider._();
 
-/// Riverpod Provider
-/// keepAlive: true is essential for WebSocket connections so they don't
-/// close automatically when the UI rebuilds.
-
 final class GeminiLiveClientProvider
-    extends
-        $FunctionalProvider<
-          GeminiLiveClient,
-          GeminiLiveClient,
-          GeminiLiveClient
-        >
-    with $Provider<GeminiLiveClient> {
-  /// Riverpod Provider
-  /// keepAlive: true is essential for WebSocket connections so they don't
-  /// close automatically when the UI rebuilds.
+    extends $NotifierProvider<GeminiLiveClient, GeminiLiveClient> {
   const GeminiLiveClientProvider._()
     : super(
         from: null,
@@ -46,13 +30,7 @@ final class GeminiLiveClientProvider
 
   @$internal
   @override
-  $ProviderElement<GeminiLiveClient> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  GeminiLiveClient create(Ref ref) {
-    return geminiLiveClient(ref);
-  }
+  GeminiLiveClient create() => GeminiLiveClient();
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(GeminiLiveClient value) {
@@ -63,4 +41,23 @@ final class GeminiLiveClientProvider
   }
 }
 
-String _$geminiLiveClientHash() => r'ef9ccd5fa22eb22a91bea6a88ec5c12c202856d9';
+String _$geminiLiveClientHash() => r'7527cae156921122c5a2b8efd05c0488434d9013';
+
+abstract class _$GeminiLiveClient extends $Notifier<GeminiLiveClient> {
+  GeminiLiveClient build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<GeminiLiveClient, GeminiLiveClient>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<GeminiLiveClient, GeminiLiveClient>,
+              GeminiLiveClient,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}

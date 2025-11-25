@@ -93,4 +93,4 @@ final class MaterialThemeModeProvider
   }
 }
 
-String _$materialThemeModeHash() => r'2143afee3427451f180b7d447c5617ab78cf5283';
+String _$materialThemeModeHash() => r'117a11f4c80452f400642966d888e109d7b4809e';

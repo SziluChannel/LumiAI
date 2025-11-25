@@ -42,7 +42,7 @@ final class LiveChatControllerProvider
 }
 
 String _$liveChatControllerHash() =>
-    r'70ce7eb3ed33d56a79c5075faba442960ac34621';
+    r'cf9cb30d1e6e1a930d25ba798a0b2ed3b8674350';
 
 abstract class _$LiveChatController extends $Notifier<LiveChatState> {
   LiveChatState build();
