@@ -5,7 +5,7 @@ import '../live_chat_controller.dart';
 import '../live_chat_state.dart';
 
 class LiveChatScreen extends ConsumerStatefulWidget {
-  final Uint8List imageBytes;
+  final Uint8List imageBytes; // Kept in case you re-enable image context later
 
   const LiveChatScreen({super.key, required this.imageBytes});
 
@@ -17,10 +17,11 @@ class _LiveChatScreenState extends ConsumerState<LiveChatScreen> {
   @override
   void initState() {
     super.initState();
+    // Auto-start the session when screen opens
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref
-          .read(liveChatControllerProvider.notifier)
-          .startSession(widget.imageBytes);
+      // NOTE: The manual LiveChatController currently assumes text/audio only.
+      // If you add image support back to the manual client, pass widget.imageBytes here.
+      ref.read(liveChatControllerProvider.notifier).startSession();
     });
   }
 
@@ -46,8 +47,11 @@ class _LiveChatScreenState extends ConsumerState<LiveChatScreen> {
         // Massive touch area for accessibility
         onTap: () {
           if (isListening) {
-            controller.stopRecordingAndSend();
-          } else if (state.status == LiveChatStatus.idle) {
+            // NEW: Method name changed to match streaming logic
+            controller.stopRecording();
+          } else if (state.status == LiveChatStatus.idle ||
+              state.status == LiveChatStatus.streaming) {
+            // Allow restarting even if currently speaking/streaming
             controller.startRecording();
           }
         },
@@ -120,7 +124,10 @@ class _LiveChatScreenState extends ConsumerState<LiveChatScreen> {
                 child: SingleChildScrollView(
                   reverse: true,
                   child: Text(
-                    state.messages ?? "I am listening...",
+                    // Default text prompt if messages are empty
+                    (state.messages != null && state.messages!.isNotEmpty)
+                        ? state.messages!
+                        : "I am listening...",
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 24,
