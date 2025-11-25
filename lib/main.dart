@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart'; // For your API Key
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lumiai/features/home/home_screen.dart'; // <-- IMPORT THIS
+import 'package:flutter_dotenv/flutter_dotenv.dart'; // For your API Key
 
-void main() async {
+// ÚJ IMPORT: A témavezérlő provider importálása
+import 'package:lumiai/features/settings/providers/theme_provider.dart'; 
+
+// A meglévő Home Screen importálása
+import 'package:lumiai/features/home/home_screen.dart'; 
+
+Future<void> main() async {
   // 1. Ensure Flutter bindings are initialized before async code
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -11,30 +16,53 @@ void main() async {
   try {
     await dotenv.load(fileName: ".env");
   } catch (e) {
-    print("Error loading .env file: $e");
+    // Csak a hibát írjuk ki, ha nem találja, ne állítsa le az appot
+    print("Error loading .env file: $e"); 
   }
 
   // 3. Wrap the app in ProviderScope
   runApp(const ProviderScope(child: MyApp()));
 }
 
-class MyApp extends StatelessWidget {
+// MyApp mostantól ConsumerWidget a Riverpod használatához
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    
+    // Figyeljük a kiszámított ThemeMode-ot, ami olvassa a mentett beállítást.
+    final themeMode = ref.watch(materialThemeModeProvider);
+
     return MaterialApp(
       title: 'LumiAI',
       debugShowCheckedModeBanner: false,
+      
+      // 1. Beállítjuk a themeMode-ot a provider értékére
+      themeMode: themeMode, 
+
+      // 2. Világos téma (Light Theme)
       theme: ThemeData(
-        // Define your standard theme here
-        primarySwatch: Colors.blue,
-        scaffoldBackgroundColor: Colors.white,
+        brightness: Brightness.light,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.blue, 
+          brightness: Brightness.light,
+        ),
         useMaterial3: true,
       ),
-      // This should point to the HomeScreen we created earlier
-      // which decides whether to show Minimal or Partial UI
-      home: HomeScreen(),
+      
+      // 3. Sötét téma (Dark Theme)
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.blue, 
+          brightness: Brightness.dark,
+        ),
+        useMaterial3: true,
+      ),
+
+      // Ez a fő képernyő, ami a beállított UI módot (standard/simplified) is kezeli.
+      home: const HomeScreen(), 
     );
   }
 }

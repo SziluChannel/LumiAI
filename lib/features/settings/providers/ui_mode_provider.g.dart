@@ -13,7 +13,7 @@ part of 'ui_mode_provider.dart';
 const uiModeControllerProvider = UiModeControllerProvider._();
 
 final class UiModeControllerProvider
-    extends $NotifierProvider<UiModeController, UiMode> {
+    extends $AsyncNotifierProvider<UiModeController, UiMode> {
   const UiModeControllerProvider._()
     : super(
         from: null,
@@ -31,30 +31,22 @@ final class UiModeControllerProvider
   @$internal
   @override
   UiModeController create() => UiModeController();
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(UiMode value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<UiMode>(value),
-    );
-  }
 }
 
-String _$uiModeControllerHash() => r'3a9556568cbf12241215b1eb9d65bb2425c079d6';
+String _$uiModeControllerHash() => r'dca0a02c28d386961021d04bbbfe493793900127';
 
-abstract class _$UiModeController extends $Notifier<UiMode> {
-  UiMode build();
+abstract class _$UiModeController extends $AsyncNotifier<UiMode> {
+  FutureOr<UiMode> build();
   @$mustCallSuper
   @override
   void runBuild() {
     final created = build();
-    final ref = this.ref as $Ref<UiMode, UiMode>;
+    final ref = this.ref as $Ref<AsyncValue<UiMode>, UiMode>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<UiMode, UiMode>,
-              UiMode,
+              AnyNotifier<AsyncValue<UiMode>, UiMode>,
+              AsyncValue<UiMode>,
               Object?,
               Object?
             >;

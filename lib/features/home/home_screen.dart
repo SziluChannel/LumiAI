@@ -5,6 +5,7 @@ import 'package:lumiai/features/settings/providers/ui_mode_provider.dart';
 // Imports for your specific features and settings
 import 'layouts/minimal_ui.dart';
 import 'layouts/partial_ui.dart';
+import 'package:lumiai/features/settings/ui/settings_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -40,6 +41,17 @@ class HomeScreen extends ConsumerWidget {
               ref.read(uiModeControllerProvider.notifier).toggleMode();
             },
           ),
+          IconButton(
+            icon: const Icon(Icons.settings),
+            tooltip: 'Settings',
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const SettingsScreen(),
+                ),
+              );
+            },
+          ),
           const SizedBox(width: 8),
         ],
       ),
@@ -47,8 +59,12 @@ class HomeScreen extends ConsumerWidget {
       // This is where the magic happens. We swap the entire widget tree
       // based on the selected mode.
       body: switch (uiMode) {
-        UiMode.simplified => const MinimalFunctionalUI(),
-        UiMode.standard => const PartialFunctionalUI(),
+        AsyncData<UiMode>(:final value) => switch (value) {
+          UiMode.simplified => const MinimalFunctionalUI(),
+          UiMode.standard => const PartialFunctionalUI(),
+        },
+        AsyncLoading<UiMode>() => const Center(child: CircularProgressIndicator()),
+        AsyncError<UiMode>(:final error, :final stackTrace) => Center(child: Text('Error: $error')),
       },
     );
   }

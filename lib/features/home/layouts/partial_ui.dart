@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lumiai/core/services/tts_service.dart';
+import 'package:lumiai/features/settings/providers/tts_settings_provider.dart'; // Import settings
 import '../../object_id/object_id_controller.dart';
 import '../../object_id/object_id_state.dart';
 import '../../shared/widgets/task_views.dart';
@@ -55,6 +57,8 @@ class PartialFunctionalUI extends ConsumerWidget {
 
   Widget _buildMenu(BuildContext context, WidgetRef ref) {
     final objectIdController = ref.read(objectIdControllerProvider.notifier);
+    // Watch settings for the temporary sliders
+    final ttsSettings = ref.watch(ttsSettingsControllerProvider);
 
     return ListView(
       padding: const EdgeInsets.all(16),
@@ -65,7 +69,7 @@ class PartialFunctionalUI extends ConsumerWidget {
             _FeatureButton(
               label: "Identify Object",
               icon: Icons.camera_alt,
-              onPressed: objectIdController.captureImage, // Triggers the logic
+              onPressed: objectIdController.captureImage,
             ),
             _FeatureButton(
               label: "Describe Scene",
@@ -89,6 +93,76 @@ class PartialFunctionalUI extends ConsumerWidget {
             ),
           ],
         ),
+        const SizedBox(height: 20),
+        _SectionHeader(title: "Debug"),
+        _FeatureCard(
+          children: [
+            _FeatureButton(
+              label: "Test TTS",
+              icon: Icons.record_voice_over,
+              onPressed: () {
+                ref
+                    .read(ttsServiceProvider)
+                    .speak("This is a test of the text to speech system.");
+              },
+            ),
+          ],
+        ),
+
+        // --- TEMPORARY DEBUG CONTROLS (Easy to remove) ---
+        const SizedBox(height: 10),
+        Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: Colors
+                .yellow
+                .shade100, // Distinct color to remind you to remove it
+            border: Border.all(color: Colors.orange),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "TEMP: TTS Controls",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+              ),
+              Row(
+                children: [
+                  Text("Pitch: ${ttsSettings.pitch.toStringAsFixed(1)}"),
+                  Expanded(
+                    child: Slider(
+                      value: ttsSettings.pitch,
+                      min: 0.5,
+                      max: 2.0,
+                      divisions: 15,
+                      onChanged: (val) => ref
+                          .read(ttsSettingsControllerProvider.notifier)
+                          .setPitch(val),
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Text("Speed: ${ttsSettings.speed.toStringAsFixed(1)}"),
+                  Expanded(
+                    child: Slider(
+                      value: ttsSettings.speed,
+                      min: 0.0,
+                      max: 1.0,
+                      divisions: 10,
+                      onChanged: (val) => ref
+                          .read(ttsSettingsControllerProvider.notifier)
+                          .setSpeed(val),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        // -------------------------------------------------
       ],
     );
   }

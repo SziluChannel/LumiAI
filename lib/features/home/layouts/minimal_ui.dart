@@ -4,6 +4,7 @@ import 'package:lumiai/features/live_chat/ui/live_chat_screen.dart';
 import '../../object_id/object_id_controller.dart';
 import '../../object_id/object_id_state.dart';
 import '../../shared/widgets/task_views.dart';
+import 'package:lumiai/features/settings/ui/settings_screen.dart';
 
 class MinimalFunctionalUI extends ConsumerWidget {
   const MinimalFunctionalUI({super.key});
@@ -86,7 +87,13 @@ class MinimalFunctionalUI extends ConsumerWidget {
         _MinimalMenuButton(
           label: 'Settings',
           icon: Icons.settings,
-          onPressed: () {},
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const SettingsScreen(),
+              ),
+            );
+          },
         ),
       ],
     );
