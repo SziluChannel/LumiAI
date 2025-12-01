@@ -43,23 +43,31 @@ class LiveChatController extends _$LiveChatController {
 
   Future<void> startSession() async {
     try {
-      // 1. Get Shared Client
+      // 1. Request microphone permission first
+      if (!await Permission.microphone.request().isGranted) {
+        state = state.copyWith(
+          status: LiveChatStatus.error,
+          errorMessage: 'Microphone permission denied',
+        );
+        return;
+      }
+
+      // 2. Get Shared Client
       final client = ref.read(geminiLiveClientProvider.notifier);
 
-      // 2. Connect (if needed)
-      // Since it's shared, we only connect if disconnected to save resources
+      // 3. Connect (if needed)
       if (!client.isConnected) {
         await client.connect();
       }
 
-      // 3. Listen to Gemini Text Responses
+      // 4. Listen to Gemini Text Responses
       _geminiStreamSub?.cancel();
       _geminiStreamSub = client.textStream.listen((text) {
         _handleIncomingText(text);
       });
 
-      // 4. Start Microphone
-      await startRecording();
+      // 5. Start continuous audio streaming
+      await _startContinuousRecording();
     } catch (e) {
       state = state.copyWith(
         status: LiveChatStatus.error,
@@ -68,9 +76,7 @@ class LiveChatController extends _$LiveChatController {
     }
   }
 
-  Future<void> startRecording() async {
-    if (!await Permission.microphone.request().isGranted) return;
-
+  Future<void> _startContinuousRecording() async {
     state = state.copyWith(status: LiveChatStatus.listening);
 
     // 1. Start Amplitude Stream (Visuals)
@@ -82,7 +88,7 @@ class LiveChatController extends _$LiveChatController {
           _amplitudeController.add(normalized);
         });
 
-    // 2. Start Audio Stream
+    // 2. Start continuous audio stream
     const config = RecordConfig(
       encoder: AudioEncoder.pcm16bits,
       sampleRate: 16000,
@@ -93,7 +99,7 @@ class LiveChatController extends _$LiveChatController {
 
     _audioStreamSub?.cancel();
     _audioStreamSub = stream.listen((data) {
-      // Stream Mic Audio using real-time input format
+      // Continuously stream mic audio to Gemini Live API
       ref
           .read(geminiLiveClientProvider.notifier)
           .send(
@@ -104,12 +110,14 @@ class LiveChatController extends _$LiveChatController {
     });
   }
 
-  Future<void> stopRecording() async {
+  void stopSession() {
+    // Stop audio recording
     _amplitudeSubscription?.cancel();
-    await _audioStreamSub?.cancel();
-    await _audioRecorder.stop();
-
-    state = state.copyWith(status: LiveChatStatus.processing);
+    _audioStreamSub?.cancel();
+    _audioRecorder.stop();
+    
+    // Reset state
+    state = const LiveChatState();
   }
 
   void _handleIncomingText(String newTextChunk) {
