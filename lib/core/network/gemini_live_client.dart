@@ -15,6 +15,7 @@ class GeminiLiveClient extends _$GeminiLiveClient {
   WebSocketChannel? _channel;
   final _textController = StreamController<String>.broadcast();
   final _turnCompleteController = StreamController<bool>.broadcast();
+  final _audioController = StreamController<Uint8List>.broadcast();
 
   // Configuration
   static const _baseUrl = GeminiLiveParams.webSocketEndpoint;
@@ -23,6 +24,7 @@ class GeminiLiveClient extends _$GeminiLiveClient {
   // Streams for external controllers
   Stream<String> get textStream => _textController.stream;
   Stream<bool> get turnCompleteStream => _turnCompleteController.stream;
+  Stream<Uint8List> get audioStream => _audioController.stream;
   bool get isConnected => _channel != null;
 
   @override
@@ -76,7 +78,7 @@ class GeminiLiveClient extends _$GeminiLiveClient {
         "setup": {
           "model": _modelName,
           "generationConfig": {
-            "responseModalities": ["TEXT"], // We prefer Text for local TTS
+            "responseModalities": ["TEXT"], // Receive text only, use local TTS
             "speechConfig": {
               "voiceConfig": {
                 "prebuiltVoiceConfig": {"voiceName": "Puck"},
@@ -101,14 +103,31 @@ class GeminiLiveClient extends _$GeminiLiveClient {
   /// [imageBytes] - Optional JPEG image bytes.
   /// [audioBytes] - Optional Audio bytes (defaults to 16k PCM if mimeType not provided).
   /// [audioMimeType] - The mime type of the audio (e.g., 'audio/wav', 'audio/pcm;rate=16000').
+  /// [isRealtime] - If true, sends audio as realtime input chunks for streaming.
   void send({
     String? text,
     Uint8List? imageBytes,
     Uint8List? audioBytes,
     String audioMimeType = 'audio/pcm;rate=16000',
+    bool isRealtime = false,
   }) {
     if (_channel == null) {
       print("⚠️ Cannot send: Disconnected");
+      return;
+    }
+
+    // For real-time audio streaming, use realtimeInput format
+    if (isRealtime && audioBytes != null) {
+      _sendJson({
+        "realtimeInput": {
+          "mediaChunks": [
+            {
+              "mimeType": audioMimeType,
+              "data": base64Encode(audioBytes),
+            },
+          ],
+        },
+      });
       return;
     }
 
@@ -129,7 +148,7 @@ class GeminiLiveClient extends _$GeminiLiveClient {
       });
     }
 
-    // 3. Add Audio
+    // 3. Add Audio (non-realtime)
     if (audioBytes != null) {
       parts.add({
         "inlineData": {
@@ -180,6 +199,15 @@ class GeminiLiveClient extends _$GeminiLiveClient {
             if (part is Map && part.containsKey('text')) {
               _textController.add(part['text']);
             }
+            // Handle audio responses
+            if (part is Map && part.containsKey('inlineData')) {
+              final inlineData = part['inlineData'];
+              if (inlineData['mimeType']?.toString().contains('audio') == true) {
+                final audioData = base64Decode(inlineData['data']);
+                _audioController.add(audioData);
+                print("🔊 Received audio chunk: ${audioData.length} bytes");
+              }
+            }
           }
         }
 
@@ -209,5 +237,6 @@ class GeminiLiveClient extends _$GeminiLiveClient {
     disconnect();
     if (!_textController.isClosed) _textController.close();
     if (!_turnCompleteController.isClosed) _turnCompleteController.close();
+    if (!_audioController.isClosed) _audioController.close();
   }
 }

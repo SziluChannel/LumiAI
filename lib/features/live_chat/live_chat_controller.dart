@@ -93,10 +93,14 @@ class LiveChatController extends _$LiveChatController {
 
     _audioStreamSub?.cancel();
     _audioStreamSub = stream.listen((data) {
-      // Stream Mic Audio using the UNIFIED send() method
+      // Stream Mic Audio using real-time input format
       ref
           .read(geminiLiveClientProvider.notifier)
-          .send(audioBytes: data, audioMimeType: 'audio/pcm;rate=16000');
+          .send(
+            audioBytes: data, 
+            audioMimeType: 'audio/pcm;rate=16000',
+            isRealtime: true, // Enable real-time streaming
+          );
     });
   }
 
