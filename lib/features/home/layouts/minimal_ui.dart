@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lumiai/features/live_chat/ui/live_chat_screen.dart';
 import '../../object_id/object_id_controller.dart';
 import '../../object_id/object_id_state.dart';
-import '../../shared/widgets/task_views.dart';
+import '../../object_id/ui/object_id_task_handler.dart';
 import 'package:lumiai/features/settings/ui/settings_screen.dart';
 
 class MinimalFunctionalUI extends ConsumerWidget {
@@ -11,63 +10,15 @@ class MinimalFunctionalUI extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Watch the Logic
     final objectIdState = ref.watch(objectIdControllerProvider);
     final objectIdController = ref.read(objectIdControllerProvider.notifier);
 
-    // 1. ERROR STATE
-    if (objectIdState.status == ObjectIdStatus.error) {
-      return Center(child: Text("Error: ${objectIdState.errorMessage}"));
+    // If a task is active, show the shared task handler
+    if (objectIdState.status != ObjectIdStatus.idle) {
+      return const ObjectIdTaskHandler();
     }
 
-    // 2. LOADING STATE
-    if (objectIdState.status == ObjectIdStatus.processing) {
-      return const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircularProgressIndicator(strokeWidth: 6),
-            SizedBox(height: 20),
-            Text("Analyzing...", style: TextStyle(fontSize: 24)),
-          ],
-        ),
-      );
-    }
-
-    // 3. CONFIRMATION STATE
-    if (objectIdState.status == ObjectIdStatus.confirmingImage) {
-      return ConfirmationView(
-        imageFile: objectIdState.imageFile!,
-        onRetake: objectIdController.retakeImage,
-        onConfirm: objectIdController.confirmAndAnalyze,
-      );
-    }
-
-    // 4. STREAMING OR SUCCESS STATE
-    if (objectIdState.status == ObjectIdStatus.success ||
-        objectIdState.status == ObjectIdStatus.streaming) {
-      return ResultView(
-        text: objectIdState.resultText ?? "",
-        isStreaming: objectIdState.status == ObjectIdStatus.streaming,
-        onDone: objectIdController.reset,
-
-        // Wire up the new feature here:
-        onDeepDive: () async {
-          final imageFile = objectIdState.imageFile;
-          if (imageFile != null) {
-            final bytes = await imageFile.readAsBytes();
-
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => LiveChatScreen(imageBytes: bytes),
-              ),
-            );
-          }
-        },
-      );
-    }
-
-    // 5. IDLE (MAIN MENU)
+    // Otherwise, show the minimal menu
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -89,9 +40,7 @@ class MinimalFunctionalUI extends ConsumerWidget {
           icon: Icons.settings,
           onPressed: () {
             Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => const SettingsScreen(),
-              ),
+              MaterialPageRoute(builder: (context) => const SettingsScreen()),
             );
           },
         ),

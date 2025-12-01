@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:lumiai/core/constants/app_prompts.dart';
 import 'package:lumiai/core/constants/gemini_live_params.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -105,6 +106,7 @@ class GeminiLiveClient extends _$GeminiLiveClient {
             // We'll get transcriptions of the audio for local TTS
             "responseModalities": ["AUDIO"],
           },
+          "systemInstruction": AppPrompts.systemInstruction,
         },
       };
 
@@ -202,14 +204,29 @@ class GeminiLiveClient extends _$GeminiLiveClient {
     }
 
     // Send Client Content (text, images, video, or audio)
-    _sendJson({
+    final payload = {
       "clientContent": {
         "turns": [
           {"role": "user", "parts": parts},
         ],
         "turnComplete": true,
       },
-    });
+    };
+
+    // Debug logging
+    print("📤 Sending clientContent with ${parts.length} parts:");
+    for (var i = 0; i < parts.length; i++) {
+      final part = parts[i];
+      if (part.containsKey('text')) {
+        print("  Part $i: Text (${part['text'].toString().length} chars)");
+      } else if (part.containsKey('inlineData')) {
+        final mimeType = part['inlineData']['mimeType'];
+        final dataLength = part['inlineData']['data'].toString().length;
+        print("  Part $i: InlineData ($mimeType, $dataLength chars base64)");
+      }
+    }
+
+    _sendJson(payload);
   }
 
   void _sendJson(Map<String, dynamic> data) {
@@ -269,6 +286,9 @@ class GeminiLiveClient extends _$GeminiLiveClient {
 
       if (msg.containsKey('serverContent')) {
         final content = msg['serverContent'];
+        print(
+          "📥 Received serverContent with fields: ${content.keys.join(', ')}",
+        );
 
         // Handle audio transcription (for AUDIO response modality)
         // This gives us text from the audio output for local TTS
@@ -285,6 +305,7 @@ class GeminiLiveClient extends _$GeminiLiveClient {
         // Extract Text (for TEXT response modality)
         if (content.containsKey('modelTurn')) {
           final parts = content['modelTurn']['parts'] as List;
+          print("📦 Model turn has ${parts.length} parts");
           for (var part in parts) {
             if (part is Map && part.containsKey('text')) {
               _textController.add(part['text']);
@@ -302,9 +323,12 @@ class GeminiLiveClient extends _$GeminiLiveClient {
           }
         }
 
-        // Check for End of Turn
-        if (content.containsKey('turnComplete') &&
-            content['turnComplete'] == true) {
+        // Check for Generation Complete (marks end of transcription)
+        // generationComplete indicates the model is done generating output
+        // turnComplete comes later after audio playback would finish
+        if (content.containsKey('generationComplete') &&
+            content['generationComplete'] == true) {
+          print("✅ Generation complete");
           _turnCompleteController.add(true);
         }
       }

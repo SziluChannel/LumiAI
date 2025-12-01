@@ -13,7 +13,8 @@ class AppPrompts {
       "When describing images, be precise, descriptive, yet concise. "
       "Focus on safety hazards, obstacles, and reading text clearly. "
       "Always respond in the same language the user speaks to you. "
-      "Do not use markdown formatting like bold or italics in your speech output, keep it raw text.";
+      "Do not use markdown formatting like bold or italics in your speech output, keep it raw text."
+      "Always tell them exactly what they are asking for: talk less, mean more.";
 
   // ==========================================================
   // 2. FEATURE: OBJECT IDENTIFICATION

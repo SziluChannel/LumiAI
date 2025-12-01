@@ -4,55 +4,26 @@ import 'package:lumiai/core/services/tts_service.dart';
 import 'package:lumiai/features/settings/providers/tts_settings_provider.dart'; // Import settings
 import '../../object_id/object_id_controller.dart';
 import '../../object_id/object_id_state.dart';
-import '../../shared/widgets/task_views.dart';
+import '../../object_id/ui/object_id_task_handler.dart';
 
 class PartialFunctionalUI extends ConsumerWidget {
   const PartialFunctionalUI({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Watch the Logic
     final objectIdState = ref.watch(objectIdControllerProvider);
 
-    // If we are doing a task, hijack the screen to show the task flow
-    // This ensures consistency between minimal and partial modes
+    // If we are doing a task, show it in a scaffold with the shared task handler
+    // This ensures consistency with minimal mode
     if (objectIdState.status != ObjectIdStatus.idle) {
       return Scaffold(
-        appBar: AppBar(title: Text("Processing...")),
-        body: _buildActiveTaskView(ref, objectIdState),
+        appBar: AppBar(title: const Text("Processing...")),
+        body: const ObjectIdTaskHandler(),
       );
     }
 
     // Otherwise, show the fancy menu
     return _buildMenu(context, ref);
-  }
-
-  Widget _buildActiveTaskView(WidgetRef ref, ObjectIdState state) {
-    final controller = ref.read(objectIdControllerProvider.notifier);
-
-    return switch (state.status) {
-      ObjectIdStatus.processing => const Center(
-        child: CircularProgressIndicator(),
-      ),
-      ObjectIdStatus.confirmingImage => ConfirmationView(
-        imageFile: state.imageFile!,
-        onRetake: controller.retakeImage,
-        onConfirm: controller.confirmAndAnalyze,
-      ),
-      ObjectIdStatus.success => ResultView(
-        text: state.resultText!,
-        onDone: controller.reset,
-      ),
-      ObjectIdStatus.error => Center(
-        child: Column(
-          children: [
-            Text("Error: ${state.errorMessage}"),
-            ElevatedButton(onPressed: controller.reset, child: Text("Close")),
-          ],
-        ),
-      ),
-      _ => SizedBox.shrink(),
-    };
   }
 
   Widget _buildMenu(BuildContext context, WidgetRef ref) {
