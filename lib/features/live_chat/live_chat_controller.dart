@@ -143,9 +143,11 @@ class LiveChatController extends _$LiveChatController {
 
     _isSpeaking = true;
     final textToSpeak = _ttsQueue.removeAt(0);
-    final tts = ref.read(ttsServiceProvider);
+    final tts = ref.read(ttsServiceProvider).value; // Access the TtsService from AsyncValue
 
-    await tts.speak(textToSpeak);
+    if (tts != null) {
+      await tts.speak(textToSpeak);
+    }
 
     _isSpeaking = false;
     _processTtsQueue();

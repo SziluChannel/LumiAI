@@ -30,6 +30,14 @@ class SettingsScreen extends ConsumerWidget {
           const Divider(height: 32),
 
           // ------------------------------------------
+          // 🔊 HANG BEÁLLÍTÁSOK (TTS)
+          // ------------------------------------------
+          const SectionHeader(title: 'Hangbeállítások'),
+          _buildTtsSettings(ref),
+
+          const Divider(height: 32),
+
+          // ------------------------------------------
           // ℹ️ INFORMÁCIÓ
           // ------------------------------------------
           const SectionHeader(title: 'Információ'),
