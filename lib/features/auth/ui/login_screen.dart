@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lumiai/features/home/home_screen.dart'; // Import the actual HomeScreen
 import 'package:lumiai/core/services/biometric_auth_service.dart'; // Import BiometricAuthService
 import 'package:lumiai/core/services/feedback_service.dart'; // Import FeedbackService
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends ConsumerState<LoginScreen> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isPasswordVisible = false;
@@ -64,7 +65,7 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() {
         _errorMessage = null; // Clear any previous errors
       });
-      FeedbackService.triggerSuccessFeedback(); // Trigger success haptic feedback
+      ref.read(feedbackServiceProvider).triggerSuccessFeedback(); // Trigger success haptic feedback
       // Navigate to the actual HomeScreen using Navigator.of(context).pushReplacement(...)
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (_) => const HomeScreen()),
@@ -74,7 +75,7 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() {
         _errorMessage = 'Incorrect username or password.';
       });
-      FeedbackService.triggerErrorFeedback(); // Trigger error haptic feedback
+      ref.read(feedbackServiceProvider).triggerErrorFeedback(); // Trigger error haptic feedback
       // The Semantics(liveRegion: true) widget will ensure this error is announced.
     }
   }
@@ -122,7 +123,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       setState(() {
                         _isPasswordVisible = !_isPasswordVisible;
                       });
-                      FeedbackService.triggerSuccessFeedback(); // Trigger success haptic feedback on toggle
+                      ref.read(feedbackServiceProvider).triggerSuccessFeedback(); // Trigger success haptic feedback on toggle
                     },
                   ),
                 ),

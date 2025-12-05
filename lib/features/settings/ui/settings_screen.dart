@@ -8,6 +8,7 @@ import 'package:lumiai/core/services/tts_service.dart';
 import 'package:lumiai/core/constants/app_themes.dart'; // Needed for CustomThemeType in dropdown
 import 'package:lumiai/features/accessibility/font_size_feature.dart'; // For AccessibilitySettingsScreen
 import 'package:lumiai/core/services/feedback_service.dart'; // Import FeedbackService
+import 'package:lumiai/features/settings/providers/haptic_feedback_provider.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -38,7 +39,7 @@ class SettingsScreen extends ConsumerWidget {
             subtitle: 'Adjust font size for better readability',
             trailing: const Icon(Icons.chevron_right),
             onTap: () {
-              FeedbackService.triggerSuccessFeedback(); // Haptic feedback
+              ref.read(feedbackServiceProvider).triggerSuccessFeedback(); // Haptic feedback
               Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) => const AccessibilitySettingsScreen()),
               );
@@ -52,6 +53,14 @@ class SettingsScreen extends ConsumerWidget {
           // ------------------------------------------
           const SectionHeader(title: 'Hangbeállítások'),
           _buildTtsSettings(ref),
+
+          const Divider(height: 32),
+
+          // ------------------------------------------
+          // 📳 HAPTIC FEEDBACK
+          // ------------------------------------------
+          const SectionHeader(title: 'Haptic Feedback'),
+          _buildHapticFeedbackSetting(ref),
 
           const Divider(height: 32),
 
@@ -180,6 +189,28 @@ class SettingsScreen extends ConsumerWidget {
               ),
             ),
           ],
+        );
+      },
+    );
+  }
+
+  // Haptic Feedback beállítás
+  Widget _buildHapticFeedbackSetting(WidgetRef ref) {
+    final hapticFeedbackAsync = ref.watch(hapticFeedbackControllerProvider);
+
+    return hapticFeedbackAsync.when(
+      loading: () => const SettingsTile(title: 'Haptic Feedback', trailing: CircularProgressIndicator()),
+      error: (e, s) => SettingsTile(title: 'Error loading haptic feedback', subtitle: e.toString()),
+      data: (isEnabled) {
+        final controller = ref.read(hapticFeedbackControllerProvider.notifier);
+
+        return SettingsTile(
+          title: 'Haptic Feedback',
+          subtitle: isEnabled ? 'Enabled' : 'Disabled',
+          trailing: Switch(
+            value: isEnabled,
+            onChanged: (value) => controller.setHapticFeedback(value),
+          ),
         );
       },
     );

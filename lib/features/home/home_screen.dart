@@ -80,7 +80,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
             tooltip: 'Switch UI Mode',
             onPressed: () {
-              FeedbackService.triggerSuccessFeedback(); // Haptic feedback
+              ref.read(feedbackServiceProvider).triggerSuccessFeedback(); // Haptic feedback
               ref.read(uiModeControllerProvider.notifier).toggleMode();
             },
           ),
@@ -88,7 +88,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             icon: const Icon(Icons.settings),
             tooltip: 'Settings',
             onPressed: () {
-              FeedbackService.triggerSuccessFeedback(); // Haptic feedback
+              ref.read(feedbackServiceProvider).triggerSuccessFeedback(); // Haptic feedback
               Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) => const SettingsScreen()),
               );

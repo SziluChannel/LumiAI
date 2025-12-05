@@ -107,13 +107,13 @@ class _FeatureCard extends StatelessWidget {
   }
 }
 
-class _FeatureButton extends StatelessWidget {
+class _FeatureButton extends ConsumerWidget {
   final String label;
   final IconData icon;
   final VoidCallback onPressed;
 
   // Removed const keyword from constructor because of dynamic scaleFactor
-  _FeatureButton({
+  const _FeatureButton({
     super.key,
     required this.label,
     required this.icon,
@@ -121,13 +121,13 @@ class _FeatureButton extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final fontSizeProvider = pr.Provider.of<FontSizeProvider>(context);
     final double scaleFactor = fontSizeProvider.scaleFactor;
 
     return InkWell(
       onTap: () {
-        FeedbackService.triggerSuccessFeedback();
+        ref.read(feedbackServiceProvider).triggerSuccessFeedback();
         onPressed();
       },
       borderRadius: BorderRadius.circular(8),

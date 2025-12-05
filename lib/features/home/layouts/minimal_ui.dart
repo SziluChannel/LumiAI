@@ -50,13 +50,13 @@ class MinimalFunctionalUI extends ConsumerWidget {
   }
 }
 
-class _MinimalMenuButton extends StatelessWidget {
+class _MinimalMenuButton extends ConsumerWidget {
   final String label;
   final IconData icon;
   final VoidCallback onPressed;
 
   // Removed const keyword due to dynamic scaling
-  _MinimalMenuButton({
+  const _MinimalMenuButton({
     super.key,
     required this.label,
     required this.icon,
@@ -64,7 +64,7 @@ class _MinimalMenuButton extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final fontSizeProvider = pr.Provider.of<FontSizeProvider>(context);
     final double scaleFactor = fontSizeProvider.scaleFactor;
 
@@ -89,7 +89,7 @@ class _MinimalMenuButton extends StatelessWidget {
             ),
           ),
           onPressed: () {
-            FeedbackService.triggerSuccessFeedback();
+            ref.read(feedbackServiceProvider).triggerSuccessFeedback();
             onPressed();
           },
         ),
