@@ -32,35 +32,15 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     
-    // Figyeljük a kiszámított ThemeMode-ot, ami olvassa a mentett beállítást.
-    final themeMode = ref.watch(materialThemeModeProvider);
+    // Figyeljük a kiszámított teljes ThemeData objektumot.
+    final appTheme = ref.watch(selectedAppThemeProvider);
 
     return MaterialApp(
       title: 'LumiAI',
       debugShowCheckedModeBanner: false,
       
-      // 1. Beállítjuk a themeMode-ot a provider értékére
-      themeMode: themeMode, 
-
-      // 2. Világos téma (Light Theme)
-      theme: ThemeData(
-        brightness: Brightness.light,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.blue, 
-          brightness: Brightness.light,
-        ),
-        useMaterial3: true,
-      ),
-      
-      // 3. Sötét téma (Dark Theme)
-      darkTheme: ThemeData(
-        brightness: Brightness.dark,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.blue, 
-          brightness: Brightness.dark,
-        ),
-        useMaterial3: true,
-      ),
+      // A teljes ThemeData objektum beállítása a provider értékére.
+      theme: appTheme,
 
       // Ez a fő képernyő, ami a beállított UI módot (standard/simplified) is kezeli.
       home: const LoginScreen(), // Set LoginScreen as the initial screen

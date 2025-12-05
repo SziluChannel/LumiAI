@@ -1,62 +1,133 @@
 import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:lumiai/core/constants/app_themes.dart'; // Import custom themes
 
 part 'theme_provider.g.dart';
 
 // Az enum a témák lehetséges állapotait definiálja
 enum AppThemeMode { light, dark, system }
 
-const _kThemeModeKey = 'app_theme_mode';
+// ÚJ ENUM: A kiegészítő, hozzáférhetőségi témák típusai
+enum CustomThemeType {
+  none, // Használd a standard light/dark témát
+  highContrast,
+  colorblindFriendly,
+  amoled,
+}
 
-@Riverpod(keepAlive: true)
-class ThemeController extends _$ThemeController {
-  
-  late final SharedPreferences _prefs;
-  
-  @override
-  // Aszinkron betöltés shared_preferences-ből
-  Future<AppThemeMode> build() async {
-    _prefs = await SharedPreferences.getInstance();
-    
-    final savedModeString = _prefs.getString(_kThemeModeKey);
-    
-    if (savedModeString == null) {
-      return AppThemeMode.system; // Alapértelmezett: Rendszer
-    }
+// Az AppThemeMode mellett tároljuk a kiválasztott custom téma típusát is.
+// Ezt az állapotot a ThemeController fogja kezelni.
+class ThemeState {
+  final AppThemeMode appThemeMode;
+  final CustomThemeType customThemeType;
 
-    // String konvertálása AppThemeMode enum-má
-    return AppThemeMode.values.firstWhere(
-      (mode) => mode.name == savedModeString,
-      orElse: () => AppThemeMode.system,
+  const ThemeState({
+    this.appThemeMode = AppThemeMode.system,
+    this.customThemeType = CustomThemeType.none,
+  });
+
+  ThemeState copyWith({
+    AppThemeMode? appThemeMode,
+    CustomThemeType? customThemeType,
+  }) {
+    return ThemeState(
+      appThemeMode: appThemeMode ?? this.appThemeMode,
+      customThemeType: customThemeType ?? this.customThemeType,
     );
-  }
-
-  // Publikus metódus a téma beállítására és mentésére
-  void setMode(AppThemeMode mode) async {
-    // Frissítjük a provider állapotát
-    state = AsyncValue.data(mode); 
-    // Mentjük a shared_preferences-be (a .name használatával)
-    await _prefs.setString(_kThemeModeKey, mode.name);
   }
 }
 
-// Segéd provider a ThemeMode-hoz, amit a MaterialApp használhat.
+const _kAppThemeModeKey = 'app_theme_mode';
+const _kCustomThemeTypeKey = 'custom_theme_type';
+
+@Riverpod(keepAlive: true)
+class ThemeController extends _$ThemeController {
+  late final SharedPreferences _prefs;
+
+  @override
+  // Aszinkron betöltés shared_preferences-ből
+  Future<ThemeState> build() async {
+    _prefs = await SharedPreferences.getInstance();
+
+    final savedAppModeString = _prefs.getString(_kAppThemeModeKey);
+    final savedCustomThemeString = _prefs.getString(_kCustomThemeTypeKey);
+
+    final initialAppThemeMode = savedAppModeString == null
+        ? AppThemeMode.system
+        : AppThemeMode.values.firstWhere(
+            (mode) => mode.name == savedAppModeString,
+            orElse: () => AppThemeMode.system,
+          );
+
+    final initialCustomThemeType = savedCustomThemeString == null
+        ? CustomThemeType.none
+        : CustomThemeType.values.firstWhere(
+            (type) => type.name == savedCustomThemeString,
+            orElse: () => CustomThemeType.none,
+          );
+
+    return ThemeState(
+      appThemeMode: initialAppThemeMode,
+      customThemeType: initialCustomThemeType,
+    );
+  }
+
+  // Publikus metódus a standard téma beállítására és mentésére
+  void setAppThemeMode(AppThemeMode mode) async {
+    state = AsyncValue.data(state.value!.copyWith(appThemeMode: mode));
+    await _prefs.setString(_kAppThemeModeKey, mode.name);
+  }
+
+  // Publikus metódus a custom téma beállítására és mentésére
+  void setCustomThemeType(CustomThemeType type) async {
+    state = AsyncValue.data(state.value!.copyWith(customThemeType: type));
+    await _prefs.setString(_kCustomThemeTypeKey, type.name);
+  }
+}
+
+// Segéd provider a ThemeMode-hoz (standard light/dark/system).
 // Csak akkor érhető el, ha a ThemeController betöltődött (hasValue).
+// Új név a kód ütközések elkerülésére, mivel az eredeti `materialThemeMode`
+// most már a teljes ThemeData-t fogja szolgáltatni.
 @riverpod
-ThemeMode materialThemeMode(Ref ref) {
-  final appThemeMode = ref.watch(themeControllerProvider);
-  
-  return appThemeMode.when(
-    data: (mode) {
-      return switch (mode) {
-        AppThemeMode.light => ThemeMode.light,
-        AppThemeMode.dark => ThemeMode.dark,
-        AppThemeMode.system => ThemeMode.system,
-      };
+AppThemeMode currentAppThemeMode(Ref ref) {
+  return ref.watch(themeControllerProvider).when(
+        data: (themeState) => themeState.appThemeMode,
+        loading: () => AppThemeMode.system,
+        error: (_, __) => AppThemeMode.system,
+      );
+}
+
+// ÚJ PROVIDER: Ez fogja szolgáltatni a teljes ThemeData objektumot a MaterialApp számára.
+// Figyelembe veszi mind az AppThemeMode-ot, mind a CustomThemeType-ot.
+@riverpod
+ThemeData selectedAppTheme(Ref ref) {
+  final themeState = ref.watch(themeControllerProvider);
+
+  return themeState.when(
+    data: (state) {
+      if (state.customThemeType != CustomThemeType.none) {
+        // Ha custom téma van kiválasztva, azt használjuk
+        return switch (state.customThemeType) {
+          CustomThemeType.highContrast => AppThemes.highContrastTheme,
+          CustomThemeType.colorblindFriendly => AppThemes.colorblindTheme,
+          CustomThemeType.amoled => AppThemes.amoledTheme,
+          _ => ThemeData.light(useMaterial3: true), // Fallback
+        };
+      } else {
+        // Ha nincs custom téma, akkor a standard light/dark/system logikát követjük
+        return switch (state.appThemeMode) {
+          AppThemeMode.light => ThemeData.light(useMaterial3: true),
+          AppThemeMode.dark => ThemeData.dark(useMaterial3: true),
+          AppThemeMode.system =>
+            WidgetsBinding.instance.window.platformBrightness == Brightness.dark
+                ? ThemeData.dark(useMaterial3: true)
+                : ThemeData.light(useMaterial3: true),
+        };
+      }
     },
-    // Betöltés alatt vagy hiba esetén maradjunk az alapértelmezett rendszertémánál
-    loading: () => ThemeMode.system,
-    error: (_, __) => ThemeMode.system,
+    loading: () => ThemeData.light(useMaterial3: true), // Alapértelmezett betöltés alatt
+    error: (_, __) => ThemeData.light(useMaterial3: true), // Alapértelmezett hiba esetén
   );
 }

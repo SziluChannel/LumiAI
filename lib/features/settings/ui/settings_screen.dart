@@ -5,6 +5,7 @@ import 'package:lumiai/features/settings/providers/ui_mode_provider.dart';
 import 'package:lumiai/features/settings/providers/tts_settings_provider.dart';
 import 'package:lumiai/features/settings/ui/settings_tile.dart';
 import 'package:lumiai/core/services/tts_service.dart';
+import 'package:lumiai/core/constants/app_themes.dart'; // Needed for CustomThemeType in dropdown
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -97,32 +98,73 @@ class SettingsScreen extends ConsumerWidget {
 
   // Téma Mód beállítás
   Widget _buildThemeModeSetting(WidgetRef ref) {
-    final themeModeAsync = ref.watch(themeControllerProvider);
-    
-    return themeModeAsync.when(
-      loading: () => const SettingsTile(title: 'Téma Mód', trailing: CircularProgressIndicator()),
-      error: (e, s) => SettingsTile(title: 'Hiba a téma betöltésében', subtitle: e.toString()),
-      data: (currentMode) {
+    final themeStateAsync = ref.watch(themeControllerProvider); // Watch the full theme state
+
+    return themeStateAsync.when(
+      loading: () => Column( // Use Column for multiple loading indicators
+        children: const [
+          SettingsTile(title: 'Téma Mód', trailing: CircularProgressIndicator()),
+          SettingsTile(title: 'Hozzáférhetőségi Téka', trailing: CircularProgressIndicator()),
+        ],
+      ),
+      error: (e, s) => Column( // Use Column for multiple error messages
+        children: [
+          SettingsTile(title: 'Hiba a mód betöltésében', subtitle: e.toString()),
+          SettingsTile(title: 'Hiba a custom téma betöltésében', subtitle: e.toString()),
+        ],
+      ),
+      data: (themeState) {
         final controller = ref.read(themeControllerProvider.notifier);
-        
-        return SettingsTile(
-          title: 'Sötét Téma',
-          subtitle: 'Jelenlegi: ${currentMode.name.toUpperCase()}',
-          // A legördülő menü (Dropdown) ideális a több válaszlehetőséghez
-          trailing: DropdownButton<AppThemeMode>(
-            value: currentMode,
-            onChanged: (AppThemeMode? newMode) {
-              if (newMode != null) {
-                controller.setMode(newMode);
-              }
-            },
-            items: AppThemeMode.values.map((mode) {
-              return DropdownMenuItem(
-                value: mode,
-                child: Text(mode.name.toUpperCase()),
-              );
-            }).toList(),
-          ),
+
+        return Column(
+          children: [
+            // Standard Light/Dark/System Theme Selection
+            SettingsTile(
+              title: 'Téma Mód',
+              subtitle: 'Jelenlegi: ${themeState.appThemeMode.name.toUpperCase()}',
+              trailing: DropdownButton<AppThemeMode>(
+                value: themeState.appThemeMode,
+                onChanged: (AppThemeMode? newMode) {
+                  if (newMode != null) {
+                    controller.setAppThemeMode(newMode); // Use new method
+                    // Reset custom theme if standard mode is selected
+                    if (newMode != AppThemeMode.system) { // Only reset if not system
+                       controller.setCustomThemeType(CustomThemeType.none);
+                    }
+                  }
+                },
+                items: AppThemeMode.values.map((mode) {
+                  return DropdownMenuItem(
+                    value: mode,
+                    child: Text(mode.name.toUpperCase()),
+                  );
+                }).toList(),
+              ),
+            ),
+            // Custom Accessibility Theme Selection
+            SettingsTile(
+              title: 'Hozzáférhetőségi Téka',
+              subtitle: 'Jelenlegi: ${themeState.customThemeType.name.toUpperCase()}',
+              trailing: DropdownButton<CustomThemeType>(
+                value: themeState.customThemeType,
+                onChanged: (CustomThemeType? newType) {
+                  if (newType != null) {
+                    controller.setCustomThemeType(newType);
+                  }
+                },
+                items: CustomThemeType.values.map((type) {
+                  return DropdownMenuItem(
+                    value: type,
+                    child: Text(
+                        type == CustomThemeType.none
+                            ? 'None'
+                            : type.name.split('_').map((s) => s[0].toUpperCase() + s.substring(1)).join(' '),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+          ],
         );
       },
     );
