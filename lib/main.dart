@@ -6,7 +6,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart'; // For your API Key
 import 'package:lumiai/features/settings/providers/theme_provider.dart'; 
 
 // A meglévő Home Screen importálása
-import 'package:lumiai/features/home/home_screen.dart'; 
+import 'package:lumiai/features/home/home_screen.dart';
+import 'package:lumiai/features/auth/ui/login_screen.dart'; // Import LoginScreen
 
 Future<void> main() async {
   // 1. Ensure Flutter bindings are initialized before async code
@@ -62,7 +63,7 @@ class MyApp extends ConsumerWidget {
       ),
 
       // Ez a fő képernyő, ami a beállított UI módot (standard/simplified) is kezeli.
-      home: const HomeScreen(), 
+      home: const LoginScreen(), // Set LoginScreen as the initial screen
     );
   }
 }
