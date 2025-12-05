@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lumiai/core/constants/app_prompts.dart';
 import 'package:lumiai/features/global_listening/global_listening_controller.dart';
 import 'package:lumiai/features/settings/ui/settings_screen.dart';
+import 'package:provider/provider.dart' as pr; // Alias for Provider.of
+import 'package:lumiai/features/accessibility/font_size_feature.dart'; // For FontSizeProvider
 
 class MinimalFunctionalUI extends ConsumerWidget {
   const MinimalFunctionalUI({super.key});
@@ -52,7 +54,9 @@ class _MinimalMenuButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback onPressed;
 
-  const _MinimalMenuButton({
+  // Removed const keyword due to dynamic scaling
+  _MinimalMenuButton({
+    super.key,
     required this.label,
     required this.icon,
     required this.onPressed,
@@ -60,19 +64,29 @@ class _MinimalMenuButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final fontSizeProvider = pr.Provider.of<FontSizeProvider>(context);
+    final double scaleFactor = fontSizeProvider.scaleFactor;
+
     return Expanded(
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(16.0 * scaleFactor), // Scale padding
         child: ElevatedButton.icon(
           style: ElevatedButton.styleFrom(
             backgroundColor: Theme.of(context).primaryColor.withAlpha(200),
             foregroundColor: Colors.white,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(20 * scaleFactor), // Scale border radius
+            ),
+            padding: EdgeInsets.symmetric(horizontal: 16 * scaleFactor, vertical: 12 * scaleFactor), // Scale padding
+          ),
+          icon: Icon(icon, size: 60 * scaleFactor), // Scale icon size
+          label: Text(
+            label,
+            style: TextStyle(
+              fontSize: 32 * scaleFactor, // Scale text size
+              fontWeight: FontWeight.bold,
             ),
           ),
-          icon: Icon(icon, size: 60),
-          label: Text(label, style: const TextStyle(fontSize: 32)),
           onPressed: onPressed,
         ),
       ),

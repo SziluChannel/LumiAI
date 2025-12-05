@@ -6,6 +6,7 @@ import 'package:lumiai/features/settings/providers/tts_settings_provider.dart';
 import 'package:lumiai/features/settings/ui/settings_tile.dart';
 import 'package:lumiai/core/services/tts_service.dart';
 import 'package:lumiai/core/constants/app_themes.dart'; // Needed for CustomThemeType in dropdown
+import 'package:lumiai/features/accessibility/font_size_feature.dart'; // For AccessibilitySettingsScreen
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -29,6 +30,18 @@ class SettingsScreen extends ConsumerWidget {
 
           // 2. Téma Mód (Dark Mode)
           _buildThemeModeSetting(ref),
+
+          // 3. Accessibility Settings (Font Size)
+          SettingsTile(
+            title: 'Accessibility Settings',
+            subtitle: 'Adjust font size for better readability',
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const AccessibilitySettingsScreen()),
+              );
+            },
+          ),
 
           const Divider(height: 32),
 

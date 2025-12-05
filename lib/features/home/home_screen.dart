@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lumiai/features/global_listening/global_listening_controller.dart';
 import 'package:lumiai/features/global_listening/global_listening_state.dart';
 import 'package:lumiai/features/settings/providers/ui_mode_provider.dart';
+import 'package:lumiai/features/accessibility/font_size_feature.dart'; // Import ScaledTextWidget
 
 // Imports for your specific features and settings
 import 'layouts/minimal_ui.dart';
@@ -46,7 +47,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       appBar: AppBar(
         title: Row(
           children: [
-            Text(title),
+            // Use ScaledTextWidget for the title
+            ScaledTextWidget(
+              text: title,
+              baseFontSize: 20, // Base font size for the app bar title
+              fontWeight: FontWeight.bold,
+            ),
             const SizedBox(width: 10),
             // Status Indicator
             if (listeningState.status == GlobalListeningStatus.listening)

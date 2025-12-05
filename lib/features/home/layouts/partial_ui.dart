@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lumiai/core/constants/app_prompts.dart';
 import 'package:lumiai/features/global_listening/global_listening_controller.dart';
 import 'package:lumiai/features/live_chat/ui/live_chat_screen.dart';
+import 'package:provider/provider.dart' as pr; // Alias for Provider.of
+import 'package:lumiai/features/accessibility/font_size_feature.dart'; // For FontSizeProvider
 
 class PartialFunctionalUI extends ConsumerWidget {
   const PartialFunctionalUI({super.key});
@@ -109,7 +111,9 @@ class _FeatureButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback onPressed;
 
-  const _FeatureButton({
+  // Removed const keyword from constructor because of dynamic scaleFactor
+  _FeatureButton({
+    super.key,
     required this.label,
     required this.icon,
     required this.onPressed,
@@ -117,20 +121,26 @@ class _FeatureButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final fontSizeProvider = pr.Provider.of<FontSizeProvider>(context);
+    final double scaleFactor = fontSizeProvider.scaleFactor;
+
     return InkWell(
       onTap: onPressed,
       borderRadius: BorderRadius.circular(8),
       child: Container(
-        width: 120,
+        width: 120 * scaleFactor, // Scale button width
         padding: const EdgeInsets.symmetric(vertical: 12),
         child: Column(
           children: [
-            Icon(icon, size: 40, color: Theme.of(context).primaryColor),
-            const SizedBox(height: 8),
+            Icon(icon, size: 40 * scaleFactor, color: Theme.of(context).primaryColor), // Scale icon size
+            SizedBox(height: 8 * scaleFactor), // Scale spacing, removed const
             Text(
               label,
               textAlign: TextAlign.center,
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16 * scaleFactor, // Scale text size
+              ),
             ),
           ],
         ),
