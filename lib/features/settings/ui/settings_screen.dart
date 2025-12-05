@@ -7,6 +7,7 @@ import 'package:lumiai/features/settings/ui/settings_tile.dart';
 import 'package:lumiai/core/services/tts_service.dart';
 import 'package:lumiai/core/constants/app_themes.dart'; // Needed for CustomThemeType in dropdown
 import 'package:lumiai/features/accessibility/font_size_feature.dart'; // For AccessibilitySettingsScreen
+import 'package:lumiai/core/services/feedback_service.dart'; // Import FeedbackService
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -37,6 +38,7 @@ class SettingsScreen extends ConsumerWidget {
             subtitle: 'Adjust font size for better readability',
             trailing: const Icon(Icons.chevron_right),
             onTap: () {
+              FeedbackService.triggerSuccessFeedback(); // Haptic feedback
               Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) => const AccessibilitySettingsScreen()),
               );

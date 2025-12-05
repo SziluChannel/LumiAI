@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lumiai/core/constants/app_prompts.dart';
+import 'package:lumiai/core/services/feedback_service.dart';
 import 'package:lumiai/features/global_listening/global_listening_controller.dart';
 import 'package:lumiai/features/live_chat/ui/live_chat_screen.dart';
 import 'package:provider/provider.dart' as pr; // Alias for Provider.of
@@ -125,7 +126,10 @@ class _FeatureButton extends StatelessWidget {
     final double scaleFactor = fontSizeProvider.scaleFactor;
 
     return InkWell(
-      onTap: onPressed,
+      onTap: () {
+        FeedbackService.triggerSuccessFeedback();
+        onPressed();
+      },
       borderRadius: BorderRadius.circular(8),
       child: Container(
         width: 120 * scaleFactor, // Scale button width

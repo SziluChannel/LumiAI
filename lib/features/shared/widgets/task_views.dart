@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:lumiai/core/services/feedback_service.dart';
 
 // =========================================================
 // 1. CONFIRMATION VIEW (Image + Confirm/Retake)
@@ -225,7 +226,10 @@ class _ActionButton extends StatelessWidget {
       ),
       icon: Icon(icon, size: 32),
       label: Text(label, style: const TextStyle(fontSize: 22)),
-      onPressed: onTap,
+      onPressed: () {
+        FeedbackService.triggerSuccessFeedback();
+        onTap();
+      },
     );
   }
 }

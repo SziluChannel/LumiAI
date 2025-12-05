@@ -5,6 +5,7 @@ import 'package:lumiai/features/global_listening/global_listening_controller.dar
 import 'package:lumiai/features/global_listening/global_listening_state.dart';
 import 'package:lumiai/features/settings/providers/ui_mode_provider.dart';
 import 'package:lumiai/features/accessibility/font_size_feature.dart'; // Import ScaledTextWidget
+import 'package:lumiai/core/services/feedback_service.dart'; // Import FeedbackService
 
 // Imports for your specific features and settings
 import 'layouts/minimal_ui.dart';
@@ -79,6 +80,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
             tooltip: 'Switch UI Mode',
             onPressed: () {
+              FeedbackService.triggerSuccessFeedback(); // Haptic feedback
               ref.read(uiModeControllerProvider.notifier).toggleMode();
             },
           ),
@@ -86,6 +88,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             icon: const Icon(Icons.settings),
             tooltip: 'Settings',
             onPressed: () {
+              FeedbackService.triggerSuccessFeedback(); // Haptic feedback
               Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) => const SettingsScreen()),
               );
