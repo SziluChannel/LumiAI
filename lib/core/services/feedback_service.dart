@@ -12,15 +12,17 @@ class FeedbackService {
   FeedbackService(this._ref);
 
   /// Provides a light impact vibration for successful actions.
-  void triggerSuccessFeedback() {
-    if (_ref.read(hapticFeedbackControllerProvider).value!) {
+  Future<void> triggerSuccessFeedback() async {
+    final isEnabled = await _ref.read(hapticFeedbackControllerProvider.future);
+    if (isEnabled) {
       HapticFeedback.lightImpact();
     }
   }
 
   /// Provides a heavy impact vibration for error or failed actions.
-  void triggerErrorFeedback() {
-    if (_ref.read(hapticFeedbackControllerProvider).value!) {
+  Future<void> triggerErrorFeedback() async {
+    final isEnabled = await _ref.read(hapticFeedbackControllerProvider.future);
+    if (isEnabled) {
       HapticFeedback.heavyImpact();
     }
   }

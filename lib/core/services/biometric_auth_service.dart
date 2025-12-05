@@ -1,5 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:local_auth_android/local_auth_android.dart';
 
 class BiometricAuthService {
   final LocalAuthentication _localAuth = LocalAuthentication();
@@ -26,10 +27,16 @@ class BiometricAuthService {
   Future<bool> authenticate() async {
     try {
       final bool didAuthenticate = await _localAuth.authenticate(
-        localizedReason: 'Authenticate to log in to LumiAI',
+        localizedReason: 'Please authenticate to log in to LumiAI',
+        authMessages: const <AuthMessages>[
+          AndroidAuthMessages(
+            signInTitle: 'LumiAI Biometric Login',
+            cancelButton: 'Cancel',
+          ),
+        ],
         options: const AuthenticationOptions(
-          stickyAuth: true, // Keep the authentication UI on screen until app is in foreground again
-          biometricOnly: true, // Only allow biometrics, no fallback to device PIN/pattern
+          stickyAuth: true,
+          useErrorDialogs: true,
         ),
       );
       return didAuthenticate;

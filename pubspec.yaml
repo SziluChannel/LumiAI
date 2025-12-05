@@ -52,6 +52,7 @@ dependencies:
   web: ^1.1.0
   provider: ^6.1.2 # Added for global state management of font size
   local_auth: ^2.2.0 # Added for biometric authentication
+  local_auth_android: ^1.0.37 # Added for specific Android biometric messages
 
 # Workaround for camera_web 0.3.5+ bug with Firefox facingMode
 # See: https://github.com/flutter/flutter/issues/

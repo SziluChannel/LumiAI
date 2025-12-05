@@ -98,8 +98,8 @@ class _MinimalMenuButton extends ConsumerWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          onPressed: () {
-            ref.read(feedbackServiceProvider).triggerSuccessFeedback();
+          onPressed: () async {
+            await ref.read(feedbackServiceProvider).triggerSuccessFeedback();
             onPressed();
           },
         ),
