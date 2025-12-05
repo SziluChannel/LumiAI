@@ -5,9 +5,9 @@ import '../live_chat_controller.dart';
 import '../live_chat_state.dart';
 
 class LiveChatScreen extends ConsumerStatefulWidget {
-  final Uint8List imageBytes; // Kept in case you re-enable image context later
+  final Uint8List? imageBytes; // Made nullable for easier navigation
 
-  const LiveChatScreen({super.key, required this.imageBytes});
+  const LiveChatScreen({super.key, this.imageBytes});
 
   @override
   ConsumerState<LiveChatScreen> createState() => _LiveChatScreenState();

@@ -42,7 +42,7 @@ final class TtsSettingsControllerProvider
 }
 
 String _$ttsSettingsControllerHash() =>
-    r'0690ef85b512ffe026f87ee680822753d69e7b86';
+    r'7376487bf88618808c69eb208954c4379b323526';
 
 abstract class _$TtsSettingsController extends $Notifier<TtsSettingsState> {
   TtsSettingsState build();
