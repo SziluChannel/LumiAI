@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lumiai/features/settings/providers/theme_provider.dart';
 import 'package:lumiai/features/settings/providers/ui_mode_provider.dart';
+import 'package:lumiai/features/settings/providers/tts_settings_provider.dart';
 import 'package:lumiai/features/settings/ui/settings_tile.dart';
+import 'package:lumiai/core/services/tts_service.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -123,6 +125,85 @@ class SettingsScreen extends ConsumerWidget {
           ),
         );
       },
+    );
+  }
+
+  // TTS beállítások
+  Widget _buildTtsSettings(WidgetRef ref) {
+    final ttsSettings = ref.watch(ttsSettingsControllerProvider);
+    final controller = ref.read(ttsSettingsControllerProvider.notifier);
+    final ttsServiceAsync = ref.watch(ttsServiceProvider); // Watch the AsyncValue
+
+    return Column(
+      children: [
+        // Voice Selection
+        ttsServiceAsync.when(
+          data: (ttsService) {
+            // Only show if voices are available
+            if (ttsService.availableVoices.isEmpty) {
+              return const SizedBox.shrink();
+            }
+            return SettingsTile(
+              title: 'Hang (Voice)',
+              subtitle: ttsService.availableVoices
+                  .firstWhere(
+                      (v) => v.identifier == ttsSettings.selectedVoice,
+                      orElse: () => ttsService.availableVoices.first)
+                  .name, // Display selected voice name
+              trailing: DropdownButton<String>(
+                value: ttsSettings.selectedVoice,
+                onChanged: (String? newVoiceIdentifier) {
+                  if (newVoiceIdentifier != null) {
+                    controller.setSelectedVoice(newVoiceIdentifier);
+                  }
+                },
+                items: ttsService.availableVoices.map((voice) {
+                  return DropdownMenuItem(
+                    value: voice.identifier,
+                    child: Text(voice.name),
+                  );
+                }).toList(),
+              ),
+            );
+          },
+          loading: () =>
+              const SettingsTile(title: 'Hang (Voice)', trailing: CircularProgressIndicator()),
+          error: (e, s) =>
+              SettingsTile(title: 'Hiba hang betöltésében', subtitle: e.toString()),
+        ),
+        
+        // Pitch Slider
+        SettingsTile(
+          title: 'Hangmagasság (Pitch)',
+          subtitle: ttsSettings.pitch.toStringAsFixed(1),
+          trailing: SizedBox(
+            width: 150, // Adjust width as needed
+            child: Slider(
+              value: ttsSettings.pitch,
+              min: 0.5,
+              max: 2.0,
+              divisions: 15, // 0.1 increments
+              onChanged: (value) => controller.setPitch(value),
+            ),
+          ),
+        ),
+        
+        // Speed Slider
+        SettingsTile(
+          title: 'Beszédsebesség (Speed)',
+          subtitle: ttsSettings.speed.toStringAsFixed(1),
+          trailing: SizedBox(
+            width: 150, // Adjust width as needed
+            child: Slider(
+              value: ttsSettings.speed,
+              min: 0.1,
+              max: 2.0,
+              divisions: 19, // 0.1 increments
+              onChanged: (value) => controller.setSpeed(value),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

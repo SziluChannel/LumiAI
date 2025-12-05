@@ -13,8 +13,13 @@ part of 'tts_service.dart';
 const ttsServiceProvider = TtsServiceProvider._();
 
 final class TtsServiceProvider
-    extends $FunctionalProvider<TtsService, TtsService, TtsService>
-    with $Provider<TtsService> {
+    extends
+        $FunctionalProvider<
+          AsyncValue<TtsService>,
+          TtsService,
+          FutureOr<TtsService>
+        >
+    with $FutureModifier<TtsService>, $FutureProvider<TtsService> {
   const TtsServiceProvider._()
     : super(
         from: null,
@@ -31,21 +36,13 @@ final class TtsServiceProvider
 
   @$internal
   @override
-  $ProviderElement<TtsService> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+  $FutureProviderElement<TtsService> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
 
   @override
-  TtsService create(Ref ref) {
+  FutureOr<TtsService> create(Ref ref) {
     return ttsService(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(TtsService value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<TtsService>(value),
-    );
   }
 }
 
-String _$ttsServiceHash() => r'6865d0cb42db4bf20f2e2f4ef18df9bd43abb4f1';
+String _$ttsServiceHash() => r'64bde97af2bbfa65c8653cbf067ce733d0df4021';
