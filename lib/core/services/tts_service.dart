@@ -62,7 +62,7 @@ class TtsService {
     await _initVoices();
   }
 
-  Future<void> _initVoices() async {
+    Future<void> _initVoices() async {
     try {
       final voices = await _flutterTts.getVoices;
       if (voices != null) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lumiai/features/home/home_screen.dart'; // Import the actual HomeScreen
+import 'package:lumiai/core/services/biometric_auth_service.dart'; // Import BiometricAuthService
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -13,6 +14,37 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _passwordController = TextEditingController();
   bool _isPasswordVisible = false;
   String? _errorMessage;
+  bool _isBiometricAvailable = false; // New state variable
+
+  final BiometricAuthService _biometricAuthService = BiometricAuthService();
+
+  @override
+  void initState() {
+    super.initState();
+    _checkBiometricAvailability();
+  }
+
+  Future<void> _checkBiometricAvailability() async {
+    final bool available = await _biometricAuthService.canCheckBiometrics();
+    setState(() {
+      _isBiometricAvailable = available;
+    });
+  }
+
+  Future<void> _authenticateBiometrics() async {
+    final bool authenticated = await _biometricAuthService.authenticate();
+    if (authenticated) {
+      // Success Condition: Navigate to HomeScreen
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => const HomeScreen()),
+      );
+    } else {
+      // Failure Condition: Show SnackBar feedback
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Biometric authentication failed or canceled.')),
+      );
+    }
+  }
 
   @override
   void dispose() {
@@ -106,10 +138,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   style: const TextStyle(color: Colors.red, fontSize: 16.0),
                   textAlign: TextAlign.center,
                 ),
-              ),
+            ),
             const SizedBox(height: 24.0),
-            // Button & Tap Size:
-            // The Login ElevatedButton must have a minimum height of 48.0 pixels.
+            // Login Button
             SizedBox(
               width: double.infinity,
               height: 48.0, // WCAG recommended minimum tappable size
@@ -118,6 +149,23 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: const Text('Login', style: TextStyle(fontSize: 18.0)),
               ),
             ),
+            // Biometric Login Button
+            if (_isBiometricAvailable) ...[
+              const SizedBox(height: 16.0),
+              SizedBox(
+                width: double.infinity,
+                height: 48.0, // WCAG recommended minimum tappable size
+                child: ElevatedButton.icon(
+                  icon: const Icon(Icons.fingerprint, size: 24.0),
+                  label: const Text('Login with Fingerprint/Face ID', style: TextStyle(fontSize: 18.0)),
+                  onPressed: _authenticateBiometrics,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.secondary,
+                    foregroundColor: Theme.of(context).colorScheme.onSecondary,
+                  ),
+                ),
+              ),
+            ],
           ],
         ),
       ),
