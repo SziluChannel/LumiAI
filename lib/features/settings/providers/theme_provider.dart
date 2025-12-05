@@ -118,16 +118,16 @@ ThemeData selectedAppTheme(Ref ref) {
       } else {
         // Ha nincs custom téma, akkor a standard light/dark/system logikát követjük
         return switch (state.appThemeMode) {
-          AppThemeMode.light => ThemeData.light(useMaterial3: true),
-          AppThemeMode.dark => ThemeData.dark(useMaterial3: true),
+          AppThemeMode.light => AppThemes.defaultLightTheme,
+          AppThemeMode.dark => AppThemes.defaultDarkTheme,
           AppThemeMode.system =>
             WidgetsBinding.instance.window.platformBrightness == Brightness.dark
-                ? ThemeData.dark(useMaterial3: true)
-                : ThemeData.light(useMaterial3: true),
+                ? AppThemes.defaultDarkTheme
+                : AppThemes.defaultLightTheme,
         };
       }
     },
-    loading: () => ThemeData.light(useMaterial3: true), // Alapértelmezett betöltés alatt
-    error: (_, __) => ThemeData.light(useMaterial3: true), // Alapértelmezett hiba esetén
+    loading: () => AppThemes.defaultLightTheme, // Alapértelmezett betöltés alatt
+    error: (_, __) => AppThemes.defaultLightTheme, // Alapértelmezett hiba esetén
   );
 }
