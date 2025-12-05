@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lumiai/core/constants/app_prompts.dart';
 import 'package:lumiai/core/services/feedback_service.dart';
 import 'package:lumiai/features/global_listening/global_listening_controller.dart';
+import 'package:lumiai/features/live_chat/ui/live_chat_screen.dart';
 import 'package:lumiai/features/settings/ui/settings_screen.dart';
 import 'package:provider/provider.dart' as pr; // Alias for Provider.of
 import 'package:lumiai/features/accessibility/font_size_feature.dart'; // For FontSizeProvider
@@ -34,6 +35,15 @@ class MinimalFunctionalUI extends ConsumerWidget {
           onPressed: () {
             // Send read text prompt
             globalController.sendUserPrompt(AppPrompts.readText);
+          },
+        ),
+        _MinimalMenuButton(
+          label: 'Live Chat',
+          icon: Icons.chat,
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => const LiveChatScreen()),
+            );
           },
         ),
         _MinimalMenuButton(
