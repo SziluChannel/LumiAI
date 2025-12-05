@@ -17,6 +17,8 @@ class GeminiLiveClient extends _$GeminiLiveClient {
   final _textController = StreamController<String>.broadcast();
   final _turnCompleteController = StreamController<bool>.broadcast();
   final _audioController = StreamController<Uint8List>.broadcast();
+  final _toolCallController =
+      StreamController<List<Map<String, dynamic>>>.broadcast();
 
   // Configuration
   static const _baseUrl = GeminiLiveParams.webSocketEndpoint;
@@ -26,6 +28,8 @@ class GeminiLiveClient extends _$GeminiLiveClient {
   Stream<String> get textStream => _textController.stream;
   Stream<bool> get turnCompleteStream => _turnCompleteController.stream;
   Stream<Uint8List> get audioStream => _audioController.stream;
+  Stream<List<Map<String, dynamic>>> get toolCallStream =>
+      _toolCallController.stream;
   bool get isConnected => _channel != null;
 
   @override
@@ -38,7 +42,7 @@ class GeminiLiveClient extends _$GeminiLiveClient {
   }
 
   /// Connects to the Gemini Live WebSocket
-  Future<void> connect() async {
+  Future<void> connect({List<Map<String, dynamic>>? tools}) async {
     final apiKey = dotenv.env['GEMINI_API_KEY'];
     if (apiKey == null) throw Exception("Missing GEMINI_API_KEY");
 
@@ -61,16 +65,11 @@ class GeminiLiveClient extends _$GeminiLiveClient {
                 : jsonDecode(utf8.decode(data));
             _parseServerMessage(decoded);
           } catch (e, stackTrace) {
-            print("🚨 Parsing Error: $e");
-            print(
-              "📋 Raw data received: ${data.toString().substring(0, data.toString().length > 500 ? 500 : data.toString().length)}",
-            );
-            print("Stack trace: $stackTrace");
+            print("🚨 Parsing Error: $e\n$stackTrace");
           }
         },
-        onError: (e, stackTrace) {
+        onError: (e) {
           print("🚨 WebSocket Stream Error: $e");
-          print("Stack trace: $stackTrace");
           disconnect();
         },
         onDone: () {
@@ -82,9 +81,6 @@ class GeminiLiveClient extends _$GeminiLiveClient {
             if (closeCode != null) {
               print("📊 Close Code: $closeCode");
               print("📝 Close Reason: ${closeReason ?? 'No reason provided'}");
-              print(
-                "🔍 Close Code Meaning: ${_getCloseCodeMeaning(closeCode)}",
-              );
             } else {
               print("⚠️ No close code available");
             }
@@ -106,11 +102,15 @@ class GeminiLiveClient extends _$GeminiLiveClient {
             // We'll get transcriptions of the audio for local TTS
             "responseModalities": ["AUDIO"],
           },
-          "systemInstruction": AppPrompts.systemInstruction,
+          "systemInstruction": {
+            "parts": [
+              {"text": AppPrompts.systemInstruction},
+            ],
+          },
+          if (tools != null) "tools": tools,
         },
       };
 
-      print("📤 Sending Setup...");
       _sendJson(setupMsg);
     } catch (e) {
       print("💥 Connection Failed: $e");
@@ -136,6 +136,7 @@ class GeminiLiveClient extends _$GeminiLiveClient {
     Uint8List? audioBytes,
     String audioMimeType = 'audio/pcm;rate=16000',
     bool isRealtime = false,
+    bool turnComplete = false, // Default to true for normal interactions
   }) {
     if (_channel == null) {
       print("⚠️ Cannot send: Disconnected");
@@ -144,29 +145,41 @@ class GeminiLiveClient extends _$GeminiLiveClient {
 
     // For real-time audio streaming, use realtimeInput with dedicated audio field
     // Using modern format (not deprecated mediaChunks)
-    if (isRealtime && audioBytes != null) {
-      _sendJson({
-        "realtimeInput": {
-          "audio": {
-            "mimeType": audioMimeType,
-            "data": base64Encode(audioBytes),
+    if (isRealtime) {
+      if (audioBytes != null) {
+        _sendJson({
+          "realtimeInput": {
+            "audio": {
+              "mimeType": audioMimeType,
+              "data": base64Encode(audioBytes),
+            },
           },
-        },
-      });
-      return;
+        });
+        return;
+      }
+
+      if (imageBytes != null) {
+        _sendJson({
+          "realtimeInput": {
+            "mediaChunks": [
+              {"mimeType": "image/jpeg", "data": base64Encode(imageBytes)},
+            ],
+          },
+        });
+        return;
+      }
     }
 
     final List<Map<String, dynamic>> parts = [];
 
+    // ... (text/image/video/audio parts adding remains same) ...
     // 1. Add Text
     if (text != null && text.isNotEmpty) {
       parts.add({"text": text});
     }
 
-    // 2. Add Image (sent as inlineData in clientContent, not realtimeInput)
-    // Images should be sent via clientContent, not realtimeInput video stream
+    // 2. Add Image
     if (imageBytes != null) {
-      print("📸 Sending image: ${imageBytes.length} bytes (image/jpeg)");
       parts.add({
         "inlineData": {
           "mimeType": "image/jpeg",
@@ -175,7 +188,7 @@ class GeminiLiveClient extends _$GeminiLiveClient {
       });
     }
 
-    // 3. Add Video (for actual video files)
+    // 3. Add Video
     if (videoBytes != null) {
       parts.add({
         "inlineData": {
@@ -183,9 +196,6 @@ class GeminiLiveClient extends _$GeminiLiveClient {
           "data": base64Encode(videoBytes),
         },
       });
-      print(
-        "📹 Sending video data: ${videoBytes.length} bytes, type: $videoMimeType",
-      );
     }
 
     // 4. Add Audio (non-realtime)
@@ -198,35 +208,25 @@ class GeminiLiveClient extends _$GeminiLiveClient {
       });
     }
 
-    if (parts.isEmpty) {
-      print("⚠️ Warning: Attempted to send empty payload.");
-      return;
-    }
+    if (parts.isEmpty) return;
 
-    // Send Client Content (text, images, video, or audio)
+    // Send Client Content
     final payload = {
       "clientContent": {
         "turns": [
           {"role": "user", "parts": parts},
         ],
-        "turnComplete": true,
+        "turnComplete": turnComplete,
       },
     };
 
-    // Debug logging
-    print("📤 Sending clientContent with ${parts.length} parts:");
-    for (var i = 0; i < parts.length; i++) {
-      final part = parts[i];
-      if (part.containsKey('text')) {
-        print("  Part $i: Text (${part['text'].toString().length} chars)");
-      } else if (part.containsKey('inlineData')) {
-        final mimeType = part['inlineData']['mimeType'];
-        final dataLength = part['inlineData']['data'].toString().length;
-        print("  Part $i: InlineData ($mimeType, $dataLength chars base64)");
-      }
-    }
-
     _sendJson(payload);
+  }
+
+  void sendToolResponse(List<Map<String, dynamic>> functionResponses) {
+    _sendJson({
+      "toolResponse": {"functionResponses": functionResponses},
+    });
   }
 
   void _sendJson(Map<String, dynamic> data) {
@@ -238,57 +238,25 @@ class GeminiLiveClient extends _$GeminiLiveClient {
     }
   }
 
-  String _getCloseCodeMeaning(int code) {
-    switch (code) {
-      case 1000:
-        return "Normal Closure";
-      case 1001:
-        return "Going Away - Server is shutting down or browser navigating away";
-      case 1002:
-        return "Protocol Error";
-      case 1003:
-        return "Unsupported Data";
-      case 1006:
-        return "Abnormal Closure - No close frame received";
-      case 1007:
-        return "Invalid Frame Payload Data";
-      case 1008:
-        return "Policy Violation";
-      case 1009:
-        return "Message Too Big";
-      case 1010:
-        return "Mandatory Extension";
-      case 1011:
-        return "Internal Server Error";
-      case 1012:
-        return "Service Restart";
-      case 1013:
-        return "Try Again Later";
-      case 1014:
-        return "Bad Gateway";
-      case 1015:
-        return "TLS Handshake Failure";
-      default:
-        if (code >= 3000 && code <= 3999) {
-          return "Application-specific error (Registered)";
-        } else if (code >= 4000 && code <= 4999) {
-          return "Application-specific error (Private use) - Likely API-specific error";
-        }
-        return "Unknown close code";
-    }
-  }
-
   void _parseServerMessage(Map<String, dynamic> msg) {
     try {
       if (msg.containsKey('setupComplete')) {
         print("✅ Setup Complete - Ready");
       }
 
+      if (msg.containsKey('toolCall')) {
+        final toolCall = msg['toolCall'];
+        if (toolCall.containsKey('functionCalls')) {
+          final functionCalls = List<Map<String, dynamic>>.from(
+            toolCall['functionCalls'],
+          );
+          print("🛠️ Received Tool Call: $functionCalls");
+          _toolCallController.add(functionCalls);
+        }
+      }
+
       if (msg.containsKey('serverContent')) {
         final content = msg['serverContent'];
-        print(
-          "📥 Received serverContent with fields: ${content.keys.join(', ')}",
-        );
 
         // Handle audio transcription (for AUDIO response modality)
         // This gives us text from the audio output for local TTS
@@ -296,8 +264,6 @@ class GeminiLiveClient extends _$GeminiLiveClient {
           final transcription = content['outputTranscription'];
           if (transcription is Map && transcription.containsKey('text')) {
             final transcribedText = transcription['text'] as String;
-            print("📝 Transcription: $transcribedText");
-            // Send transcribed text to text stream for local TTS
             _textController.add(transcribedText);
           }
         }
@@ -305,7 +271,6 @@ class GeminiLiveClient extends _$GeminiLiveClient {
         // Extract Text (for TEXT response modality)
         if (content.containsKey('modelTurn')) {
           final parts = content['modelTurn']['parts'] as List;
-          print("📦 Model turn has ${parts.length} parts");
           for (var part in parts) {
             if (part is Map && part.containsKey('text')) {
               _textController.add(part['text']);
@@ -317,7 +282,6 @@ class GeminiLiveClient extends _$GeminiLiveClient {
                   true) {
                 final audioData = base64Decode(inlineData['data']);
                 _audioController.add(audioData);
-                print("🔊 Received audio chunk: ${audioData.length} bytes");
               }
             }
           }
@@ -328,7 +292,6 @@ class GeminiLiveClient extends _$GeminiLiveClient {
         // turnComplete comes later after audio playback would finish
         if (content.containsKey('generationComplete') &&
             content['generationComplete'] == true) {
-          print("✅ Generation complete");
           _turnCompleteController.add(true);
         }
       }
@@ -353,5 +316,6 @@ class GeminiLiveClient extends _$GeminiLiveClient {
     if (!_textController.isClosed) _textController.close();
     if (!_turnCompleteController.isClosed) _turnCompleteController.close();
     if (!_audioController.isClosed) _audioController.close();
+    if (!_toolCallController.isClosed) _toolCallController.close();
   }
 }
