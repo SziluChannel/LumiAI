@@ -13,7 +13,7 @@ part of 'theme_provider.dart';
 const themeControllerProvider = ThemeControllerProvider._();
 
 final class ThemeControllerProvider
-    extends $AsyncNotifierProvider<ThemeController, AppThemeMode> {
+    extends $AsyncNotifierProvider<ThemeController, ThemeState> {
   const ThemeControllerProvider._()
     : super(
         from: null,
@@ -33,20 +33,20 @@ final class ThemeControllerProvider
   ThemeController create() => ThemeController();
 }
 
-String _$themeControllerHash() => r'0c1dae617811c9ad76900b5b42ed1602a93790d1';
+String _$themeControllerHash() => r'0caa0607525d7011d43373e3e7d0d541a111ec33';
 
-abstract class _$ThemeController extends $AsyncNotifier<AppThemeMode> {
-  FutureOr<AppThemeMode> build();
+abstract class _$ThemeController extends $AsyncNotifier<ThemeState> {
+  FutureOr<ThemeState> build();
   @$mustCallSuper
   @override
   void runBuild() {
     final created = build();
-    final ref = this.ref as $Ref<AsyncValue<AppThemeMode>, AppThemeMode>;
+    final ref = this.ref as $Ref<AsyncValue<ThemeState>, ThemeState>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<AsyncValue<AppThemeMode>, AppThemeMode>,
-              AsyncValue<AppThemeMode>,
+              AnyNotifier<AsyncValue<ThemeState>, ThemeState>,
+              AsyncValue<ThemeState>,
               Object?,
               Object?
             >;
@@ -54,43 +54,85 @@ abstract class _$ThemeController extends $AsyncNotifier<AppThemeMode> {
   }
 }
 
-@ProviderFor(materialThemeMode)
-const materialThemeModeProvider = MaterialThemeModeProvider._();
+@ProviderFor(currentAppThemeMode)
+const currentAppThemeModeProvider = CurrentAppThemeModeProvider._();
 
-final class MaterialThemeModeProvider
-    extends $FunctionalProvider<ThemeMode, ThemeMode, ThemeMode>
-    with $Provider<ThemeMode> {
-  const MaterialThemeModeProvider._()
+final class CurrentAppThemeModeProvider
+    extends $FunctionalProvider<AppThemeMode, AppThemeMode, AppThemeMode>
+    with $Provider<AppThemeMode> {
+  const CurrentAppThemeModeProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'materialThemeModeProvider',
+        name: r'currentAppThemeModeProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$materialThemeModeHash();
+  String debugGetCreateSourceHash() => _$currentAppThemeModeHash();
 
   @$internal
   @override
-  $ProviderElement<ThemeMode> $createElement($ProviderPointer pointer) =>
+  $ProviderElement<AppThemeMode> $createElement($ProviderPointer pointer) =>
       $ProviderElement(pointer);
 
   @override
-  ThemeMode create(Ref ref) {
-    return materialThemeMode(ref);
+  AppThemeMode create(Ref ref) {
+    return currentAppThemeMode(ref);
   }
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(ThemeMode value) {
+  Override overrideWithValue(AppThemeMode value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<ThemeMode>(value),
+      providerOverride: $SyncValueProvider<AppThemeMode>(value),
     );
   }
 }
 
-String _$materialThemeModeHash() => r'117a11f4c80452f400642966d888e109d7b4809e';
+String _$currentAppThemeModeHash() =>
+    r'7edcb2299a0bc6e2f158170dd4f75744e6f4c154';
+
+@ProviderFor(selectedAppTheme)
+const selectedAppThemeProvider = SelectedAppThemeProvider._();
+
+final class SelectedAppThemeProvider
+    extends $FunctionalProvider<ThemeData, ThemeData, ThemeData>
+    with $Provider<ThemeData> {
+  const SelectedAppThemeProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'selectedAppThemeProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$selectedAppThemeHash();
+
+  @$internal
+  @override
+  $ProviderElement<ThemeData> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  ThemeData create(Ref ref) {
+    return selectedAppTheme(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(ThemeData value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<ThemeData>(value),
+    );
+  }
+}
+
+String _$selectedAppThemeHash() => r'86d80a12c467155f5bcc7bb4543c119e59dd9311';
