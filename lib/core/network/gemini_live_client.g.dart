@@ -41,7 +41,7 @@ final class GeminiLiveClientProvider
   }
 }
 
-String _$geminiLiveClientHash() => r'187d6698cf65a879b57454c2305444f9253000ae';
+String _$geminiLiveClientHash() => r'804215e9204e0f3d82f173602f7293a435d74d40';
 
 abstract class _$GeminiLiveClient extends $Notifier<GeminiLiveClient> {
   GeminiLiveClient build();

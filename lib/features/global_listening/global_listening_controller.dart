@@ -1,7 +1,6 @@
 import 'dart:async';
-import 'dart:typed_data'; // Used for Uint8List in send()
 import 'package:camera/camera.dart';
-import 'package:flutter/foundation.dart'; // For kIsWeb
+import 'package:flutter/foundation.dart';
 import 'package:lumiai/core/network/gemini_live_client.dart';
 import 'package:lumiai/core/services/tts_service.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -52,8 +51,6 @@ class GlobalListeningController extends _$GlobalListeningController {
       state = state.copyWith(status: GlobalListeningStatus.connecting);
 
       // 1. Permissions
-      // On Web, we need to explicitly trigger getUserMedia to ensure permissions
-      // and populate device info before availableCameras() works reliably.
       await requestWebCameraPermission();
 
       Map<Permission, PermissionStatus> statuses = await [
@@ -69,9 +66,6 @@ class GlobalListeningController extends _$GlobalListeningController {
         return;
       }
 
-      // Camera permission is optional for app start, but needed for this feature.
-      // We'll check it again when opening the camera.
-
       // 2. Connect to Gemini with Tools
       final client = ref.read(geminiLiveClientProvider.notifier);
       await client.connect(tools: cameraTools);
@@ -85,8 +79,7 @@ class GlobalListeningController extends _$GlobalListeningController {
       // 5. Start Mic Streaming
       await _startMicStreaming();
 
-      // 6. Initial Greeting (Simulated)
-      // Ideally the model would say this, but we can prompt it or just speak it locally
+      // 6. Initial Greeting
       ref.read(ttsServiceProvider).speak("What can I help you with?");
     } catch (e) {
       state = state.copyWith(
@@ -94,6 +87,19 @@ class GlobalListeningController extends _$GlobalListeningController {
         errorMessage: e.toString(),
       );
     }
+  }
+
+  /// Sends a text prompt to Gemini as if the user spoke it.
+  /// Used for button shortcuts like "Identify Object" or "Read Text".
+  void sendUserPrompt(String prompt) {
+    final client = ref.read(geminiLiveClientProvider.notifier);
+
+    if (!client.isConnected) {
+      ref.read(ttsServiceProvider).speak('Please wait, connecting...');
+      return;
+    }
+
+    client.send(text: prompt, turnComplete: true);
   }
 
   Future<void> _startMicStreaming() async {
@@ -109,7 +115,6 @@ class GlobalListeningController extends _$GlobalListeningController {
 
     _audioStreamSub?.cancel();
     _audioStreamSub = stream.listen((data) {
-      // Check connection before sending audio
       final client = ref.read(geminiLiveClientProvider.notifier);
       if (client.isConnected) {
         client.send(
@@ -126,12 +131,7 @@ class GlobalListeningController extends _$GlobalListeningController {
 
     for (final call in toolCalls) {
       final name = call['name'];
-      // final args = call['args']; // Unused for now
-      final id = call['id']; // Capture ID for response
-
-      // Note: Gemini Live API tool calls structure might differ slightly from REST.
-      // Usually it's just a list of FunctionCalls.
-      // We need to send back a ToolResponse.
+      final id = call['id'];
 
       Map<String, dynamic> responseResult = {};
 
@@ -145,24 +145,30 @@ class GlobalListeningController extends _$GlobalListeningController {
         responseResult = {"error": "Unknown tool: $name"};
       }
 
-      // Construct the response object for this function call
-      // The API expects 'id' to match the call if provided, or 'name' mapping.
-      // For Live API, we send a 'toolResponse' message.
-      responses.add({
-        "id": id, // Pass back the ID received from the server
-        "name": name,
-        "response": responseResult,
-      });
+      responses.add({"id": id, "name": name, "response": responseResult});
     }
 
-    // Send response back to Gemini
     if (responses.isNotEmpty) {
       ref.read(geminiLiveClientProvider.notifier).sendToolResponse(responses);
     }
   }
 
+  /// Public method to open the camera programmatically.
+  Future<void> openCamera() async {
+    await _openCamera();
+  }
+
+  /// Public method to close the camera programmatically.
+  Future<void> closeCamera() async {
+    await _closeCamera();
+  }
+
+  /// Returns true if the global listening is initialized and connected.
+  bool get isInitialized =>
+      state.status == GlobalListeningStatus.listening ||
+      state.status == GlobalListeningStatus.cameraActive;
+
   Future<void> _openCamera() async {
-    // Prevent double initialization (race condition or multiple tool calls)
     if (_isInitializingCamera ||
         state.status == GlobalListeningStatus.cameraActive) {
       return;
@@ -175,27 +181,23 @@ class GlobalListeningController extends _$GlobalListeningController {
 
       if (cameras.isEmpty) throw Exception("No cameras available");
 
-      // Try to initialize cameras one by one until one works
       CameraController? controller;
       for (final camera in cameras) {
         try {
-          // Dispose existing controller if any (safety check)
           if (state.cameraController != null) {
             await state.cameraController!.dispose();
           }
 
           final c = CameraController(
             camera,
-            ResolutionPreset.low, // Use low resolution for 1 FPS streaming
+            ResolutionPreset.low,
             enableAudio: false,
           );
 
           await c.initialize();
           controller = c;
-          print("✅ Camera initialized: ${camera.name}");
           break;
         } catch (e) {
-          // Fallback for Web: Try treating it as 'external' to bypass facingMode checks
           if (kIsWeb && camera.lensDirection != CameraLensDirection.external) {
             try {
               final externalCamera = CameraDescription(
@@ -210,7 +212,6 @@ class GlobalListeningController extends _$GlobalListeningController {
               );
               await c2.initialize();
               controller = c2;
-              print("✅ Camera initialized (fallback): ${camera.name}");
               break;
             } catch (_) {
               // Fallback failed, try next camera
@@ -240,7 +241,7 @@ class GlobalListeningController extends _$GlobalListeningController {
         await _captureAndSendFrame();
       });
     } catch (e) {
-      print("❌ Error opening camera: $e");
+      debugPrint("Error opening camera: $e");
     } finally {
       _isInitializingCamera = false;
     }
@@ -269,32 +270,21 @@ class GlobalListeningController extends _$GlobalListeningController {
 
       if (bytes.isEmpty) return;
 
-      // Resize image to reduce bandwidth/latency (crucial for 1 FPS streaming)
-      // Decode -> Resize -> Encode to JPEG
       final image = img.decodeImage(bytes);
       if (image == null) return;
 
-      // Resize to max width 640 (good balance for vision models)
       final resized = img.copyResize(image, width: 640);
       final resizedBytes = Uint8List.fromList(
         img.encodeJpg(resized, quality: 70),
       );
 
-      print(
-        "📸 Sending frame: ${resizedBytes.length} bytes (resized from ${bytes.length})",
-      );
-
-      client.send(
-        imageBytes: resizedBytes,
-        // No text, just the image frame
-        isRealtime: true, // Use realtimeInput for streaming
-      );
+      client.send(imageBytes: resizedBytes, isRealtime: true);
     } catch (_) {
       // Frame capture failed - silently continue
     }
   }
 
-  // --- TTS Handling (Same as LiveChatController) ---
+  // --- TTS Handling ---
   void _handleIncomingText(String newTextChunk) {
     _ttsBuffer += newTextChunk;
     if (RegExp(r'[.?!:\n](\s|$)').hasMatch(_ttsBuffer)) {

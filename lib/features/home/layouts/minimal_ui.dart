@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../object_id/object_id_controller.dart';
-import '../../object_id/object_id_state.dart';
-import '../../object_id/ui/object_id_task_handler.dart';
+import 'package:lumiai/core/constants/app_prompts.dart';
+import 'package:lumiai/features/global_listening/global_listening_controller.dart';
 import 'package:lumiai/features/settings/ui/settings_screen.dart';
 
 class MinimalFunctionalUI extends ConsumerWidget {
@@ -10,15 +9,10 @@ class MinimalFunctionalUI extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final objectIdState = ref.watch(objectIdControllerProvider);
-    final objectIdController = ref.read(objectIdControllerProvider.notifier);
+    final globalController = ref.read(
+      globalListeningControllerProvider.notifier,
+    );
 
-    // If a task is active, show the shared task handler
-    if (objectIdState.status != ObjectIdStatus.idle) {
-      return const ObjectIdTaskHandler();
-    }
-
-    // Otherwise, show the minimal menu
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -26,13 +20,17 @@ class MinimalFunctionalUI extends ConsumerWidget {
         _MinimalMenuButton(
           label: 'Identify Object',
           icon: Icons.camera_alt,
-          onPressed: objectIdController.captureImage,
+          onPressed: () {
+            // Send prompt directly - model will open camera, analyze, and speak
+            globalController.sendUserPrompt(AppPrompts.identifyObjectLive);
+          },
         ),
         _MinimalMenuButton(
           label: 'Read Text',
           icon: Icons.text_fields,
           onPressed: () {
-            // Call TextReaderController.captureImage()
+            // Send read text prompt
+            globalController.sendUserPrompt(AppPrompts.readText);
           },
         ),
         _MinimalMenuButton(

@@ -1,33 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lumiai/core/constants/app_prompts.dart';
 import 'package:lumiai/core/services/tts_service.dart';
-import 'package:lumiai/features/settings/providers/tts_settings_provider.dart'; // Import settings
-import '../../object_id/object_id_controller.dart';
-import '../../object_id/object_id_state.dart';
-import '../../object_id/ui/object_id_task_handler.dart';
+import 'package:lumiai/features/global_listening/global_listening_controller.dart';
+import 'package:lumiai/features/settings/providers/tts_settings_provider.dart';
 
 class PartialFunctionalUI extends ConsumerWidget {
   const PartialFunctionalUI({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final objectIdState = ref.watch(objectIdControllerProvider);
-
-    // If we are doing a task, show it in a scaffold with the shared task handler
-    // This ensures consistency with minimal mode
-    if (objectIdState.status != ObjectIdStatus.idle) {
-      return Scaffold(
-        appBar: AppBar(title: const Text("Processing...")),
-        body: const ObjectIdTaskHandler(),
-      );
-    }
-
-    // Otherwise, show the fancy menu
     return _buildMenu(context, ref);
   }
 
   Widget _buildMenu(BuildContext context, WidgetRef ref) {
-    final objectIdController = ref.read(objectIdControllerProvider.notifier);
+    final globalController = ref.read(
+      globalListeningControllerProvider.notifier,
+    );
     // Watch settings for the temporary sliders
     final ttsSettings = ref.watch(ttsSettingsControllerProvider);
 
@@ -40,13 +29,15 @@ class PartialFunctionalUI extends ConsumerWidget {
             _FeatureButton(
               label: "Identify Object",
               icon: Icons.camera_alt,
-              onPressed: objectIdController.captureImage,
+              onPressed: () {
+                globalController.sendUserPrompt(AppPrompts.identifyObjectLive);
+              },
             ),
             _FeatureButton(
               label: "Describe Scene",
               icon: Icons.landscape,
               onPressed: () {
-                /* Add specific logic */
+                globalController.sendUserPrompt(AppPrompts.describeScene);
               },
             ),
           ],
@@ -59,7 +50,7 @@ class PartialFunctionalUI extends ConsumerWidget {
               label: "Read Text",
               icon: Icons.text_fields,
               onPressed: () {
-                /* trigger text reader */
+                globalController.sendUserPrompt(AppPrompts.readText);
               },
             ),
           ],
