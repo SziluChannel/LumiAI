@@ -120,14 +120,14 @@
 
 | TC# | Test Case Description | Environment | Steps to Execute | Expected Result | Actual Result |
 |-----|----------------------|-------------|------------------|-----------------|---------------|
-| TC049 | Verify network disconnection error | Web/Android/iOS | 1. Start listening 2. Disable network | Clear error message about connection loss | |
-| TC050 | Verify API rate limit handling | Web/Android/iOS | 1. Send many rapid requests | Rate limit error handled gracefully | |
-| TC051 | Verify invalid audio format error | Web/Android/iOS | 1. Corrupt audio stream (simulated) | Error logged, doesn't crash app | |
-| TC052 | Verify camera initialization error | Web/Android/iOS | 1. Block camera 2. Try camera feature | Error message with instructions | |
-| TC053 | Verify API timeout handling | Web/Android/iOS | 1. Send query 2. Simulate slow response | Timeout error after reasonable wait | |
-| TC054 | Verify recovery after error state | Web/Android/iOS | 1. Trigger error 2. Fix condition 3. Retry | App recovers and functions normally | |
-| TC055 | Verify error state UI indication | Web/Android/iOS | 1. Trigger any error | Visual indication of error state | |
-| TC056 | Verify error does not leak to other features | Web/Android/iOS | 1. Error in one feature 2. Try another feature | Other features work normally | |
+| TC049 | Verify network disconnection error | Web/Android/iOS | 1. Start listening 2. Disable network | Clear error message about connection loss | ✅ Passed |
+| TC050 | Verify API rate limit handling | Web/Android/iOS | 1. Send many rapid requests | Rate limit error handled gracefully | ✅ Passed |
+| TC051 | Verify invalid audio format error | Web/Android/iOS | 1. Corrupt audio stream (simulated) | Error logged, doesn't crash app | ✅ Passed |
+| TC052 | Verify camera initialization error | Web/Android/iOS | 1. Block camera 2. Try camera feature | Error message with instructions | ✅ Passed |
+| TC053 | Verify API timeout handling | Web/Android/iOS | 1. Send query 2. Simulate slow response | Timeout error after reasonable wait | ✅ Passed |
+| TC054 | Verify recovery after error state | Web/Android/iOS | 1. Trigger error 2. Fix condition 3. Retry | App recovers and functions normally | ✅ Passed |
+| TC055 | Verify error state UI indication | Web/Android/iOS | 1. Trigger any error | Visual indication of error state | ✅ Passed |
+| TC056 | Verify error does not leak to other features | Web/Android/iOS | 1. Error in one feature 2. Try another feature | Other features work normally | ✅ Passed |
 
 ---
 
