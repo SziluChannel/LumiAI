@@ -62,7 +62,6 @@ class _MinimalMenuButton extends ConsumerWidget {
 
   // Removed const keyword due to dynamic scaling
   const _MinimalMenuButton({
-    super.key,
     required this.label,
     required this.icon,
     required this.onPressed,

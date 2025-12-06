@@ -1,4 +1,5 @@
 /// Definitions for tools that the Gemini model can call.
+library;
 
 final List<Map<String, dynamic>> cameraTools = [
   {
