@@ -92,6 +92,15 @@ class MockTtsService extends _i1.Mock implements _i2.TtsService {
             returnValueForMissingStub: _i3.Future<void>.value(),
           )
           as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> setLanguage(String? language) =>
+      (super.noSuchMethod(
+            Invocation.method(#setLanguage, [language]),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
 }
 
 /// A class which mocks [FeedbackService].
