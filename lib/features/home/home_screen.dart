@@ -11,6 +11,11 @@ import 'package:lumiai/core/services/feedback_service.dart'; // Import FeedbackS
 import 'layouts/minimal_ui.dart';
 import 'layouts/partial_ui.dart';
 import 'package:lumiai/features/settings/ui/settings_screen.dart';
+import 'package:lumiai/features/home/providers/smart_camera_mode_provider.dart';
+import 'package:lumiai/features/accessibility/color_identifier/color_identifier_controller.dart';
+import 'package:lumiai/features/accessibility/color_identifier/color_identifier_state.dart';
+import 'package:lumiai/features/accessibility/light_meter/light_meter_controller.dart';
+import 'package:lumiai/features/accessibility/light_meter/light_meter_state.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -36,8 +41,36 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     // 2. Listen to Global Listening State
     final listeningState = ref.watch(globalListeningControllerProvider);
+    
+    // 3. Listen to Smart Camera Mode
+    final smartCameraMode = ref.watch(smartCameraStateProvider);
 
-    // 3. Determine the Title and Background Color based on mode
+    // Listen to mode changes to trigger initialization/disposal for Color/Light features
+    ref.listen<SmartCameraMode>(smartCameraStateProvider, (previous, next) {
+      // PROACTIVELY CLOSE Global Listening Camera if switching to a specific mode
+      // This prevents "Camera is busy" errors on mobile devices
+      if (next != SmartCameraMode.off) {
+         ref.read(globalListeningControllerProvider.notifier).closeCamera();
+      } else {
+         // Re-initialize Global Listening when returning to standard mode
+         ref.read(globalListeningControllerProvider.notifier).initialize();
+      }
+
+      if (previous == SmartCameraMode.color && next != SmartCameraMode.color) {
+        ref.read(colorIdentifierControllerProvider.notifier).disposeCamera();
+      }
+      if (previous == SmartCameraMode.light && next != SmartCameraMode.light) {
+        ref.read(lightMeterControllerProvider.notifier).disposeCamera();
+      }
+
+      if (next == SmartCameraMode.color) {
+        ref.read(colorIdentifierControllerProvider.notifier).initialize();
+      } else if (next == SmartCameraMode.light) {
+        ref.read(lightMeterControllerProvider.notifier).initialize();
+      }
+    });
+
+    // 4. Determine the Title and Background Color based on mode
     final isSimplified = uiMode.value == UiMode.simplified;
     final String title = isSimplified ? "LumiAI (Simple)" : "LumiAI";
     final Color? appBarColor = isSimplified
@@ -166,8 +199,146 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ),
               ),
           ],
+          
+          // Smart Camera Feature Overlay (Color/Light)
+          if (smartCameraMode != SmartCameraMode.off)
+             Positioned(
+              bottom: 20,
+              right: 20,
+              width: 150,
+              height: 200,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.red, width: 2),
+                    color: Colors.black,
+                  ),
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                       smartCameraMode == SmartCameraMode.color
+                          ? const _ColorScannerView()
+                          : const _LightMeterView(),
+                    ],
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
+    );
+  }
+}
+
+class _ColorScannerView extends ConsumerWidget {
+  const _ColorScannerView();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(colorIdentifierControllerProvider);
+
+     if (state.status == ColorIdentifierStatus.loading || !state.isCameraInitialized || state.cameraController == null) {
+      return const Center(child: CircularProgressIndicator(strokeWidth: 2));
+    }
+
+    if (state.status == ColorIdentifierStatus.error) {
+      return const Center(child: Icon(Icons.error, color: Colors.red));
+    }
+
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        // Camera Layer - Matches Global Listening AspectRatio behavior EXACTLY (No Center)
+        AspectRatio(
+          aspectRatio: state.cameraController!.value.aspectRatio,
+          child: CameraPreview(state.cameraController!),
+        ),
+        
+        // Color Info Overlay
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: Container(
+            color: Colors.black54,
+            padding: const EdgeInsets.all(4),
+            width: double.infinity,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: 16, height: 16,
+                  decoration: BoxDecoration(
+                    color: state.currentColor,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.white),
+                  ),
+                ),
+                const SizedBox(width: 4),
+                Flexible(
+                  child: Text(
+                    state.currentColorName,
+                    style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _LightMeterView extends ConsumerWidget {
+  const _LightMeterView();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(lightMeterControllerProvider);
+
+    if (state.status == LightMeterStatus.loading || !state.isCameraInitialized || state.cameraController == null) {
+      return const Center(child: CircularProgressIndicator(strokeWidth: 2));
+    }
+
+    if (state.status == LightMeterStatus.error) {
+       return const Center(child: Icon(Icons.error, color: Colors.red));
+    }
+
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        // Camera Layer - Matches Global Listening AspectRatio behavior EXACTLY (No Center)
+        AspectRatio(
+          aspectRatio: state.cameraController!.value.aspectRatio,
+          child: CameraPreview(state.cameraController!),
+        ),
+        
+        // Light Info Overlay
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: Container(
+             color: Colors.black54,
+             padding: const EdgeInsets.all(4),
+             width: double.infinity,
+             child: Column(
+               mainAxisSize: MainAxisSize.min,
+               children: [
+                 Text(
+                   "${(state.brightness * 100).toInt()}%",
+                   style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                 ),
+                 Text(
+                   state.brightnessCategory,
+                   style: const TextStyle(color: Colors.white, fontSize: 10),
+                   overflow: TextOverflow.ellipsis,
+                 ),
+               ],
+             ),
+           ),
+        )
+      ],
     );
   }
 }

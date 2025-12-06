@@ -32,6 +32,7 @@ class PartialFunctionalUI extends ConsumerWidget {
               label: l10n.identifyObject,
               icon: Icons.camera_alt,
               onPressed: () {
+                ref.read(smartCameraStateProvider.notifier).setMode(SmartCameraMode.off);
                 featureController.handleAction(FeatureAction.identifyObject);
               },
             ),
@@ -44,6 +45,7 @@ class PartialFunctionalUI extends ConsumerWidget {
               label: l10n.describeScene,
               icon: Icons.landscape,
               onPressed: () {
+                ref.read(smartCameraStateProvider.notifier).setMode(SmartCameraMode.off);
                 featureController.handleAction(FeatureAction.describeScene);
               },
             ),
@@ -72,6 +74,7 @@ class PartialFunctionalUI extends ConsumerWidget {
             label: l10n.readText,
             icon: Icons.text_fields,
             onPressed: () {
+              ref.read(smartCameraStateProvider.notifier).setMode(SmartCameraMode.off);
               featureController.handleAction(FeatureAction.readText);
             },
           ),
@@ -79,6 +82,7 @@ class PartialFunctionalUI extends ConsumerWidget {
             label: l10n.readMenu,
             icon: Icons.restaurant_menu,
             onPressed: () {
+              ref.read(smartCameraStateProvider.notifier).setMode(SmartCameraMode.off);
               featureController.handleAction(FeatureAction.readMenu);
             },
           ),
@@ -90,6 +94,7 @@ class PartialFunctionalUI extends ConsumerWidget {
             label: l10n.readCurrency,
             icon: Icons.attach_money,
             onPressed: () {
+              ref.read(smartCameraStateProvider.notifier).setMode(SmartCameraMode.off);
               featureController.handleAction(FeatureAction.readCurrency);
             },
           ),
@@ -97,6 +102,7 @@ class PartialFunctionalUI extends ConsumerWidget {
             label: l10n.describeClothing,
             icon: Icons.checkroom,
             onPressed: () {
+              ref.read(smartCameraStateProvider.notifier).setMode(SmartCameraMode.off);
               featureController.handleAction(FeatureAction.describeClothing);
             },
           ),
@@ -107,6 +113,7 @@ class PartialFunctionalUI extends ConsumerWidget {
             label: l10n.expiryDate,
             icon: Icons.calendar_today,
             onPressed: () {
+              ref.read(smartCameraStateProvider.notifier).setMode(SmartCameraMode.off);
               featureController.handleAction(FeatureAction.readExpiryDate);
             },
           ),
@@ -114,6 +121,7 @@ class PartialFunctionalUI extends ConsumerWidget {
             label: l10n.findObject,
             icon: Icons.search,
             onPressed: () {
+              ref.read(smartCameraStateProvider.notifier).setMode(SmartCameraMode.off);
               _showFindObjectDialog(context, ref, l10n);
             },
           ),

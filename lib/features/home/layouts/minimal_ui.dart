@@ -7,6 +7,7 @@ import 'package:lumiai/features/live_chat/ui/live_chat_screen.dart';
 import 'package:lumiai/features/settings/ui/settings_screen.dart';
 import 'package:lumiai/features/accessibility/font_size_feature.dart'; // For fontSizeProvider
 import 'package:lumiai/core/l10n/app_localizations.dart';
+import 'package:lumiai/features/home/providers/smart_camera_mode_provider.dart';
 
 class MinimalFunctionalUI extends ConsumerWidget {
   const MinimalFunctionalUI({super.key});
@@ -24,6 +25,7 @@ class MinimalFunctionalUI extends ConsumerWidget {
           label: l10n.identifyObject,
           icon: Icons.camera_alt,
           onPressed: () {
+            ref.read(smartCameraStateProvider.notifier).setMode(SmartCameraMode.off);
             featureController.handleAction(FeatureAction.identifyObject);
           },
         ),
@@ -31,6 +33,7 @@ class MinimalFunctionalUI extends ConsumerWidget {
           label: l10n.readText,
           icon: Icons.text_fields,
           onPressed: () {
+            ref.read(smartCameraStateProvider.notifier).setMode(SmartCameraMode.off);
             featureController.handleAction(FeatureAction.readText);
           },
         ),
@@ -38,6 +41,7 @@ class MinimalFunctionalUI extends ConsumerWidget {
           label: l10n.readCurrency,
           icon: Icons.attach_money,
           onPressed: () {
+            ref.read(smartCameraStateProvider.notifier).setMode(SmartCameraMode.off);
             featureController.handleAction(FeatureAction.readCurrency);
           },
         ),

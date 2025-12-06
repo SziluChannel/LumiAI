@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart'; // for kIsWeb
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -49,19 +50,60 @@ class ColorIdentifierController extends _$ColorIdentifierController {
         return;
       }
 
-      final camera = cameras.firstWhere(
-        (c) => c.lensDirection == CameraLensDirection.back,
-        orElse: () => cameras.first,
-      );
+      CameraController? controller;
+      String? lastError;
 
-      final controller = CameraController(
-        camera,
-        ResolutionPreset.low,
-        enableAudio: false,
-        imageFormatGroup: ImageFormatGroup.yuv420,
-      );
+      // Robust camera selection loop (matching GlobalListeningController logic)
+      for (final camera in cameras) {
+        try {
+          if (state.cameraController != null) {
+            await state.cameraController!.dispose();
+          }
 
-      await controller.initialize();
+          final c = CameraController(
+            camera,
+            ResolutionPreset.low,
+            enableAudio: false,
+            // imageFormatGroup removed to match GlobalListeningController exactly
+          );
+
+          await c.initialize();
+          controller = c;
+          debugPrint("📷 ColorIdentifier: Camera initialized successfully: ${camera.name}");
+          break;
+        } catch (e) {
+          lastError = e.toString();
+          debugPrint("📷 ColorIdentifier: Camera init error: $e");
+          if (kIsWeb && camera.lensDirection != CameraLensDirection.external) {
+            try {
+              final externalCamera = CameraDescription(
+                name: camera.name,
+                lensDirection: CameraLensDirection.external,
+                sensorOrientation: camera.sensorOrientation,
+              );
+              final c2 = CameraController(
+                externalCamera,
+                ResolutionPreset.low,
+                enableAudio: false,
+              );
+              await c2.initialize();
+              controller = c2;
+              break;
+            } catch (_) {
+              // Fallback failed, try next camera
+            }
+          }
+          continue;
+        }
+      }
+
+      if (controller == null) {
+         state = state.copyWith(
+          status: ColorIdentifierStatus.error,
+          errorMessage: "Failed to initialize camera: $lastError",
+        );
+        return;
+      }
       
       state = state.copyWith(
         status: ColorIdentifierStatus.active,
