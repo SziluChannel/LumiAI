@@ -54,6 +54,8 @@ dependencies:
   local_auth_android: ^1.0.37 # Added for specific Android biometric messages
   google_fonts: ^6.3.3
   url_launcher: ^6.3.2
+  mailer: ^6.6.0
+  flutter_secure_storage: ^9.2.4
 
 # Workaround for camera_web 0.3.5+ bug with Firefox facingMode
 # See: https://github.com/flutter/flutter/issues/

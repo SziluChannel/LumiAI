@@ -11,7 +11,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:record/record.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:image/image.dart' as img;
-import 'package:url_launcher/url_launcher.dart';
+import 'package:lumiai/core/services/email_service.dart';
 
 import 'package:lumiai/core/utils/web_utils_export.dart';
 import 'global_listening_state.dart';
@@ -233,36 +233,27 @@ class GlobalListeningController extends _$GlobalListeningController {
     }
 
     try {
-      final Uri emailLaunchUri = Uri(
-        scheme: 'mailto',
-        path: recipient,
-        query: _encodeQueryParameters(<String, String>{
-          'subject': subject ?? '',
-          'body': body ?? '',
-        }),
-      );
+      debugPrint("📧 Sending email to $recipient via SMTP...");
 
-      debugPrint("📧 Launching email: $emailLaunchUri");
+      await ref
+          .read(emailServiceProvider.notifier)
+          .sendEmail(
+            recipient: recipient,
+            subject: subject ?? 'No Subject',
+            body: body ?? '',
+          );
 
-      if (await canLaunchUrl(emailLaunchUri)) {
-        await launchUrl(emailLaunchUri);
-        return {"result": "Email client opened with draft."};
-      } else {
-        return {"error": "Could not launch email client."};
-      }
+      return {"result": "Email sent successfully to $recipient."};
     } catch (e) {
-      debugPrint("📧 Email launch error: $e");
-      return {"error": "Failed to open email client: $e"};
+      debugPrint("📧 Email send error: $e");
+      if (e.toString().contains("SMTP settings are missing")) {
+        return {
+          "error":
+              "Email failed: SMTP settings are not configured. Please ask the user to configure Email Server in Settings.",
+        };
+      }
+      return {"error": "Failed to send email: $e"};
     }
-  }
-
-  String? _encodeQueryParameters(Map<String, String> params) {
-    return params.entries
-        .map(
-          (e) =>
-              '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}',
-        )
-        .join('&');
   }
 
   /// Handles the update_settings tool call
