@@ -11,9 +11,7 @@ class PrivacyPolicyScreen extends ConsumerWidget {
     final isAccepted = privacyStateObj.value ?? false;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Adatvédelmi Nyilatkozat'),
-      ),
+      appBar: AppBar(title: const Text('Adatvédelmi Nyilatkozat')),
       body: Column(
         children: [
           Expanded(
@@ -88,15 +86,22 @@ class PrivacyPolicyScreen extends ConsumerWidget {
                     ? ElevatedButton.icon(
                         onPressed: null, // Disabled
                         icon: const Icon(Icons.check, color: Colors.green),
-                        label: const Text('Elfogadva', style: TextStyle(color: Colors.green)),
+                        label: const Text(
+                          'Elfogadva',
+                          style: TextStyle(color: Colors.green),
+                        ),
                         style: ElevatedButton.styleFrom(
-                          disabledBackgroundColor: Colors.green.withOpacity(0.1),
+                          disabledBackgroundColor: Colors.green.withValues(
+                            alpha: 0.1,
+                          ),
                           disabledForegroundColor: Colors.green,
                         ),
                       )
                     : ElevatedButton(
                         onPressed: () {
-                          ref.read(privacyPolicyControllerProvider.notifier).acceptPolicy();
+                          ref
+                              .read(privacyPolicyControllerProvider.notifier)
+                              .acceptPolicy();
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Theme.of(context).primaryColor,
@@ -118,10 +123,7 @@ class PrivacyPolicyScreen extends ConsumerWidget {
       padding: const EdgeInsets.only(bottom: 8.0),
       child: Text(
         title,
-        style: const TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-        ),
+        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
       ),
     );
   }
