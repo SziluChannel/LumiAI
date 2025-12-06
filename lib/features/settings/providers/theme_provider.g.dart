@@ -33,7 +33,7 @@ final class ThemeControllerProvider
   ThemeController create() => ThemeController();
 }
 
-String _$themeControllerHash() => r'0caa0607525d7011d43373e3e7d0d541a111ec33';
+String _$themeControllerHash() => r'7ebfc421107f727d98ac7dd8d1b65039ea072426';
 
 abstract class _$ThemeController extends $AsyncNotifier<ThemeState> {
   FutureOr<ThemeState> build();
@@ -135,4 +135,4 @@ final class SelectedAppThemeProvider
   }
 }
 
-String _$selectedAppThemeHash() => r'e0db41d9cc0ab5b4d8e4382ccd1a091179931c06';
+String _$selectedAppThemeHash() => r'8e5e67339e87dbd6b74ba7bbcefafaef5d750c2c';
