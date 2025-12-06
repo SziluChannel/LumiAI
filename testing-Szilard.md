@@ -163,11 +163,11 @@
 
 | TC# | Test Case Description | Environment | Steps to Execute | Expected Result | Actual Result |
 |-----|----------------------|-------------|------------------|-----------------|---------------|
-| TC071 | Verify spatial guidance in responses | Web/Android/iOS | 1. Ask to identify object 2. Check response | Response includes spatial directions (left, right, etc.) | |
-| TC072 | Verify responses are visually-impaired friendly | Web/Android/iOS | 1. Use various features | All responses suitable for audio-only consumption | |
-| TC073 | Verify responses avoid visual-only references | Web/Android/iOS | 1. Ask for descriptions | Responses don't rely on visual context alone | |
-| TC074 | Verify response clarity and conciseness | Web/Android/iOS | 1. Ask various questions | Responses are clear, not overly verbose | |
-| TC075 | Verify object location descriptions | Web/Android/iOS | 1. Identify object 2. Check location info | Position given relative to camera/user | |
+| TC071 | Verify spatial guidance in responses | Web/Android/iOS | 1. Ask to identify object 2. Check response | Response includes spatial directions (left, right, etc.) | ✅ Passed |
+| TC072 | Verify responses are visually-impaired friendly | Web/Android/iOS | 1. Use various features | All responses suitable for audio-only consumption | ✅ Passed |
+| TC073 | Verify responses avoid visual-only references | Web/Android/iOS | 1. Ask for descriptions | Responses don't rely on visual context alone | ✅ Passed |
+| TC074 | Verify response clarity and conciseness | Web/Android/iOS | 1. Ask various questions | Responses are clear, not overly verbose | ✅ Passed |
+| TC075 | Verify object location descriptions | Web/Android/iOS | 1. Identify object 2. Check location info | Position given relative to camera/user | ✅ Passed |
 
 ---
 
@@ -175,13 +175,13 @@
 
 | TC# | Test Case Description | Environment | Steps to Execute | Expected Result | Actual Result |
 |-----|----------------------|-------------|------------------|-----------------|---------------|
-| TC076 | Verify idle state after initialization | Web/Android/iOS | 1. Open app | State is idle, no connection active | |
-| TC077 | Verify listening state when active | Web/Android/iOS | 1. Start global listening | State changes to listening | |
-| TC078 | Verify cameraActive state | Web/Android/iOS | 1. Open camera feature | State indicates camera is active | |
-| TC079 | Verify error state on failure | Web/Android/iOS | 1. Trigger error condition | State changes to error with message | |
-| TC080 | Verify state reset after stopping | Web/Android/iOS | 1. Listen 2. Stop listening | State returns to idle | |
-| TC081 | Verify camera initialized flag | Web/Android/iOS | 1. Open camera | isCameraInitialized becomes true | |
-| TC082 | Verify camera controller availability | Web/Android/iOS | 1. Open camera | CameraController is available in state | |
+| TC076 | Verify idle state after initialization | Web/Android/iOS | 1. Open app | State is idle, no connection active | ✅ Passed |
+| TC077 | Verify listening state when active | Web/Android/iOS | 1. Start global listening | State changes to listening | ✅ Passed |
+| TC078 | Verify cameraActive state | Web/Android/iOS | 1. Open camera feature | State indicates camera is active | ✅ Passed |
+| TC079 | Verify error state on failure | Web/Android/iOS | 1. Trigger error condition | State changes to error with message | ✅ Passed |
+| TC080 | Verify state reset after stopping | Web/Android/iOS | 1. Listen 2. Stop listening | State returns to idle | ✅ Passed |
+| TC081 | Verify camera initialized flag | Web/Android/iOS | 1. Open camera | isCameraInitialized becomes true | ✅ Passed |
+| TC082 | Verify camera controller availability | Web/Android/iOS | 1. Open camera | CameraController is available in state | ✅ Passed |
 
 ---
 
@@ -189,14 +189,14 @@
 
 | TC# | Test Case Description | Environment | Steps to Execute | Expected Result | Actual Result |
 |-----|----------------------|-------------|------------------|-----------------|---------------|
-| TC083 | Verify handling of very long speech input | Web/Android/iOS | 1. Speak continuously for 60 seconds | Input handled without buffer overflow | |
-| TC084 | Verify handling of very long API response | Web/Android/iOS | 1. Ask question requiring long answer | Full response received and played | |
-| TC085 | Verify handling of silence (no speech) | Web/Android/iOS | 1. Start listening 2. Stay silent 30 seconds | No errors, connection maintained | |
-| TC086 | Verify handling of rapid feature activation | Web/Android/iOS | 1. Rapidly tap feature buttons | No crashes, one feature at a time | |
-| TC087 | Verify behavior with poor lighting (camera) | Web/Android/iOS | 1. Use camera in low light | API handles low quality frames | |
-| TC088 | Verify behavior with very bright lighting | Web/Android/iOS | 1. Use camera in bright light | Overexposed frames handled | |
-| TC089 | Verify handling of camera obstruction | Web/Android/iOS | 1. Cover camera lens | Error or appropriate notification | |
-| TC090 | Verify app behavior during phone call | Android/iOS | 1. Use app 2. Receive phone call | App pauses gracefully | |
+| TC083 | Verify handling of very long speech input | Web/Android/iOS | 1. Speak continuously for 60 seconds | Input handled without buffer overflow | ✅ Passed |
+| TC084 | Verify handling of very long API response | Web/Android/iOS | 1. Ask question requiring long answer | Full response received and played | ✅ Passed |
+| TC085 | Verify handling of silence (no speech) | Web/Android/iOS | 1. Start listening 2. Stay silent 30 seconds | No errors, connection maintained | ✅ Passed |
+| TC086 | Verify handling of rapid feature activation | Web/Android/iOS | 1. Rapidly tap feature buttons | No crashes, one feature at a time | ✅ Passed |
+| TC087 | Verify behavior with poor lighting (camera) | Web/Android/iOS | 1. Use camera in low light | API handles low quality frames | ✅ Passed |
+| TC088 | Verify behavior with very bright lighting | Web/Android/iOS | 1. Use camera in bright light | Overexposed frames handled | ✅ Passed |
+| TC089 | Verify handling of camera obstruction | Web/Android/iOS | 1. Cover camera lens | Error or appropriate notification | ✅ Passed |
+| TC090 | Verify app behavior during phone call | Android/iOS | 1. Use app 2. Receive phone call | App pauses gracefully | ✅ Passed |
 
 ---
 
