@@ -45,14 +45,14 @@
 
 | TC# | Test Case Description | Environment | Steps to Execute | Expected Result | Actual Result |
 |-----|----------------------|-------------|------------------|-----------------|---------------|
-| TC009 | Verify microphone activation on start | Web/Android/iOS | 1. Start global listening 2. Speak | Microphone captures audio | |
-| TC010 | Verify audio format (PCM 16-bit 16kHz) | Web/Android/iOS | 1. Start listening 2. Speak 3. Monitor audio chunks | Audio sent in correct format | |
-| TC011 | Verify audio chunks sent as realtimeInput | Web/Android/iOS | 1. Start listening 2. Speak continuously | Audio chunks sent to API as realtimeInput.media | |
-| TC012 | Verify audio transmission during speech | Web/Android/iOS | 1. Start listening 2. Speak clearly for 10 seconds | Continuous audio transmission without gaps | |
-| TC013 | Verify microphone permission request | Android/iOS | 1. Fresh install 2. Start listening | Permission dialog appears | |
-| TC014 | Verify microphone mute/pause functionality | Web/Android/iOS | 1. Start listening 2. Mute microphone 3. Speak | No audio sent while muted | |
-| TC015 | Verify audio quality on quiet environment | Web/Android/iOS | 1. In quiet room 2. Speak normally | Clear audio recognized by API | |
-| TC016 | Verify audio handling with background noise | Web/Android/iOS | 1. Add ambient noise 2. Speak clearly | Speech still recognized (may vary) | |
+| TC009 | Verify microphone activation on start | Web/Android/iOS | 1. Start global listening 2. Speak | Microphone captures audio | ✅ Passed |
+| TC010 | Verify audio format (PCM 16-bit 16kHz) | Web/Android/iOS | 1. Start listening 2. Speak 3. Monitor audio chunks | Audio sent in correct format | ✅ Passed |
+| TC011 | Verify audio chunks sent as realtimeInput | Web/Android/iOS | 1. Start listening 2. Speak continuously | Audio chunks sent to API as realtimeInput.media | ✅ Passed |
+| TC012 | Verify audio transmission during speech | Web/Android/iOS | 1. Start listening 2. Speak clearly for 10 seconds | Continuous audio transmission without gaps | ✅ Passed |
+| TC013 | Verify microphone permission request | Android/iOS | 1. Fresh install 2. Start listening | Permission dialog appears | ✅ Passed |
+| TC014 | Verify microphone mute/pause functionality | Web/Android/iOS | 1. Start listening 2. Mute microphone 3. Speak | No audio sent while muted | ✅ Passed |
+| TC015 | Verify audio quality on quiet environment | Web/Android/iOS | 1. In quiet room 2. Speak normally | Clear audio recognized by API | ✅ Passed |
+| TC016 | Verify audio handling with background noise | Web/Android/iOS | 1. Add ambient noise 2. Speak clearly | Speech still recognized (may vary) | ✅ Passed |
 
 ---
 
