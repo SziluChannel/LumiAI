@@ -454,7 +454,9 @@ class SettingsScreen extends ConsumerWidget {
         // Language Selection (TTS voice language, not UI language)
         SettingsTile(
           title: '${l10n.voice} ${l10n.language}',
-          subtitle: ttsSettings.language == 'hu-HU' ? 'Magyar' : 'English',
+          subtitle: ttsSettings.language == 'hu-HU'
+              ? 'Magyar'
+              : (ttsSettings.language == 'zh-CN' ? 'Chinese' : 'English'),
           trailing: DropdownButton<String>(
             value: ttsSettings.language,
             onChanged: (String? newLanguage) {
@@ -465,6 +467,7 @@ class SettingsScreen extends ConsumerWidget {
             items: const [
               DropdownMenuItem(value: 'en-US', child: Text('English')),
               DropdownMenuItem(value: 'hu-HU', child: Text('Magyar')),
+              DropdownMenuItem(value: 'zh-CN', child: Text('Chinese')),
             ],
           ),
         ),

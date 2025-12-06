@@ -12,6 +12,7 @@ Use this when the user asks to change any of these settings:
 TTS (Text-to-Speech) Settings:
 - Language: "Speak Hungarian" / "Beszélj magyarul" -> language: "hu-HU"
 - Language: "Speak English" / "Switch to English" -> language: "en-US"  
+- Language: "Speak Chinese" / "Switch to Chinese" -> language: "zh-CN"
 - Speed: "Speak faster" / "Slow down" -> adjust speed
 - Pitch: "Higher voice" / "Lower voice" -> adjust pitch
 
@@ -42,8 +43,8 @@ When user asks about available fonts/options, respond verbally with the list, do
             "language": {
               "type": "string",
               "description":
-                  "The language/locale code for TTS. Use 'en-US' for English or 'hu-HU' for Hungarian.",
-              "enum": ["en-US", "hu-HU"],
+                  "The language code for TTS. Options: 'en-US' (English), 'hu-HU' (Hungarian), 'zh-CN' (Chinese).",
+              "enum": ["en-US", "hu-HU", "zh-CN"],
             },
             "speed": {
               "type": "number",
@@ -64,7 +65,7 @@ When user asks about available fonts/options, respond verbally with the list, do
             "font_family": {
               "type": "string",
               "description":
-                  "The font family to use for the app. Available options: 'Roboto' (clean, modern), 'Open Sans' (friendly, readable), 'Lato' (elegant), 'Montserrat' (bold, geometric), 'Oswald' (condensed, impactful), 'Merriweather' (serif, classic), 'Source Code Pro' (monospace). Use 'system' to reset to device default.",
+                  "The font family to use for the application UI. Options: 'system' (default), 'Roboto', 'Open Sans', 'Lato', 'Montserrat', 'Oswald', 'Merriweather', 'Source Code Pro'. Note: If the user asks 'What fonts are available?', DO NOT call this tool. Instead, verbally list these options.",
               "enum": [
                 "system",
                 "Roboto",
@@ -75,6 +76,12 @@ When user asks about available fonts/options, respond verbally with the list, do
                 "Merriweather",
                 "Source Code Pro",
               ],
+            },
+            "app_language": {
+              "type": "string",
+              "description":
+                  "The language of the application UI. Options: 'en' (English), 'hu' (Hungarian). Use this to change the app's interface language.",
+              "enum": ["en", "hu"],
             },
             "theme_mode": {
               "type": "string",
