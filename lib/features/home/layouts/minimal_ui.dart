@@ -84,58 +84,77 @@ class _MinimalMenuButton extends ConsumerWidget {
     return Expanded(
       child: Padding(
         padding: EdgeInsets.all(16.0 * scaleFactor), // Scale padding
-        child: InkWell(
-          onTap: () async {
-            await ref.read(feedbackServiceProvider).triggerSuccessFeedback();
-            onPressed();
-          },
-          borderRadius: BorderRadius.circular(20 * scaleFactor),
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                colors: [
-                  const Color(0xFF5C6BC0), // Indigo blue
-                  const Color(0xFF7E57C2), // Soft purple
-                  const Color(0xFF7E57C2), // Soft purple
-                  const Color(0xFF5C6BC0), // Indigo blue
-                ],
-                stops: const [0.0, 0.15, 0.85, 1.0], // Blue only at edges
-              ),
+        child: Builder(
+          builder: (context) {
+            final isDark = Theme.of(context).brightness == Brightness.dark;
+
+            // Light mode: Indigo-purple | Dark mode: Deep purple-dark blue
+            final colors = isDark
+                ? [
+                    const Color(0xFF4A148C), // Deep purple
+                    const Color(0xFF311B92), // Deep indigo
+                    const Color(0xFF311B92), // Deep indigo
+                    const Color(0xFF4A148C), // Deep purple
+                  ]
+                : [
+                    const Color(0xFF5C6BC0), // Indigo blue
+                    const Color(0xFF7E57C2), // Soft purple
+                    const Color(0xFF7E57C2), // Soft purple
+                    const Color(0xFF5C6BC0), // Indigo blue
+                  ];
+
+            return InkWell(
+              onTap: () async {
+                await ref
+                    .read(feedbackServiceProvider)
+                    .triggerSuccessFeedback();
+                onPressed();
+              },
               borderRadius: BorderRadius.circular(20 * scaleFactor),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.deepPurple.withAlpha(80),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            padding: EdgeInsets.symmetric(
-              horizontal: 16 * scaleFactor,
-              vertical: 16 * scaleFactor,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  icon,
-                  size: 60 * scaleFactor,
-                  color: const Color(0xFFFFD54F),
-                ),
-                SizedBox(width: 12 * scaleFactor),
-                Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: 32 * scaleFactor,
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFFFFD54F), // Vibrant amber/gold
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                    colors: colors,
+                    stops: const [0.0, 0.15, 0.85, 1.0],
                   ),
+                  borderRadius: BorderRadius.circular(20 * scaleFactor),
+                  boxShadow: [
+                    BoxShadow(
+                      color: (isDark ? Colors.black : Colors.deepPurple)
+                          .withAlpha(80),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ),
+                padding: EdgeInsets.symmetric(
+                  horizontal: 16 * scaleFactor,
+                  vertical: 16 * scaleFactor,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      icon,
+                      size: 60 * scaleFactor,
+                      color: const Color(0xFFFFD54F),
+                    ),
+                    SizedBox(width: 12 * scaleFactor),
+                    Text(
+                      label,
+                      style: TextStyle(
+                        fontSize: 32 * scaleFactor,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFFFFD54F), // Vibrant amber/gold
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
         ),
       ),
     );

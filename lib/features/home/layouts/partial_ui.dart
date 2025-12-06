@@ -209,23 +209,35 @@ class _FeatureCard extends StatelessWidget {
   const _FeatureCard({required this.children});
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    // Light mode: Indigo-purple | Dark mode: Deep purple-dark blue
+    final colors = isDark
+        ? [
+            const Color(0xFF4A148C), // Deep purple
+            const Color(0xFF311B92), // Deep indigo
+            const Color(0xFF311B92), // Deep indigo
+            const Color(0xFF4A148C), // Deep purple
+          ]
+        : [
+            const Color(0xFF5C6BC0), // Indigo blue
+            const Color(0xFF7E57C2), // Soft purple
+            const Color(0xFF7E57C2), // Soft purple
+            const Color(0xFF5C6BC0), // Indigo blue
+          ];
+
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            const Color(0xFF5C6BC0), // Indigo blue
-            const Color(0xFF7E57C2), // Soft purple
-            const Color(0xFF7E57C2), // Soft purple
-            const Color(0xFF5C6BC0), // Indigo blue
-          ],
-          stops: const [0.0, 0.15, 0.85, 1.0], // Blue only at edges
+          colors: colors,
+          stops: const [0.0, 0.15, 0.85, 1.0],
         ),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.deepPurple.withAlpha(60),
+            color: (isDark ? Colors.black : Colors.deepPurple).withAlpha(60),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -267,23 +279,35 @@ class _SingleFeatureCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    // Light mode: Indigo-purple | Dark mode: Deep purple-dark blue
+    final colors = isDark
+        ? [
+            const Color(0xFF4A148C), // Deep purple
+            const Color(0xFF311B92), // Deep indigo
+            const Color(0xFF311B92), // Deep indigo
+            const Color(0xFF4A148C), // Deep purple
+          ]
+        : [
+            const Color(0xFF5C6BC0), // Indigo blue
+            const Color(0xFF7E57C2), // Soft purple
+            const Color(0xFF7E57C2), // Soft purple
+            const Color(0xFF5C6BC0), // Indigo blue
+          ];
+
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            const Color(0xFF5C6BC0), // Indigo blue
-            const Color(0xFF7E57C2), // Soft purple
-            const Color(0xFF7E57C2), // Soft purple
-            const Color(0xFF5C6BC0), // Indigo blue
-          ],
+          colors: colors,
           stops: const [0.0, 0.15, 0.85, 1.0],
         ),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.deepPurple.withAlpha(60),
+            color: (isDark ? Colors.black : Colors.deepPurple).withAlpha(60),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
