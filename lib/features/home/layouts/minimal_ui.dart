@@ -84,32 +84,52 @@ class _MinimalMenuButton extends ConsumerWidget {
     return Expanded(
       child: Padding(
         padding: EdgeInsets.all(16.0 * scaleFactor), // Scale padding
-        child: ElevatedButton.icon(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Theme.of(context).primaryColor.withAlpha(200),
-            foregroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(
-                20 * scaleFactor,
-              ), // Scale border radius
-            ),
-            padding: EdgeInsets.symmetric(
-              horizontal: 16 * scaleFactor,
-              vertical: 12 * scaleFactor,
-            ), // Scale padding
-          ),
-          icon: Icon(icon, size: 60 * scaleFactor), // Scale icon size
-          label: Text(
-            label,
-            style: TextStyle(
-              fontSize: 32 * scaleFactor, // Scale text size
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          onPressed: () async {
+        child: InkWell(
+          onTap: () async {
             await ref.read(feedbackServiceProvider).triggerSuccessFeedback();
             onPressed();
           },
+          borderRadius: BorderRadius.circular(20 * scaleFactor),
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                colors: [
+                  const Color(0xFFFF4081), // Hot pink
+                  const Color(0xFFAA00FF), // Vivid purple
+                  const Color(0xFF00E5FF), // Cyan
+                ],
+              ),
+              borderRadius: BorderRadius.circular(20 * scaleFactor),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.deepPurple.withAlpha(80),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            padding: EdgeInsets.symmetric(
+              horizontal: 16 * scaleFactor,
+              vertical: 16 * scaleFactor,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(icon, size: 60 * scaleFactor, color: Colors.white),
+                SizedBox(width: 12 * scaleFactor),
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 32 * scaleFactor,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );

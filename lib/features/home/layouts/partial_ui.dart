@@ -210,8 +210,26 @@ class _FeatureCard extends StatelessWidget {
   const _FeatureCard({required this.children});
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 2,
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            const Color(0xFFE040FB), // Vibrant pink/magenta
+            const Color(0xFF7C4DFF), // Bright purple
+            const Color(0xFF448AFF), // Electric blue
+          ],
+        ),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.deepPurple.withAlpha(60),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Row(
