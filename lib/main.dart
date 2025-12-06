@@ -18,7 +18,7 @@ Future<void> main() async {
     await dotenv.load(fileName: ".env");
   } catch (e) {
     // Only print error if not found, don't stop the app
-    print("Error loading .env file: $e");
+    debugPrint("Error loading .env file: $e");
   }
 
   // 3. Wrap the app in ProviderScope for Riverpod

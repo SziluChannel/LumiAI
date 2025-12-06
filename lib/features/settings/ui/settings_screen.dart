@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lumiai/features/settings/providers/theme_provider.dart';
@@ -9,6 +8,7 @@ import 'package:lumiai/core/services/tts_service.dart';
 import 'package:lumiai/features/accessibility/font_size_feature.dart'; // For AccessibilitySettingsScreen
 import 'package:lumiai/core/services/feedback_service.dart'; // Import FeedbackService
 import 'package:lumiai/features/settings/providers/haptic_feedback_provider.dart';
+import 'package:lumiai/features/settings/ui/privacy_policy_screen.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -84,7 +84,9 @@ class SettingsScreen extends ConsumerWidget {
             title: 'Adatvédelmi Nyilatkozat',
             trailing: const Icon(Icons.chevron_right),
             onTap: () {
-              // TODO: Itt lehetne megnyitni egy URL-t
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const PrivacyPolicyScreen()),
+              );
             },
           ),
           SettingsTile(
@@ -142,7 +144,7 @@ class SettingsScreen extends ConsumerWidget {
 
                 // Category dropdown
                 DropdownButtonFormField<String>(
-                  value: selectedCategory,
+                  initialValue: selectedCategory,
                   decoration: const InputDecoration(
                     labelText: 'Kategória',
                     prefixIcon: Icon(Icons.category_outlined),

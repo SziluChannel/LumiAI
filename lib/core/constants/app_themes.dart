@@ -93,8 +93,6 @@ class AppThemes {
     colorScheme: const ColorScheme.dark(
       primary: Colors.yellowAccent, // Very vibrant yellow
       onPrimary: Colors.black,
-      background: Colors.black,
-      onBackground: Colors.white,
       surface: Colors.black,
       onSurface: Colors.white,
       error: Colors.redAccent, // High contrast error
@@ -126,10 +124,8 @@ class AppThemes {
     brightness: Brightness.dark,
     scaffoldBackgroundColor: const Color(0xFF000000), // True black
     colorScheme: const ColorScheme.dark(
-      background: Color(0xFF000000),
       surface: Color(0xFF000000),
-      onBackground: Color(0xFFF2F2F2), // Soft, slightly off-white text
-      onSurface: Color(0xFFF2F2F2),
+      onSurface: Color(0xFFF2F2F2), // Soft, slightly off-white text
       primary: Colors.blueAccent, // Example primary for dark theme
     ),
     textTheme: const TextTheme(

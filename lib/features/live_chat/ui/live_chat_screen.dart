@@ -54,11 +54,14 @@ class _LiveChatScreenState extends ConsumerState<LiveChatScreen> {
             padding: const EdgeInsets.only(right: 16.0),
             child: Center(
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
-                  color: isListening 
-                      ? Colors.green.withOpacity(0.2)
-                      : Colors.grey.withOpacity(0.2),
+                  color: isListening
+                      ? Colors.green.withValues(alpha: 0.2)
+                      : Colors.grey.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
                     color: isListening ? Colors.green : Colors.grey,
@@ -125,8 +128,8 @@ class _LiveChatScreenState extends ConsumerState<LiveChatScreen> {
                           height: 100 * scale,
                           decoration: BoxDecoration(
                             color: isStreaming
-                                ? Colors.blueAccent.withOpacity(0.5)
-                                : Colors.green.withOpacity(0.3),
+                                ? Colors.blueAccent.withValues(alpha: 0.5)
+                                : Colors.green.withValues(alpha: 0.3),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
@@ -147,8 +150,8 @@ class _LiveChatScreenState extends ConsumerState<LiveChatScreen> {
               isError
                   ? "Error"
                   : isStreaming
-                      ? "Speaking..."
-                      : "Listening...",
+                  ? "Speaking..."
+                  : "Listening...",
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 24,
