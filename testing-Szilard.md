@@ -105,14 +105,14 @@
 
 | TC# | Test Case Description | Environment | Steps to Execute | Expected Result | Actual Result |
 |-----|----------------------|-------------|------------------|-----------------|---------------|
-| TC041 | Verify turn-based conversation | Web/Android/iOS | 1. Ask question 2. Wait for response 3. Ask follow-up | AI maintains conversation context | |
-| TC042 | Verify context retention across turns | Web/Android/iOS | 1. Describe an object 2. Ask "what color is it?" | AI remembers previous context | |
-| TC043 | Verify turnComplete signal handling | Web/Android/iOS | 1. Finish speaking 2. Wait | AI responds after detecting turnComplete | |
-| TC044 | Verify interruption handling | Web/Android/iOS | 1. Start AI response 2. Speak during response | AI stops and listens to user | |
-| TC045 | Verify long conversation stability (5+ turns) | Web/Android/iOS | 1. Have 5+ back-and-forth exchanges | Connection stable throughout | |
-| TC046 | Verify response filtering (no internal thoughts) | Web/Android/iOS | 1. Get complex response | Response contains only speech, no internal reasoning | |
-| TC047 | Verify clientContent prompt handling | Web/Android/iOS | 1. Send feature prompt 2. Check API format | Prompts sent as clientContent with turnComplete | |
-| TC048 | Verify empty model output handling | Web/Android/iOS | 1. Send unclear audio 2. Check response | Graceful handling of empty/unclear responses | |
+| TC041 | Verify turn-based conversation | Web/Android/iOS | 1. Ask question 2. Wait for response 3. Ask follow-up | AI maintains conversation context | ✅ Passed |
+| TC042 | Verify context retention across turns | Web/Android/iOS | 1. Describe an object 2. Ask "what color is it?" | AI remembers previous context | ✅ Passed |
+| TC043 | Verify turnComplete signal handling | Web/Android/iOS | 1. Finish speaking 2. Wait | AI responds after detecting turnComplete | ✅ Passed |
+| TC044 | Verify interruption handling | Web/Android/iOS | 1. Start AI response 2. Speak during response | AI stops and listens to user | ✅ Passed |
+| TC045 | Verify long conversation stability (5+ turns) | Web/Android/iOS | 1. Have 5+ back-and-forth exchanges | Connection stable throughout | ✅ Passed |
+| TC046 | Verify response filtering (no internal thoughts) | Web/Android/iOS | 1. Get complex response | Response contains only speech, no internal reasoning | ✅ Passed |
+| TC047 | Verify clientContent prompt handling | Web/Android/iOS | 1. Send feature prompt 2. Check API format | Prompts sent as clientContent with turnComplete | ✅ Passed |
+| TC048 | Verify empty model output handling | Web/Android/iOS | 1. Send unclear audio 2. Check response | Graceful handling of empty/unclear responses | ✅ Passed |
 
 ---
 
