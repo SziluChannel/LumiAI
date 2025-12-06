@@ -21,6 +21,12 @@ Display Settings:
 - Theme: "Dark mode" / "Sötét mód" -> theme_mode: "dark"
 - Theme: "Light mode" / "Világos mód" -> theme_mode: "light"
 
+Accessibility Themes:
+- "High contrast" / "Nagy kontraszt" -> accessibility_theme: "high_contrast"
+- "Colorblind mode" / "Színvak mód" -> accessibility_theme: "colorblind"
+- "AMOLED theme" / "AMOLED mód" -> accessibility_theme: "amoled"
+- "Normal theme" / "Normál téma" -> accessibility_theme: "none"
+
 UI Mode:
 - "Simple mode" / "Simplified" / "Egyszerű mód" -> ui_mode: "simplified"
 - "Standard mode" / "Full mode" / "Teljes nézet" -> ui_mode: "standard"
@@ -58,6 +64,12 @@ IMPORTANT: Only pass the parameters that the user explicitly wants to change.
               "description":
                   "The theme mode for the app. Use 'light' for light mode, 'dark' for dark mode, or 'system' to follow device settings.",
               "enum": ["light", "dark", "system"],
+            },
+            "accessibility_theme": {
+              "type": "string",
+              "description":
+                  "Special accessibility theme. Use 'high_contrast' for visually impaired users, 'colorblind' for colorblind-friendly colors, 'amoled' for pure black AMOLED theme, or 'none' to disable and use normal theme.",
+              "enum": ["none", "high_contrast", "colorblind", "amoled"],
             },
             // UI Mode
             "ui_mode": {
