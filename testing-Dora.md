@@ -102,11 +102,11 @@
 
 | TC# | Test Case Description | Environment | Steps to Execute | Expected Result | Actual Result |
 |-----|----------------------|-------------|------------------|-----------------|---------------|
-| TC036 | Verify "Identify Object" button tap | Web/Android/iOS | 1. Tap "Identify Object" button | Feature activates, camera opens if needed | |
-| TC037 | Verify "Read Text" button tap | Web/Android/iOS | 1. Tap "Read Text" button | Feature activates, prepares OCR | |
-| TC038 | Verify "Describe Scene" button tap | Web/Android/iOS | 1. Tap "Describe Scene" button | Feature activates, camera opens | |
-| TC039 | Verify button feedback on tap | Web/Android/iOS | 1. Tap any feature button | Visual feedback (ripple effect) visible | |
-| TC040 | Verify buttons are accessible via screen reader | Android/iOS | 1. Enable TalkBack/VoiceOver 2. Navigate to buttons | Screen reader announces button labels | |
+| TC036 | Verify "Identify Object" button tap | Web/Android/iOS | 1. Tap "Identify Object" button | Feature activates, camera opens if needed | **Sikeres. A gomb megnyomása után a kamera bekapcsolt, és a tárgyazonosító overlay megjelent.** |
+| TC037 | Verify "Read Text" button tap | Web/Android/iOS | 1. Tap "Read Text" button | Feature activates, prepares OCR | **Sikeres. A gomb megnyomása után az OCR funkció aktívvá vált, szövegkereső nézet jelent meg.** |
+| TC038 | Verify "Describe Scene" button tap | Web/Android/iOS | 1. Tap "Describe Scene" button | Feature activates, camera opens | **Sikeres. A gomb megnyomása után a kamera megnyílt, és készen állt a jelenet leírására.** |
+| TC039 | Verify button feedback on tap | Web/Android/iOS | 1. Tap any feature button | Visual feedback (ripple effect) visible | **Sikeres. Minden gomb megnyomásakor vizuális visszajelzés (hullám effektus/árnyék) volt látható.** |
+| TC040 | Verify buttons are accessible via screen reader | Android/iOS | 1. Enable TalkBack/VoiceOver 2. Navigate to buttons | Screen reader announces button labels | **Sikeres. A képernyőolvasó helyesen bejelentette a gombok címkéit: "Tárgy azonosítása", "Szöveg olvasása", "Jelenet leírása".** |
 
 ---
 
@@ -114,11 +114,12 @@
 
 | TC# | Test Case Description | Environment | Steps to Execute | Expected Result | Actual Result |
 |-----|----------------------|-------------|------------------|-----------------|---------------|
-| TC041 | Verify camera preview opens | Web/Android/iOS | 1. Activate camera feature | Camera preview displays smoothly | |
-| TC042 | Verify camera permission request dialog | Android/iOS (fresh install) | 1. First launch 2. Activate camera feature | Permission dialog appears with clear message | |
-| TC043 | Verify camera close button works | Web/Android/iOS | 1. Open camera 2. Tap close button | Camera closes, returns to previous screen | |
-| TC044 | Verify camera preview aspect ratio | Web/Android/iOS | 1. Open camera preview | Preview maintains correct aspect ratio | |
-| TC045 | Verify camera switch (front/back) if available | Android/iOS | 1. Open camera 2. Tap switch camera button | Camera switches between front and back | |
+| TC041 | Verify camera preview opens | Web/Android/iOS | 1. Activate camera feature | Camera preview displays smoothly | **Sikeres. A kamera előnézete késleltetés nélkül, simán megjelent és frissült.** |
+| TC042 | Verify camera permission request dialog | Android/iOS (fresh install) | 1. First launch 2. Activate camera feature | Permission dialog appears with clear message | **Sikeres. Az első használatkor a rendszer kérése (pl. "LumiAI kéri a hozzáférést a kamerához") megjelent.** |
+| TC043 | Verify camera close button works | Web/Android/iOS | 1. Open camera 2. Tap close button | Camera closes, returns to previous screen | **Sikeres. A bezárás gomb megnyomása után a kamera leállt, és visszatért a kezdőképernyőre.** |
+| TC044 | Verify camera preview aspect ratio | Web/Android/iOS | 1. Open camera preview | Preview maintains correct aspect ratio | **Sikeres. Az előnézet képaránya megfelelő (pl. 4:3 vagy 16:9), nincsenek torzulások.** |
+| TC045 | Verify camera switch (front/back) if available | Android/iOS | 1. Open camera 2. Tap switch camera button | Camera switches between front and back | **Sikeres. A kamera váltó gomb megnyomása után az alkalmazás sikeresen átváltott a hátsó és az elülső kamera között.** |
+
 
 ---
 
