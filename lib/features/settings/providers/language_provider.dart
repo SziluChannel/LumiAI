@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 part 'language_provider.g.dart';
 
 /// Controller for app language/locale settings
-@riverpod
+@Riverpod(keepAlive: true)
 class LanguageController extends _$LanguageController {
   static const _languageKey = 'app_language';
 
@@ -26,6 +26,7 @@ class LanguageController extends _$LanguageController {
   }
 
   Future<void> setLocale(Locale locale) async {
+    debugPrint("🌐 Setting locale to: ${locale.languageCode}");
     state = locale;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_languageKey, locale.languageCode);

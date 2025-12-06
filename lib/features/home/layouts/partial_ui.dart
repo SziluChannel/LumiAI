@@ -129,7 +129,7 @@ class PartialFunctionalUI extends ConsumerWidget {
         const SizedBox(height: 8),
         _FeatureCardRow(
           left: _FeatureButton(
-            label: "Light Meter", // Todo: Localize
+            label: l10n.lightMeter,
             icon: Icons.lightbulb,
             onPressed: () {
                 // Toggle Light Mode
