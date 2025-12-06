@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:lumiai/core/constants/app_prompts.dart';
 import 'package:lumiai/core/constants/gemini_live_params.dart';
@@ -143,7 +144,7 @@ class GeminiLiveClient extends _$GeminiLiveClient {
       return;
     }
 
-    // For real-time audio streaming, use realtimeInput with dedicated audio field
+    // For real-time streaming, use realtimeInput with dedicated fields
     // Using modern format (not deprecated mediaChunks)
     if (isRealtime) {
       if (audioBytes != null) {
@@ -159,15 +160,21 @@ class GeminiLiveClient extends _$GeminiLiveClient {
       }
 
       if (imageBytes != null) {
+        // Use 'video' field for realtime video input (not deprecated mediaChunks)
+        debugPrint("📸 Sending image frame");
         _sendJson({
           "realtimeInput": {
-            "mediaChunks": [
-              {"mimeType": "image/jpeg", "data": base64Encode(imageBytes)},
-            ],
+            "video": {
+              "mimeType": "image/jpeg",
+              "data": base64Encode(imageBytes),
+            },
           },
         });
         return;
       }
+
+      // For text, fall through to clientContent below
+      // This ensures proper turn management for prompts that need responses
     }
 
     final List<Map<String, dynamic>> parts = [];
@@ -175,6 +182,7 @@ class GeminiLiveClient extends _$GeminiLiveClient {
     // ... (text/image/video/audio parts adding remains same) ...
     // 1. Add Text
     if (text != null && text.isNotEmpty) {
+      debugPrint("📝 Sending text: $text");
       parts.add({"text": text});
     }
 
@@ -269,9 +277,15 @@ class GeminiLiveClient extends _$GeminiLiveClient {
         }
 
         // Extract Text (for TEXT response modality)
+        // Filter out 'thought' parts - only process actual text responses
         if (content.containsKey('modelTurn')) {
           final parts = content['modelTurn']['parts'] as List;
           for (var part in parts) {
+            // Skip thought/thinking parts - these are internal reasoning
+            if (part is Map && part.containsKey('thought')) {
+              debugPrint("🧠 Skipping thought: ${part['thought']}");
+              continue;
+            }
             if (part is Map && part.containsKey('text')) {
               _textController.add(part['text']);
             }

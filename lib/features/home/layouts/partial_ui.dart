@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lumiai/core/constants/app_prompts.dart';
-import 'package:lumiai/core/services/feedback_service.dart';
-import 'package:lumiai/features/global_listening/global_listening_controller.dart';
-import 'package:lumiai/features/live_chat/ui/live_chat_screen.dart';
-import 'package:provider/provider.dart' as pr; // Alias for Provider.of
-import 'package:lumiai/features/accessibility/font_size_feature.dart'; // For FontSizeProvider
+import 'package:lumiai/core/features/feature_action.dart';
+import 'package:lumiai/core/features/feature_controller.dart';
+import 'package:lumiai/core/services/tts_service.dart';
+import 'package:lumiai/features/settings/providers/tts_settings_provider.dart';
 
 class PartialFunctionalUI extends ConsumerWidget {
   const PartialFunctionalUI({super.key});
@@ -16,9 +14,9 @@ class PartialFunctionalUI extends ConsumerWidget {
   }
 
   Widget _buildMenu(BuildContext context, WidgetRef ref) {
-    final globalController = ref.read(
-      globalListeningControllerProvider.notifier,
-    );
+    final featureController = ref.read(featureControllerProvider.notifier);
+    // Watch settings for the temporary sliders
+    final ttsSettings = ref.watch(ttsSettingsControllerProvider);
 
     return ListView(
       padding: const EdgeInsets.all(16),
@@ -30,14 +28,14 @@ class PartialFunctionalUI extends ConsumerWidget {
               label: "Identify Object",
               icon: Icons.camera_alt,
               onPressed: () {
-                globalController.sendUserPrompt(AppPrompts.identifyObjectLive);
+                featureController.handleAction(FeatureAction.identifyObject);
               },
             ),
             _FeatureButton(
               label: "Describe Scene",
               icon: Icons.landscape,
               onPressed: () {
-                globalController.sendUserPrompt(AppPrompts.describeScene);
+                featureController.handleAction(FeatureAction.describeScene);
               },
             ),
           ],
@@ -50,7 +48,7 @@ class PartialFunctionalUI extends ConsumerWidget {
               label: "Read Text",
               icon: Icons.text_fields,
               onPressed: () {
-                globalController.sendUserPrompt(AppPrompts.readText);
+                featureController.handleAction(FeatureAction.readText);
               },
             ),
           ],
@@ -64,7 +62,9 @@ class PartialFunctionalUI extends ConsumerWidget {
               icon: Icons.chat,
               onPressed: () {
                 Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const LiveChatScreen()),
+                  MaterialPageRoute(
+                    builder: (context) => const LiveChatScreen(),
+                  ),
                 );
               },
             ),
@@ -136,7 +136,11 @@ class _FeatureButton extends ConsumerWidget {
         padding: const EdgeInsets.symmetric(vertical: 12),
         child: Column(
           children: [
-            Icon(icon, size: 40 * scaleFactor, color: Theme.of(context).primaryColor), // Scale icon size
+            Icon(
+              icon,
+              size: 40 * scaleFactor,
+              color: Theme.of(context).primaryColor,
+            ), // Scale icon size
             SizedBox(height: 8 * scaleFactor), // Scale spacing, removed const
             Text(
               label,
