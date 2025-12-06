@@ -72,7 +72,63 @@ When using visual features, use the open_camera tool if not already active, and 
       "Respond immediately.";
 
   // ==========================================================
-  // 4. DYNAMIC PROMPTS (Metódusok változókkal)
+  // 4. FEATURE: CURRENCY RECOGNITION
+  // ==========================================================
+
+  /// Prompt for recognizing currency (bills and coins).
+  static const String readCurrency =
+      "The camera is already open and streaming video to you. "
+      "Look at the current video frames and identify any money visible - bills or coins. "
+      "Do NOT use any tools - just describe what is visible. "
+      "Tell me the denomination and currency type (e.g., '20 Euro bill', '500 Forint coin'). "
+      "If multiple items, give the total sum. "
+      "If no currency is visible, say 'No money detected'. "
+      "Respond immediately.";
+
+  // ==========================================================
+  // 5. FEATURE: CLOTHING DESCRIPTION
+  // ==========================================================
+
+  /// Prompt for describing clothing.
+  static const String describeClothing =
+      "The camera is already open and streaming video to you. "
+      "Look at the current video frames and describe the clothing visible. "
+      "Do NOT use any tools - just describe what is visible. "
+      "Mention: color, pattern (solid, striped, plaid, etc.), type of garment (shirt, pants, dress). "
+      "If there are multiple items, describe each one. "
+      "Help me understand if this outfit matches well together. "
+      "Respond immediately.";
+
+  // ==========================================================
+  // 6. FEATURE: EXPIRY DATE READER
+  // ==========================================================
+
+  /// Prompt for reading expiry dates on food products.
+  static const String readExpiryDate =
+      "The camera is already open and streaming video to you. "
+      "Look at the current video frames for a food product. "
+      "Do NOT use any tools - just read what is visible. "
+      "Find and read the expiry date, best before date, or use by date. "
+      "Tell me if the product is still safe to consume based on today's date. "
+      "If you cannot find an expiry date, say 'No expiry date found - try rotating the product'. "
+      "Respond immediately.";
+
+  // ==========================================================
+  // 7. FEATURE: MENU READER
+  // ==========================================================
+
+  /// Prompt for reading restaurant menus.
+  static const String readMenu =
+      "The camera is already open and streaming video to you. "
+      "Look at the current video frames showing a restaurant menu. "
+      "Do NOT use any tools - just read what is visible. "
+      "Read the menu items with their prices. Group items by category if visible. "
+      "Highlight any vegetarian, vegan, or allergen information you can see. "
+      "If the menu is long, summarize the categories first, then read details. "
+      "Respond immediately.";
+
+  // ==========================================================
+  // 8. DYNAMIC PROMPTS (Metódusok változókkal)
   // ==========================================================
 
   /// Ha a felhasználó egy konkrét dolgot keres (pl. "Hol a kulcsom?")
@@ -80,5 +136,16 @@ When using visual features, use the open_camera tool if not already active, and 
     return "Locate the '$objectName' in this image. "
         "Describe exactly where it is relative to the camera position "
         "(e.g., top right, center, bottom left).";
+  }
+
+  /// Live version for finding specific objects.
+  static String findSpecificObjectLive(String objectName) {
+    return "The camera is already open and streaming video to you. "
+        "Look at the current video frames and try to find: $objectName. "
+        "Do NOT use any tools - just search what is visible. "
+        "If you find it, describe exactly where it is relative to my position "
+        "(e.g., 'to your left', 'on the table in front of you', 'on the floor to your right'). "
+        "If you cannot find it, say 'I cannot see $objectName right now - try moving the camera'. "
+        "Respond immediately.";
   }
 }
