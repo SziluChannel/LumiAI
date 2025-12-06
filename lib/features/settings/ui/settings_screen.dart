@@ -9,6 +9,7 @@ import 'package:lumiai/core/constants/app_themes.dart'; // Needed for CustomThem
 import 'package:lumiai/features/accessibility/font_size_feature.dart'; // For AccessibilitySettingsScreen
 import 'package:lumiai/core/services/feedback_service.dart'; // Import FeedbackService
 import 'package:lumiai/features/settings/providers/haptic_feedback_provider.dart';
+import 'package:lumiai/features/settings/ui/privacy_policy_screen.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -81,7 +82,9 @@ class SettingsScreen extends ConsumerWidget {
             title: 'Adatvédelmi Nyilatkozat',
             trailing: const Icon(Icons.chevron_right),
             onTap: () {
-              // TODO: Itt lehetne megnyitni egy URL-t
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const PrivacyPolicyScreen()),
+              );
             },
           ),
           SettingsTile(
