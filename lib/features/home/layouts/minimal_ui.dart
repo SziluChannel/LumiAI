@@ -96,10 +96,12 @@ class _MinimalMenuButton extends ConsumerWidget {
                 begin: Alignment.centerLeft,
                 end: Alignment.centerRight,
                 colors: [
-                  const Color(0xFFFF4081), // Hot pink
-                  const Color(0xFFAA00FF), // Vivid purple
-                  const Color(0xFF00E5FF), // Cyan
+                  const Color(0xFF5C6BC0), // Indigo blue
+                  const Color(0xFF7E57C2), // Soft purple
+                  const Color(0xFF7E57C2), // Soft purple
+                  const Color(0xFF5C6BC0), // Indigo blue
                 ],
+                stops: const [0.0, 0.15, 0.85, 1.0], // Blue only at edges
               ),
               borderRadius: BorderRadius.circular(20 * scaleFactor),
               boxShadow: [
@@ -117,14 +119,18 @@ class _MinimalMenuButton extends ConsumerWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(icon, size: 60 * scaleFactor, color: Colors.white),
+                Icon(
+                  icon,
+                  size: 60 * scaleFactor,
+                  color: const Color(0xFFFFD54F),
+                ),
                 SizedBox(width: 12 * scaleFactor),
                 Text(
                   label,
                   style: TextStyle(
                     fontSize: 32 * scaleFactor,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: const Color(0xFFFFD54F), // Vibrant amber/gold
                   ),
                 ),
               ],

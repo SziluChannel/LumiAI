@@ -33,6 +33,11 @@ class PartialFunctionalUI extends ConsumerWidget {
                 featureController.handleAction(FeatureAction.identifyObject);
               },
             ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        _FeatureCard(
+          children: [
             _FeatureButton(
               label: l10n.describeScene,
               icon: Icons.landscape,
@@ -60,62 +65,56 @@ class PartialFunctionalUI extends ConsumerWidget {
         ),
         const SizedBox(height: 20),
         _SectionHeader(title: l10n.textAssistance),
-        _FeatureCard(
-          children: [
-            _FeatureButton(
-              label: l10n.readText,
-              icon: Icons.text_fields,
-              onPressed: () {
-                featureController.handleAction(FeatureAction.readText);
-              },
-            ),
-            _FeatureButton(
-              label: l10n.readMenu,
-              icon: Icons.restaurant_menu,
-              onPressed: () {
-                featureController.handleAction(FeatureAction.readMenu);
-              },
-            ),
-          ],
+        _FeatureCardRow(
+          left: _FeatureButton(
+            label: l10n.readText,
+            icon: Icons.text_fields,
+            onPressed: () {
+              featureController.handleAction(FeatureAction.readText);
+            },
+          ),
+          right: _FeatureButton(
+            label: l10n.readMenu,
+            icon: Icons.restaurant_menu,
+            onPressed: () {
+              featureController.handleAction(FeatureAction.readMenu);
+            },
+          ),
         ),
         const SizedBox(height: 20),
         _SectionHeader(title: l10n.dailyHelpers),
-        _FeatureCard(
-          children: [
-            _FeatureButton(
-              label: l10n.readCurrency,
-              icon: Icons.attach_money,
-              onPressed: () {
-                featureController.handleAction(FeatureAction.readCurrency);
-              },
-            ),
-            _FeatureButton(
-              label: l10n.describeClothing,
-              icon: Icons.checkroom,
-              onPressed: () {
-                featureController.handleAction(FeatureAction.describeClothing);
-              },
-            ),
-          ],
+        _FeatureCardRow(
+          left: _FeatureButton(
+            label: l10n.readCurrency,
+            icon: Icons.attach_money,
+            onPressed: () {
+              featureController.handleAction(FeatureAction.readCurrency);
+            },
+          ),
+          right: _FeatureButton(
+            label: l10n.describeClothing,
+            icon: Icons.checkroom,
+            onPressed: () {
+              featureController.handleAction(FeatureAction.describeClothing);
+            },
+          ),
         ),
         const SizedBox(height: 8),
-        _FeatureCard(
-          children: [
-            _FeatureButton(
-              label: l10n.expiryDate,
-              icon: Icons.calendar_today,
-              onPressed: () {
-                featureController.handleAction(FeatureAction.readExpiryDate);
-              },
-            ),
-            _FeatureButton(
-              label: l10n.findObject,
-              icon: Icons.search,
-              onPressed: () {
-                _showFindObjectDialog(context, ref, l10n);
-              },
-            ),
-          ],
+        _FeatureCardRow(
+          left: _FeatureButton(
+            label: l10n.expiryDate,
+            icon: Icons.calendar_today,
+            onPressed: () {
+              featureController.handleAction(FeatureAction.readExpiryDate);
+            },
+          ),
+          right: _FeatureButton(
+            label: l10n.findObject,
+            icon: Icons.search,
+            onPressed: () {
+              _showFindObjectDialog(context, ref, l10n);
+            },
+          ),
         ),
         const SizedBox(height: 20),
         _SectionHeader(title: l10n.chat),
@@ -216,10 +215,12 @@ class _FeatureCard extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            const Color(0xFFE040FB), // Vibrant pink/magenta
-            const Color(0xFF7C4DFF), // Bright purple
-            const Color(0xFF448AFF), // Electric blue
+            const Color(0xFF5C6BC0), // Indigo blue
+            const Color(0xFF7E57C2), // Soft purple
+            const Color(0xFF7E57C2), // Soft purple
+            const Color(0xFF5C6BC0), // Indigo blue
           ],
+          stops: const [0.0, 0.15, 0.85, 1.0], // Blue only at edges
         ),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
@@ -237,6 +238,58 @@ class _FeatureCard extends StatelessWidget {
           children: children,
         ),
       ),
+    );
+  }
+}
+
+/// A row of separate gradient cards displayed side by side
+class _FeatureCardRow extends StatelessWidget {
+  final Widget left;
+  final Widget right;
+  const _FeatureCardRow({required this.left, required this.right});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(child: _SingleFeatureCard(child: left)),
+        const SizedBox(width: 10),
+        Expanded(child: _SingleFeatureCard(child: right)),
+      ],
+    );
+  }
+}
+
+/// A single gradient card containing one feature button
+class _SingleFeatureCard extends StatelessWidget {
+  final Widget child;
+  const _SingleFeatureCard({required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            const Color(0xFF5C6BC0), // Indigo blue
+            const Color(0xFF7E57C2), // Soft purple
+            const Color(0xFF7E57C2), // Soft purple
+            const Color(0xFF5C6BC0), // Indigo blue
+          ],
+          stops: const [0.0, 0.15, 0.85, 1.0],
+        ),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.deepPurple.withAlpha(60),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Padding(padding: const EdgeInsets.all(16.0), child: child),
     );
   }
 }
@@ -271,7 +324,7 @@ class _FeatureButton extends ConsumerWidget {
             Icon(
               icon,
               size: 40 * scaleFactor,
-              color: Theme.of(context).primaryColor,
+              color: const Color(0xFFFFD54F), // Vibrant amber/gold
             ), // Scale icon size
             SizedBox(height: 8 * scaleFactor), // Scale spacing
             Text(
@@ -280,6 +333,7 @@ class _FeatureButton extends ConsumerWidget {
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 16 * scaleFactor, // Scale text size
+                color: const Color(0xFFFFD54F), // Matching amber/gold
               ),
             ),
           ],
