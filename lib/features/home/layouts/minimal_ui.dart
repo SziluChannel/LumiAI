@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lumiai/core/constants/app_prompts.dart';
-import 'package:lumiai/features/global_listening/global_listening_controller.dart';
+import 'package:lumiai/core/features/feature_action.dart';
+import 'package:lumiai/core/features/feature_controller.dart';
 import 'package:lumiai/features/settings/ui/settings_screen.dart';
 
 class MinimalFunctionalUI extends ConsumerWidget {
@@ -9,9 +9,7 @@ class MinimalFunctionalUI extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final globalController = ref.read(
-      globalListeningControllerProvider.notifier,
-    );
+    final featureController = ref.read(featureControllerProvider.notifier);
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -21,16 +19,14 @@ class MinimalFunctionalUI extends ConsumerWidget {
           label: 'Identify Object',
           icon: Icons.camera_alt,
           onPressed: () {
-            // Send prompt directly - model will open camera, analyze, and speak
-            globalController.sendUserPrompt(AppPrompts.identifyObjectLive);
+            featureController.handleAction(FeatureAction.identifyObject);
           },
         ),
         _MinimalMenuButton(
           label: 'Read Text',
           icon: Icons.text_fields,
           onPressed: () {
-            // Send read text prompt
-            globalController.sendUserPrompt(AppPrompts.readText);
+            featureController.handleAction(FeatureAction.readText);
           },
         ),
         _MinimalMenuButton(
