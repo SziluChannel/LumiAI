@@ -46,7 +46,7 @@ class PartialFunctionalUI extends ConsumerWidget {
         _FeatureCard(
           children: [
             _FeatureButton(
-              label: "Color Identifier",
+              label: l10n.colorIdentifier,
               icon: Icons.palette,
               onPressed: () {
                 Navigator.of(context).push(

@@ -30,6 +30,7 @@ class AppLocalizations {
       // Feature Buttons
       'identifyObject': 'Identify Object',
       'describeScene': 'Describe Scene',
+      'colorIdentifier': 'Color Identifier',
       'readText': 'Read Text',
       'liveChat': 'Live Chat',
       'settings': 'Settings',
@@ -140,6 +141,7 @@ class AppLocalizations {
       // Feature Buttons
       'identifyObject': 'Tárgy Azonosítása',
       'describeScene': 'Jelenet Leírása',
+      'colorIdentifier': 'Szín Azonosító',
       'readText': 'Szöveg Olvasása',
       'liveChat': 'Élő Chat',
       'settings': 'Beállítások',
@@ -253,6 +255,7 @@ class AppLocalizations {
   String get unmuteMicrophone => get('unmuteMicrophone');
   String get identifyObject => get('identifyObject');
   String get describeScene => get('describeScene');
+  String get colorIdentifier => get('colorIdentifier');
   String get readText => get('readText');
   String get liveChat => get('liveChat');
   String get settings => get('settings');
