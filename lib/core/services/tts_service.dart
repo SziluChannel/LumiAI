@@ -30,6 +30,7 @@ Future<TtsService> ttsService(Ref ref) async {
     service.setPitch(next.pitch);
     service.setRate(next.speed);
     service.setVoice(next.selectedVoice);
+    service.setLanguage(next.language);
   });
 
   // 2. Apply initial settings (in case they are already loaded)
@@ -37,6 +38,7 @@ Future<TtsService> ttsService(Ref ref) async {
   service.setPitch(currentSettings.pitch);
   service.setRate(currentSettings.speed);
   service.setVoice(currentSettings.selectedVoice);
+  service.setLanguage(currentSettings.language);
 
   return service;
 }
@@ -62,28 +64,34 @@ class TtsService {
     await _initVoices();
   }
 
-    Future<void> _initVoices() async {
+  Future<void> _initVoices() async {
     try {
       final voices = await _flutterTts.getVoices;
       if (voices != null) {
         // Filter for US English voices and map to VoiceOption
         _availableVoices = voices
             .where((v) => v['locale'] == 'en-US' && v['name'] != null)
-            .map((v) => VoiceOption(name: v['name'] as String, identifier: v['name'] as String))
+            .map(
+              (v) => VoiceOption(
+                name: v['name'] as String,
+                identifier: v['name'] as String,
+              ),
+            )
             .toList();
 
         // Add a fallback if no specific voices are found
         if (_availableVoices.isEmpty) {
           _availableVoices = _defaultVoices;
         }
-        debugPrint('Available voices: ${_availableVoices.map((v) => v.name).join(', ')}');
+        debugPrint(
+          'Available voices: ${_availableVoices.map((v) => v.name).join(', ')}',
+        );
       }
     } catch (e) {
       debugPrint('Error getting voices: $e');
       _availableVoices = _defaultVoices; // Fallback to default on error
     }
   }
-
 
   /// Speaks the given [text] using the device's TTS engine.
   ///
@@ -113,5 +121,9 @@ class TtsService {
     if (voiceIdentifier != null && voiceIdentifier.isNotEmpty) {
       await _flutterTts.setVoice({"name": voiceIdentifier, "locale": "en-US"});
     }
+  }
+
+  Future<void> setLanguage(String language) async {
+    await _flutterTts.setLanguage(language);
   }
 }
