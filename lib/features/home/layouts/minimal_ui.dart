@@ -5,8 +5,7 @@ import 'package:lumiai/core/services/feedback_service.dart';
 import 'package:lumiai/core/features/feature_controller.dart';
 import 'package:lumiai/features/live_chat/ui/live_chat_screen.dart';
 import 'package:lumiai/features/settings/ui/settings_screen.dart';
-import 'package:provider/provider.dart' as pr; // Alias for Provider.of
-import 'package:lumiai/features/accessibility/font_size_feature.dart'; // For FontSizeProvider
+import 'package:lumiai/features/accessibility/font_size_feature.dart'; // For fontSizeProvider
 
 class MinimalFunctionalUI extends ConsumerWidget {
   const MinimalFunctionalUI({super.key});
@@ -80,8 +79,8 @@ class _MinimalMenuButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final fontSizeProvider = pr.Provider.of<FontSizeProvider>(context);
-    final double scaleFactor = fontSizeProvider.scaleFactor;
+    final fontSizeState = ref.watch(fontSizeProvider);
+    final double scaleFactor = fontSizeState.scaleFactor;
 
     return Expanded(
       child: Padding(
