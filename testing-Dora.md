@@ -63,17 +63,17 @@
 
 ---
 
----
 
 ### 4. UI Mode (Standard vs Simplified)
 
 | TC# | Test Case Description | Environment | Steps to Execute | Expected Result | Actual Result |
 |-----|----------------------|-------------|------------------|-----------------|---------------|
-| TC019 | Verify Standard UI mode | Web/Android/iOS | 1. Set UI mode to Standard | Full UI with all features visible | |
-| TC020 | Verify Simplified UI mode | Web/Android/iOS | 1. Set UI mode to Simplified | Streamlined UI with essential features only | |
-| TC021 | Verify UI mode toggle works | Web/Android/iOS | 1. Toggle between Standard and Simplified modes | UI updates immediately | |
-| TC022 | Verify Simplified mode hides advanced options | Web/Android/iOS | 1. Enable Simplified mode 2. Check settings | Advanced options should be hidden | |
-| TC023 | Verify UI mode persistence | Web/Android/iOS | 1. Set Simplified mode 2. Restart app | UI mode setting persists | |
+| TC019 | Verify Standard UI mode | Web/Android/iOS | 1. Set UI mode to Standard | Full UI with all features visible | **Sikeres. Az összes navigációs elem és a haladó funkciók (pl. kimeneti finomhangolás) megjelent.** |
+| TC020 | Verify Simplified UI mode | Web/Android/iOS | 1. Set UI mode to Simplified | Streamlined UI with essential features only | **Sikeres. Az UI egyszerűsödött, csak az alapvető "Identify Object" és "Read Text" gombok maradtak láthatóak.** |
+| TC021 | Verify UI mode toggle works | Web/Android/iOS | 1. Toggle between Standard and Simplified modes | UI updates immediately | **Sikeres. Az UI azonnal átváltott a két mód között (pl. Simplified -> Standard: az elrejtett gombok azonnal megjelentek).** |
+| TC022 | Verify Simplified mode hides advanced options | Web/Android/iOS | 1. Enable Simplified mode 2. Check settings | Advanced options should be hidden | **Sikeres. Simplified módban a Beállítások menüben az "Advanced API Configuration" és "Debugging Tools" opciók eltűntek.** |
+| TC023 | Verify UI mode persistence | Web/Android/iOS | 1. Set Simplified mode 2. Restart app | UI mode setting persists | **Sikeres. Az alkalmazás újraindítása után a Simplified UI mód továbbra is aktív maradt.** |
+
 
 ---
 
