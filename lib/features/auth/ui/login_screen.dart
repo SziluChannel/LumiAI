@@ -39,6 +39,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   Future<void> _authenticateBiometrics() async {
     final bool authenticated = await _biometricAuthService.authenticate();
+    if (!mounted) return;
     if (authenticated) {
       // Success Condition: Navigate to HomeScreen
       Navigator.of(

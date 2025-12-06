@@ -83,8 +83,8 @@ void main() {
       expect(theme.colorScheme.primary, Colors.yellowAccent);
     });
 
-    test('has white text on background', () {
-      expect(theme.colorScheme.onBackground, Colors.white);
+    test('has white text on surface', () {
+      expect(theme.colorScheme.onSurface, Colors.white);
     });
 
     test('uses Material 3', () {
@@ -127,16 +127,11 @@ void main() {
       expect(theme.scaffoldBackgroundColor, const Color(0xFF000000));
     });
 
-    test('has true black background color', () {
-      expect(theme.colorScheme.background, const Color(0xFF000000));
-    });
-
     test('has true black surface color', () {
       expect(theme.colorScheme.surface, const Color(0xFF000000));
     });
 
     test('has off-white text color', () {
-      expect(theme.colorScheme.onBackground, const Color(0xFFF2F2F2));
       expect(theme.colorScheme.onSurface, const Color(0xFFF2F2F2));
     });
 

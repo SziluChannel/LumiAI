@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lumiai/features/settings/providers/theme_provider.dart';
@@ -84,7 +83,7 @@ class SettingsScreen extends ConsumerWidget {
             title: 'Adatvédelmi Nyilatkozat',
             trailing: const Icon(Icons.chevron_right),
             onTap: () {
-              // TODO: Itt lehetne megnyitni egy URL-t
+              // _TODO: Itt lehetne megnyitni egy URL-t
             },
           ),
           SettingsTile(
@@ -142,7 +141,7 @@ class SettingsScreen extends ConsumerWidget {
 
                 // Category dropdown
                 DropdownButtonFormField<String>(
-                  value: selectedCategory,
+                  initialValue: selectedCategory,
                   decoration: const InputDecoration(
                     labelText: 'Kategória',
                     prefixIcon: Icon(Icons.category_outlined),

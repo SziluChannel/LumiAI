@@ -1,3 +1,4 @@
+import 'dart:ui' show PlatformDispatcher;
 import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -92,7 +93,9 @@ class ThemeController extends _$ThemeController {
 // most már a teljes ThemeData-t fogja szolgáltatni.
 @riverpod
 AppThemeMode currentAppThemeMode(Ref ref) {
-  return ref.watch(themeControllerProvider).when(
+  return ref
+      .watch(themeControllerProvider)
+      .when(
         data: (themeState) => themeState.appThemeMode,
         loading: () => AppThemeMode.system,
         error: (_, __) => AppThemeMode.system,
@@ -121,13 +124,15 @@ ThemeData selectedAppTheme(Ref ref) {
           AppThemeMode.light => AppThemes.defaultLightTheme,
           AppThemeMode.dark => AppThemes.defaultDarkTheme,
           AppThemeMode.system =>
-            WidgetsBinding.instance.window.platformBrightness == Brightness.dark
+            PlatformDispatcher.instance.platformBrightness == Brightness.dark
                 ? AppThemes.defaultDarkTheme
                 : AppThemes.defaultLightTheme,
         };
       }
     },
-    loading: () => AppThemes.defaultLightTheme, // Alapértelmezett betöltés alatt
-    error: (_, __) => AppThemes.defaultLightTheme, // Alapértelmezett hiba esetén
+    loading: () =>
+        AppThemes.defaultLightTheme, // Alapértelmezett betöltés alatt
+    error: (_, __) =>
+        AppThemes.defaultLightTheme, // Alapértelmezett hiba esetén
   );
 }
