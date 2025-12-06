@@ -5,6 +5,7 @@ import 'package:lumiai/core/features/feature_controller.dart';
 import 'package:lumiai/core/services/feedback_service.dart';
 import 'package:lumiai/features/accessibility/font_size_feature.dart';
 import 'package:lumiai/features/live_chat/ui/live_chat_screen.dart';
+import 'package:lumiai/features/accessibility/color_identifier/color_identifier_screen.dart';
 import 'package:lumiai/core/l10n/app_localizations.dart';
 
 class PartialFunctionalUI extends ConsumerWidget {
@@ -37,6 +38,22 @@ class PartialFunctionalUI extends ConsumerWidget {
               icon: Icons.landscape,
               onPressed: () {
                 featureController.handleAction(FeatureAction.describeScene);
+              },
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        _FeatureCard(
+          children: [
+            _FeatureButton(
+              label: "Color Identifier",
+              icon: Icons.palette,
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const ColorIdentifierScreen(),
+                  ),
+                );
               },
             ),
           ],
