@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lumiai/core/l10n/app_localizations.dart';
 
 // I. Font Size State
 class FontSizeState {
@@ -41,18 +42,19 @@ class AccessibilitySettingsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final fontSizeState = ref.watch(fontSizeProvider);
     final fontSizeNotifier = ref.read(fontSizeProvider.notifier);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Accessibility Settings')),
+      appBar: AppBar(title: Text(l10n.accessibilitySettings)),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Text Size: ${(fontSizeState.scaleFactor * 100).toStringAsFixed(0)}%',
+              '${l10n.textSize}: ${(fontSizeState.scaleFactor * 100).toStringAsFixed(0)}%',
               style: const TextStyle(fontSize: 18),
             ),
             Slider(
@@ -72,20 +74,12 @@ class AccessibilitySettingsScreen extends ConsumerWidget {
             const Divider(),
             const SizedBox(height: 20),
             // Implementation Example (ScaledTextWidget) demonstration
-            const Text(
-              'Example Text:',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            Text(
+              '${l10n.exampleText}:',
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
-            const ScaledTextWidget(
-              text:
-                  'This is an example text that will scale with the slider. '
-                  'Observe how its size changes based on your selection.',
-              baseFontSize: 16.0,
-            ),
-            const ScaledTextWidget(
-              text: 'Smaller example text.',
-              baseFontSize: 12.0,
-            ),
+            ScaledTextWidget(text: l10n.exampleTextContent, baseFontSize: 16.0),
+            ScaledTextWidget(text: l10n.smallerExampleText, baseFontSize: 12.0),
           ],
         ),
       ),

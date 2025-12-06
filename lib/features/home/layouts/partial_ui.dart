@@ -5,6 +5,7 @@ import 'package:lumiai/core/features/feature_controller.dart';
 import 'package:lumiai/core/services/feedback_service.dart';
 import 'package:lumiai/features/accessibility/font_size_feature.dart';
 import 'package:lumiai/features/live_chat/ui/live_chat_screen.dart';
+import 'package:lumiai/core/l10n/app_localizations.dart';
 
 class PartialFunctionalUI extends ConsumerWidget {
   const PartialFunctionalUI({super.key});
@@ -16,22 +17,23 @@ class PartialFunctionalUI extends ConsumerWidget {
 
   Widget _buildMenu(BuildContext context, WidgetRef ref) {
     final featureController = ref.read(featureControllerProvider.notifier);
+    final l10n = AppLocalizations.of(context);
 
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        _SectionHeader(title: "Object & Scene"),
+        _SectionHeader(title: l10n.objectAndScene),
         _FeatureCard(
           children: [
             _FeatureButton(
-              label: "Identify Object",
+              label: l10n.identifyObject,
               icon: Icons.camera_alt,
               onPressed: () {
                 featureController.handleAction(FeatureAction.identifyObject);
               },
             ),
             _FeatureButton(
-              label: "Describe Scene",
+              label: l10n.describeScene,
               icon: Icons.landscape,
               onPressed: () {
                 featureController.handleAction(FeatureAction.describeScene);
@@ -40,11 +42,11 @@ class PartialFunctionalUI extends ConsumerWidget {
           ],
         ),
         const SizedBox(height: 20),
-        _SectionHeader(title: "Text Assistance"),
+        _SectionHeader(title: l10n.textAssistance),
         _FeatureCard(
           children: [
             _FeatureButton(
-              label: "Read Text",
+              label: l10n.readText,
               icon: Icons.text_fields,
               onPressed: () {
                 featureController.handleAction(FeatureAction.readText);
@@ -53,11 +55,11 @@ class PartialFunctionalUI extends ConsumerWidget {
           ],
         ),
         const SizedBox(height: 20),
-        _SectionHeader(title: "Chat"),
+        _SectionHeader(title: l10n.chat),
         _FeatureCard(
           children: [
             _FeatureButton(
-              label: "Live Chat",
+              label: l10n.liveChat,
               icon: Icons.chat,
               onPressed: () {
                 Navigator.of(context).push(

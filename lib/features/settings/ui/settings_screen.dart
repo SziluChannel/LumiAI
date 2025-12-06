@@ -3,38 +3,45 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lumiai/features/settings/providers/theme_provider.dart';
 import 'package:lumiai/features/settings/providers/ui_mode_provider.dart';
 import 'package:lumiai/features/settings/providers/tts_settings_provider.dart';
+import 'package:lumiai/features/settings/providers/language_provider.dart';
 import 'package:lumiai/features/settings/ui/settings_tile.dart';
 import 'package:lumiai/core/services/tts_service.dart';
 import 'package:lumiai/features/accessibility/font_size_feature.dart'; // For AccessibilitySettingsScreen
 import 'package:lumiai/core/services/feedback_service.dart'; // Import FeedbackService
 import 'package:lumiai/features/settings/providers/haptic_feedback_provider.dart';
 import 'package:lumiai/features/settings/ui/privacy_policy_screen.dart';
+import 'package:lumiai/core/l10n/app_localizations.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Beállítások')),
+      appBar: AppBar(title: Text(l10n.settingsTitle)),
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
           // ------------------------------------------
           // 🎨 MEGJELENÉS
           // ------------------------------------------
-          const SectionHeader(title: 'Megjelenés'),
+          SectionHeader(title: l10n.appearance),
+
+          // 0. Language Toggle
+          _buildLanguageSetting(ref, l10n),
 
           // 1. Felület Módja (UiMode)
-          _buildUiModeSetting(ref),
+          _buildUiModeSetting(context, ref),
 
           // 2. Téma Mód (Dark Mode)
-          _buildThemeModeSetting(ref),
+          _buildThemeModeSetting(context, ref),
 
           // 3. Accessibility Settings (Font Size)
           SettingsTile(
-            title: 'Accessibility Settings',
-            subtitle: 'Adjust font size for better readability',
+            title: l10n.accessibilitySettings,
+            subtitle: l10n.accessibilitySettingsSubtitle,
             trailing: const Icon(Icons.chevron_right),
             onTap: () {
               ref
@@ -53,27 +60,27 @@ class SettingsScreen extends ConsumerWidget {
           // ------------------------------------------
           // 🔊 HANG BEÁLLÍTÁSOK (TTS)
           // ------------------------------------------
-          const SectionHeader(title: 'Hangbeállítások'),
-          _buildTtsSettings(ref),
+          SectionHeader(title: l10n.soundSettings),
+          _buildTtsSettings(context, ref),
 
           const Divider(height: 32),
 
           // ------------------------------------------
           // 📳 HAPTIC FEEDBACK
           // ------------------------------------------
-          const SectionHeader(title: 'Haptic Feedback'),
-          _buildHapticFeedbackSetting(ref),
+          SectionHeader(title: l10n.hapticFeedback),
+          _buildHapticFeedbackSetting(context, ref),
 
           const Divider(height: 32),
 
           // ------------------------------------------
           // ℹ️ INFORMÁCIÓ
           // ------------------------------------------
-          const SectionHeader(title: 'Információ'),
+          SectionHeader(title: l10n.information),
 
           // Alkalmazás Verziója
-          const SettingsTile(
-            title: 'Alkalmazás Verziója',
+          SettingsTile(
+            title: l10n.appVersion,
             subtitle:
                 '1.0.0 (Build 1)', // Ezt később olvashatod be a package_info_plus-szal
             trailing: null,
@@ -81,7 +88,7 @@ class SettingsScreen extends ConsumerWidget {
 
           // Egyéb linkek
           SettingsTile(
-            title: 'Adatvédelmi Nyilatkozat',
+            title: l10n.privacyPolicy,
             trailing: const Icon(Icons.chevron_right),
             onTap: () {
               Navigator.of(context).push(
@@ -90,7 +97,7 @@ class SettingsScreen extends ConsumerWidget {
             },
           ),
           SettingsTile(
-            title: 'Visszajelzés Küldése',
+            title: l10n.sendFeedback,
             trailing: const Icon(Icons.mail_outline),
             onTap: () {
               ref.read(feedbackServiceProvider).triggerSuccessFeedback();
@@ -104,16 +111,17 @@ class SettingsScreen extends ConsumerWidget {
 
   // --- Feedback Dialog ---
   void _showFeedbackDialog(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final nameController = TextEditingController();
     final emailController = TextEditingController();
     final messageController = TextEditingController();
-    String selectedCategory = 'Általános';
+    String selectedCategory = l10n.categoryGeneral;
 
     showDialog(
       context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) => AlertDialog(
-          title: const Text('Visszajelzés Küldése'),
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (dialogContext, setState) => AlertDialog(
+          title: Text(l10n.feedbackTitle),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -122,10 +130,9 @@ class SettingsScreen extends ConsumerWidget {
                 // Name field
                 TextField(
                   controller: nameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Név (opcionális)',
-                    hintText: 'Add meg a neved',
-                    prefixIcon: Icon(Icons.person_outline),
+                  decoration: InputDecoration(
+                    labelText: l10n.nameOptional,
+                    prefixIcon: const Icon(Icons.person_outline),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -134,39 +141,41 @@ class SettingsScreen extends ConsumerWidget {
                 TextField(
                   controller: emailController,
                   keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(
-                    labelText: 'Email (opcionális)',
-                    hintText: 'pelda@email.com',
-                    prefixIcon: Icon(Icons.email_outlined),
+                  decoration: InputDecoration(
+                    labelText: l10n.emailOptional,
+                    prefixIcon: const Icon(Icons.email_outlined),
                   ),
                 ),
                 const SizedBox(height: 16),
 
                 // Category dropdown
                 DropdownButtonFormField<String>(
-                  initialValue: selectedCategory,
-                  decoration: const InputDecoration(
-                    labelText: 'Kategória',
-                    prefixIcon: Icon(Icons.category_outlined),
+                  value: selectedCategory,
+                  decoration: InputDecoration(
+                    labelText: l10n.category,
+                    prefixIcon: const Icon(Icons.category_outlined),
                   ),
-                  items: const [
+                  items: [
                     DropdownMenuItem(
-                      value: 'Általános',
-                      child: Text('Általános'),
+                      value: l10n.categoryGeneral,
+                      child: Text(l10n.categoryGeneral),
                     ),
                     DropdownMenuItem(
-                      value: 'Hibajelentés',
-                      child: Text('Hibajelentés'),
+                      value: l10n.categoryBugReport,
+                      child: Text(l10n.categoryBugReport),
                     ),
                     DropdownMenuItem(
-                      value: 'Funkció kérés',
-                      child: Text('Funkció kérés'),
+                      value: l10n.categoryFeatureRequest,
+                      child: Text(l10n.categoryFeatureRequest),
                     ),
                     DropdownMenuItem(
-                      value: 'Használhatóság',
-                      child: Text('Használhatóság'),
+                      value: l10n.categoryUsability,
+                      child: Text(l10n.categoryUsability),
                     ),
-                    DropdownMenuItem(value: 'Egyéb', child: Text('Egyéb')),
+                    DropdownMenuItem(
+                      value: l10n.categoryOther,
+                      child: Text(l10n.categoryOther),
+                    ),
                   ],
                   onChanged: (value) {
                     if (value != null) {
@@ -180,11 +189,10 @@ class SettingsScreen extends ConsumerWidget {
                 TextField(
                   controller: messageController,
                   maxLines: 5,
-                  decoration: const InputDecoration(
-                    labelText: 'Üzenet *',
-                    hintText: 'Írd le a visszajelzésed...',
+                  decoration: InputDecoration(
+                    labelText: '${l10n.message} *',
                     alignLabelWithHint: true,
-                    prefixIcon: Padding(
+                    prefixIcon: const Padding(
                       padding: EdgeInsets.only(bottom: 80),
                       child: Icon(Icons.message_outlined),
                     ),
@@ -195,8 +203,8 @@ class SettingsScreen extends ConsumerWidget {
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Mégse'),
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: Text(l10n.cancel),
             ),
             FilledButton(
               onPressed: () {
@@ -204,8 +212,8 @@ class SettingsScreen extends ConsumerWidget {
                 final message = messageController.text.trim();
                 if (message.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Kérlek, írj egy üzenetet!'),
+                    SnackBar(
+                      content: Text(l10n.messageRequired),
                       backgroundColor: Colors.orange,
                     ),
                   );
@@ -213,14 +221,12 @@ class SettingsScreen extends ConsumerWidget {
                 }
 
                 // Close the dialog
-                Navigator.of(context).pop();
+                Navigator.of(dialogContext).pop();
 
                 // Show success message
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text(
-                      'Köszönjük a visszajelzést! (Még nincs elküldve)',
-                    ),
+                  SnackBar(
+                    content: Text(l10n.feedbackThanks),
                     backgroundColor: Colors.green,
                   ),
                 );
@@ -232,7 +238,7 @@ class SettingsScreen extends ConsumerWidget {
                 debugPrint('  Category: $selectedCategory');
                 debugPrint('  Message: $message');
               },
-              child: const Text('Küldés'),
+              child: Text(l10n.send),
             ),
           ],
         ),
@@ -242,27 +248,51 @@ class SettingsScreen extends ConsumerWidget {
 
   // --- Beállítási Widgetek ---
 
+  // Language setting
+  Widget _buildLanguageSetting(WidgetRef ref, AppLocalizations l10n) {
+    final locale = ref.watch(languageControllerProvider);
+    final controller = ref.read(languageControllerProvider.notifier);
+
+    return SettingsTile(
+      title: l10n.language,
+      subtitle: locale.languageCode == 'hu' ? 'Magyar' : 'English',
+      trailing: DropdownButton<String>(
+        value: locale.languageCode,
+        underline: const SizedBox(),
+        items: const [
+          DropdownMenuItem(value: 'hu', child: Text('Magyar')),
+          DropdownMenuItem(value: 'en', child: Text('English')),
+        ],
+        onChanged: (value) {
+          if (value != null) {
+            controller.setLocale(Locale(value));
+          }
+        },
+      ),
+    );
+  }
+
   // UI Mód beállítás
-  Widget _buildUiModeSetting(WidgetRef ref) {
+  Widget _buildUiModeSetting(BuildContext context, WidgetRef ref) {
     final uiModeAsync = ref.watch(uiModeControllerProvider);
 
     return uiModeAsync.when(
-      loading: () => const SettingsTile(
-        title: 'Felület Módja',
-        trailing: CircularProgressIndicator(),
+      loading: () => SettingsTile(
+        title: AppLocalizations.of(context).uiMode,
+        trailing: const CircularProgressIndicator(),
       ),
       error: (e, s) => SettingsTile(
-        title: 'Hiba a mód betöltésében',
+        title: AppLocalizations.of(context).errorLoadingMode,
         subtitle: e.toString(),
       ),
       data: (currentMode) {
         final controller = ref.read(uiModeControllerProvider.notifier);
 
         return SettingsTile(
-          title: 'Felület Módja',
+          title: AppLocalizations.of(context).uiMode,
           subtitle: currentMode == UiMode.standard
-              ? 'Standard nézet'
-              : 'Egyszerűsített nézet',
+              ? AppLocalizations.of(context).standardView
+              : AppLocalizations.of(context).simplifiedView,
           trailing: Switch(
             value: currentMode == UiMode.simplified,
             onChanged: (value) => controller.toggleMode(),
@@ -273,34 +303,33 @@ class SettingsScreen extends ConsumerWidget {
   }
 
   // Téma Mód beállítás
-  Widget _buildThemeModeSetting(WidgetRef ref) {
+  Widget _buildThemeModeSetting(BuildContext context, WidgetRef ref) {
     final themeStateAsync = ref.watch(
       themeControllerProvider,
     ); // Watch the full theme state
 
+    final l10n = AppLocalizations.of(context);
+
     return themeStateAsync.when(
       loading: () => Column(
         // Use Column for multiple loading indicators
-        children: const [
+        children: [
           SettingsTile(
-            title: 'Téma Mód',
-            trailing: CircularProgressIndicator(),
+            title: l10n.themeMode,
+            trailing: const CircularProgressIndicator(),
           ),
           SettingsTile(
-            title: 'Hozzáférhetőségi Téma',
-            trailing: CircularProgressIndicator(),
+            title: l10n.accessibilityTheme,
+            trailing: const CircularProgressIndicator(),
           ),
         ],
       ),
       error: (e, s) => Column(
         // Use Column for multiple error messages
         children: [
+          SettingsTile(title: l10n.errorLoadingTheme, subtitle: e.toString()),
           SettingsTile(
-            title: 'Hiba a mód betöltésében',
-            subtitle: e.toString(),
-          ),
-          SettingsTile(
-            title: 'Hiba a custom téma betöltésében',
+            title: l10n.errorLoadingCustomTheme,
             subtitle: e.toString(),
           ),
         ],
@@ -312,9 +341,8 @@ class SettingsScreen extends ConsumerWidget {
           children: [
             // Standard Light/Dark/System Theme Selection
             SettingsTile(
-              title: 'Téma Mód',
-              subtitle:
-                  'Jelenlegi: ${themeState.appThemeMode.name.toUpperCase()}',
+              title: l10n.themeMode,
+              subtitle: themeState.appThemeMode.name.toUpperCase(),
               trailing: DropdownButton<AppThemeMode>(
                 value: themeState.appThemeMode,
                 onChanged: (AppThemeMode? newMode) {
@@ -337,9 +365,8 @@ class SettingsScreen extends ConsumerWidget {
             ),
             // Custom Accessibility Theme Selection
             SettingsTile(
-              title: 'Hozzáférhetőségi Téma',
-              subtitle:
-                  'Jelenlegi: ${themeState.customThemeType.name.toUpperCase()}',
+              title: l10n.accessibilityTheme,
+              subtitle: themeState.customThemeType.name.toUpperCase(),
               trailing: DropdownButton<CustomThemeType>(
                 value: themeState.customThemeType,
                 onChanged: (CustomThemeType? newType) {
@@ -369,24 +396,24 @@ class SettingsScreen extends ConsumerWidget {
   }
 
   // Haptic Feedback beállítás
-  Widget _buildHapticFeedbackSetting(WidgetRef ref) {
+  Widget _buildHapticFeedbackSetting(BuildContext context, WidgetRef ref) {
     final hapticFeedbackAsync = ref.watch(hapticFeedbackControllerProvider);
 
+    final l10n = AppLocalizations.of(context);
+
     return hapticFeedbackAsync.when(
-      loading: () => const SettingsTile(
-        title: 'Haptic Feedback',
-        trailing: CircularProgressIndicator(),
+      loading: () => SettingsTile(
+        title: l10n.hapticFeedback,
+        trailing: const CircularProgressIndicator(),
       ),
-      error: (e, s) => SettingsTile(
-        title: 'Error loading haptic feedback',
-        subtitle: e.toString(),
-      ),
+      error: (e, s) =>
+          SettingsTile(title: l10n.errorLoadingHaptic, subtitle: e.toString()),
       data: (isEnabled) {
         final controller = ref.read(hapticFeedbackControllerProvider.notifier);
 
         return SettingsTile(
-          title: 'Haptic Feedback',
-          subtitle: isEnabled ? 'Enabled' : 'Disabled',
+          title: l10n.hapticFeedback,
+          subtitle: isEnabled ? l10n.enabled : l10n.disabled,
           trailing: Switch(
             value: isEnabled,
             onChanged: (value) => controller.setHapticFeedback(value),
@@ -397,18 +424,20 @@ class SettingsScreen extends ConsumerWidget {
   }
 
   // TTS beállítások
-  Widget _buildTtsSettings(WidgetRef ref) {
+  Widget _buildTtsSettings(BuildContext context, WidgetRef ref) {
     final ttsSettings = ref.watch(ttsSettingsControllerProvider);
     final controller = ref.read(ttsSettingsControllerProvider.notifier);
     final ttsServiceAsync = ref.watch(
       ttsServiceProvider,
     ); // Watch the AsyncValue
 
+    final l10n = AppLocalizations.of(context);
+
     return Column(
       children: [
-        // Language Selection
+        // Language Selection (TTS voice language, not UI language)
         SettingsTile(
-          title: 'Nyelv (Language)',
+          title: '${l10n.voice} ${l10n.language}',
           subtitle: ttsSettings.language == 'hu-HU' ? 'Magyar' : 'English',
           trailing: DropdownButton<String>(
             value: ttsSettings.language,
@@ -432,7 +461,7 @@ class SettingsScreen extends ConsumerWidget {
               return const SizedBox.shrink();
             }
             return SettingsTile(
-              title: 'Hang (Voice)',
+              title: l10n.voice,
               subtitle: ttsService.availableVoices
                   .firstWhere(
                     (v) => v.identifier == ttsSettings.selectedVoice,
@@ -455,19 +484,19 @@ class SettingsScreen extends ConsumerWidget {
               ),
             );
           },
-          loading: () => const SettingsTile(
-            title: 'Hang (Voice)',
-            trailing: CircularProgressIndicator(),
+          loading: () => SettingsTile(
+            title: l10n.voice,
+            trailing: const CircularProgressIndicator(),
           ),
           error: (e, s) => SettingsTile(
-            title: 'Hiba hang betöltésében',
+            title: l10n.errorLoadingVoice,
             subtitle: e.toString(),
           ),
         ),
 
         // Pitch Slider
         SettingsTile(
-          title: 'Hangmagasság (Pitch)',
+          title: l10n.pitch,
           subtitle: ttsSettings.pitch.toStringAsFixed(1),
           trailing: SizedBox(
             width: 150, // Adjust width as needed
@@ -483,7 +512,7 @@ class SettingsScreen extends ConsumerWidget {
 
         // Speed Slider
         SettingsTile(
-          title: 'Beszédsebesség (Speed)',
+          title: l10n.speed,
           subtitle: ttsSettings.speed.toStringAsFixed(1),
           trailing: SizedBox(
             width: 150, // Adjust width as needed

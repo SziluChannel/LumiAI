@@ -128,4 +128,16 @@ class MockFeedbackService extends _i1.Mock implements _i4.FeedbackService {
             returnValueForMissingStub: _i3.Future<void>.value(),
           )
           as _i3.Future<void>);
+
+  @override
+  void triggerMediumFeedback() => super.noSuchMethod(
+    Invocation.method(#triggerMediumFeedback, []),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  void triggerSelectionFeedback() => super.noSuchMethod(
+    Invocation.method(#triggerSelectionFeedback, []),
+    returnValueForMissingStub: null,
+  );
 }
