@@ -90,14 +90,14 @@
 
 | TC# | Test Case Description | Environment | Steps to Execute | Expected Result | Actual Result |
 |-----|----------------------|-------------|------------------|-----------------|---------------|
-| TC033 | Verify "Identify Object" prompt sent | Web/Android/iOS | 1. Tap "Identify Object" 2. Point camera at object | Correct prompt with camera frames sent | |
-| TC034 | Verify "Identify Object" response | Web/Android/iOS | 1. Point at recognizable object 2. Wait for response | AI describes object with spatial guidance | |
-| TC035 | Verify "Describe Scene" prompt sent | Web/Android/iOS | 1. Tap "Describe Scene" 2. Point camera | Scene description prompt sent | |
-| TC036 | Verify "Describe Scene" response | Web/Android/iOS | 1. Point at a scene 2. Wait for response | AI provides detailed scene description | |
-| TC037 | Verify "Read Text" prompt sent | Web/Android/iOS | 1. Tap "Read Text" 2. Point at text | OCR prompt sent with image | |
-| TC038 | Verify "Read Text" response accuracy | Web/Android/iOS | 1. Point at printed text 2. Wait for response | AI reads text aloud accurately | |
-| TC039 | Verify feature feedback message spoken | Web/Android/iOS | 1. Tap any feature button | Feedback message announced (e.g., "Identifying object...") | |
-| TC040 | Verify feature with camera already open | Web/Android/iOS | 1. Open camera 2. Tap feature button | Feature uses existing camera stream | |
+| TC033 | Verify "Identify Object" prompt sent | Web/Android/iOS | 1. Tap "Identify Object" 2. Point camera at object | Correct prompt with camera frames sent | ✅ Passed |
+| TC034 | Verify "Identify Object" response | Web/Android/iOS | 1. Point at recognizable object 2. Wait for response | AI describes object with spatial guidance | ✅ Passed |
+| TC035 | Verify "Describe Scene" prompt sent | Web/Android/iOS | 1. Tap "Describe Scene" 2. Point camera | Scene description prompt sent | ✅ Passed |
+| TC036 | Verify "Describe Scene" response | Web/Android/iOS | 1. Point at a scene 2. Wait for response | AI provides detailed scene description | ✅ Passed |
+| TC037 | Verify "Read Text" prompt sent | Web/Android/iOS | 1. Tap "Read Text" 2. Point at text | OCR prompt sent with image | ✅ Passed |
+| TC038 | Verify "Read Text" response accuracy | Web/Android/iOS | 1. Point at printed text 2. Wait for response | AI reads text aloud accurately | ✅ Passed |
+| TC039 | Verify feature feedback message spoken | Web/Android/iOS | 1. Tap any feature button | Feedback message announced (e.g., "Identifying object...") | ✅ Passed |
+| TC040 | Verify feature with camera already open | Web/Android/iOS | 1. Open camera 2. Tap feature button | Feature uses existing camera stream | ✅ Passed |
 
 ---
 
