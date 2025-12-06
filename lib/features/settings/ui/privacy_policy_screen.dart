@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lumiai/features/settings/providers/privacy_policy_provider.dart';
+import 'package:lumiai/core/l10n/app_localizations.dart';
 
 class PrivacyPolicyScreen extends ConsumerWidget {
   const PrivacyPolicyScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final privacyStateObj = ref.watch(privacyPolicyControllerProvider);
     final isAccepted = privacyStateObj.value ?? false;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Adatvédelmi Nyilatkozat')),
+      appBar: AppBar(title: Text(l10n.privacyPolicyTitle)),
       body: Column(
         children: [
           Expanded(
@@ -86,9 +88,9 @@ class PrivacyPolicyScreen extends ConsumerWidget {
                     ? ElevatedButton.icon(
                         onPressed: null, // Disabled
                         icon: const Icon(Icons.check, color: Colors.green),
-                        label: const Text(
-                          'Elfogadva',
-                          style: TextStyle(color: Colors.green),
+                        label: Text(
+                          l10n.privacyPolicyAccepted,
+                          style: const TextStyle(color: Colors.green),
                         ),
                         style: ElevatedButton.styleFrom(
                           disabledBackgroundColor: Colors.green.withValues(
@@ -108,7 +110,7 @@ class PrivacyPolicyScreen extends ConsumerWidget {
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 16),
                         ),
-                        child: const Text('Elfogadom'),
+                        child: Text(l10n.privacyPolicyAccept),
                       ),
               ),
             ),

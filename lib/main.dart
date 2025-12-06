@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart'; // For your API Key
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 // Import the theme provider
 import 'package:lumiai/features/settings/providers/theme_provider.dart';
+import 'package:lumiai/features/settings/providers/language_provider.dart';
+import 'package:lumiai/core/l10n/app_localizations.dart';
 
 // Auth and Login
 import 'package:lumiai/features/auth/ui/login_screen.dart'; // Import LoginScreen
@@ -37,9 +40,22 @@ class MyApp extends ConsumerWidget {
     // Watch the global font size scale factor
     final fontSizeState = ref.watch(fontSizeProvider);
 
+    // Watch the current locale
+    final locale = ref.watch(languageControllerProvider);
+
     return MaterialApp(
       title: 'LumiAI',
       debugShowCheckedModeBanner: false,
+
+      // Localization configuration
+      locale: locale,
+      supportedLocales: const [Locale('en'), Locale('hu')],
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
 
       // Set the full ThemeData object from the provider.
       theme: appTheme,
