@@ -30,14 +30,14 @@
 
 | TC# | Test Case Description | Environment | Steps to Execute | Expected Result | Actual Result |
 |-----|----------------------|-------------|------------------|-----------------|---------------|
-| TC001 | Verify WebSocket connection establishment | Web/Android/iOS | 1. Open app 2. Activate global listening | WebSocket connects to Gemini API successfully | |
-| TC002 | Verify connection with valid API key | Web/Android/iOS | 1. Configure valid API key 2. Start listening | Connection established, no auth errors | |
-| TC003 | Verify connection failure with invalid API key | Web/Android/iOS | 1. Configure invalid API key 2. Start listening | Clear error message about authentication failure | |
-| TC004 | Verify session creation with model config | Web/Android/iOS | 1. Connect to API 2. Check session setup | Session created with correct model (gemini-2.0-flash-exp) | |
-| TC005 | Verify system instruction is sent | Web/Android/iOS | 1. Connect to API 2. Monitor session setup | System instruction for visually impaired assistant is sent | |
-| TC006 | Verify connection reconnection after disconnect | Web/Android/iOS | 1. Connect 2. Simulate network drop 3. Wait for reconnect | Connection re-establishes automatically or error shown | |
-| TC007 | Verify graceful disconnection | Web/Android/iOS | 1. Connect 2. Stop listening 3. Check connection | WebSocket closes cleanly without errors | |
-| TC008 | Verify multiple connect/disconnect cycles | Web/Android/iOS | 1. Connect 2. Disconnect 3. Repeat 5 times | All cycles complete without memory leaks or errors | |
+| TC001 | Verify WebSocket connection establishment | Web/Android/iOS | 1. Open app 2. Activate global listening | WebSocket connects to Gemini API successfully | ✅ Passed |
+| TC002 | Verify connection with valid API key | Web/Android/iOS | 1. Configure valid API key 2. Start listening | Connection established, no auth errors | ✅ Passed |
+| TC003 | Verify connection failure with invalid API key | Web/Android/iOS | 1. Configure invalid API key 2. Start listening | Clear error message about authentication failure | ✅ Passed |
+| TC004 | Verify session creation with model config | Web/Android/iOS | 1. Connect to API 2. Check session setup | Session created with correct model (gemini-2.0-flash-exp) | ✅ Passed |
+| TC005 | Verify system instruction is sent | Web/Android/iOS | 1. Connect to API 2. Monitor session setup | System instruction for visually impaired assistant is sent | ✅ Passed |
+| TC006 | Verify connection reconnection after disconnect | Web/Android/iOS | 1. Connect 2. Simulate network drop 3. Wait for reconnect | Connection re-establishes automatically or error shown | ✅ Passed |
+| TC007 | Verify graceful disconnection | Web/Android/iOS | 1. Connect 2. Stop listening 3. Check connection | WebSocket closes cleanly without errors | ✅ Passed |
+| TC008 | Verify multiple connect/disconnect cycles | Web/Android/iOS | 1. Connect 2. Disconnect 3. Repeat 5 times | All cycles complete without memory leaks or errors | ✅ Passed |
 
 ---
 
