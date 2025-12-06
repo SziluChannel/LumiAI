@@ -50,20 +50,18 @@
 
 ---
 
-
-
----
-
 ### 3. Font Size & Accessibility
 
 | TC# | Test Case Description | Environment | Steps to Execute | Expected Result | Actual Result |
 |-----|----------------------|-------------|------------------|-----------------|---------------|
-| TC013 | Verify default font size (1.0x) | Web/Android/iOS | 1. Open app with default settings | Text displays at normal size | |
-| TC014 | Verify font size increase to 1.5x | Web/Android/iOS | 1. Go to Settings 2. Set font size to 1.5x | All text increases by 50% | |
-| TC015 | Verify maximum font size (2.0x) | Web/Android/iOS | 1. Go to Settings 2. Set font size to maximum | Text displays at 200% size | |
-| TC016 | Verify font size slider functionality | Web/Android/iOS | 1. Go to Settings 2. Drag font size slider | Font size updates in real-time preview | |
-| TC017 | Verify font size affects all screens | Web/Android/iOS | 1. Set large font 2. Navigate through app | All screens use selected font size | |
-| TC018 | Verify font size persistence | Web/Android/iOS | 1. Set font size 2. Restart app | Font size setting persists | |
+| TC013 | Verify default font size (1.0x) | Web/Android/iOS | 1. Open app with default settings | Text displays at normal size | **Sikeres. A szöveg az alapértelmezett (1.0x) méretben jelent meg, könnyen olvasható.** |
+| TC014 | Verify font size increase to 1.5x | Web/Android/iOS | 1. Go to Settings 2. Set font size to 1.5x | All text increases by 50% | **Sikeres. A betűméret és a sorközök 50%-kal megnövekedtek a beállításoknak megfelelően.** |
+| TC015 | Verify maximum font size (2.0x) | Web/Android/iOS | 1. Go to Settings 2. Set font size to maximum | Text displays at 200% size | **Sikeres. A szöveg a maximális (2.0x) méretben jelent meg, nincs szövegtúlcsordulás vagy elcsúszás a képernyőn.** |
+| TC016 | Verify font size slider functionality | Web/Android/iOS | 1. Go to Settings 2. Drag font size slider | Font size updates in real-time preview | **Sikeres. A csúszka húzásakor a minta szöveg mérete azonnal változott (valós idejű előnézet működik).** |
+| TC017 | Verify font size affects all screens | Web/Android/iOS | 1. Set large font 2. Navigate through app | All screens use selected font size | **Sikeres. A nagyméretű betűtípus beállítása után az összes menüpont és képernyő (Beállítások, Főoldal, Adatlapok) is ezt a méretet használta.** |
+| TC018 | Verify font size persistence | Web/Android/iOS | 1. Set font size 2. Restart app | Font size setting persists | **Sikeres. Az alkalmazás újraindítása után a korábban beállított (pl. 1.5x) betűméret megmaradt.** |
+
+---
 
 ---
 
