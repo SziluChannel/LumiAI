@@ -99,7 +99,7 @@ class GlobalListeningController extends _$GlobalListeningController {
       return;
     }
 
-    client.send(text: prompt, turnComplete: true);
+    client.send(text: prompt, isRealtime: true, turnComplete: true);
   }
 
   Future<void> _startMicStreaming() async {
@@ -127,35 +127,62 @@ class GlobalListeningController extends _$GlobalListeningController {
   }
 
   void _handleToolCalls(List<Map<String, dynamic>> toolCalls) async {
-    final List<Map<String, dynamic>> responses = [];
+    final client = ref.read(geminiLiveClientProvider.notifier);
 
     for (final call in toolCalls) {
       final name = call['name'];
       final id = call['id'];
 
-      Map<String, dynamic> responseResult = {};
+      if (name == 'get_camera_status') {
+        // Return current camera status
+        final isActive = state.status == GlobalListeningStatus.cameraActive;
+        debugPrint("📸 Camera status: ${isActive ? 'Active' : 'Inactive'}");
+        client.sendToolResponse([
+          {
+            "id": id,
+            "name": name,
+            "response": {
+              "is_active": isActive,
+              "status": isActive
+                  ? "Camera is already active and streaming video. You can see the video feed now - do NOT open the camera again."
+                  : "Camera is not active. You may open the camera if needed.",
+            },
+          },
+        ]);
+      } else if (name == 'open_camera') {
+        // Open camera and wait for it to complete
+        final result = await _openCameraWithStatus();
 
-      if (name == 'open_camera') {
-        await _openCamera();
-        responseResult = {"result": "Camera opened and streaming started."};
+        // Send final result (success or error)
+        client.sendToolResponse([
+          {"id": id, "name": name, "response": result},
+        ]);
       } else if (name == 'close_camera') {
         await _closeCamera();
-        responseResult = {"result": "Camera closed."};
+        client.sendToolResponse([
+          {
+            "id": id,
+            "name": name,
+            "response": {"result": "Camera closed successfully."},
+          },
+        ]);
       } else {
-        responseResult = {"error": "Unknown tool: $name"};
+        client.sendToolResponse([
+          {
+            "id": id,
+            "name": name,
+            "response": {"error": "Unknown tool: $name"},
+          },
+        ]);
       }
-
-      responses.add({"id": id, "name": name, "response": responseResult});
-    }
-
-    if (responses.isNotEmpty) {
-      ref.read(geminiLiveClientProvider.notifier).sendToolResponse(responses);
     }
   }
 
   /// Public method to open the camera programmatically.
   Future<void> openCamera() async {
+    debugPrint("📷 openCamera() called");
     await _openCamera();
+    debugPrint("📷 openCamera() completed, status: ${state.status}");
   }
 
   /// Public method to close the camera programmatically.
@@ -168,20 +195,41 @@ class GlobalListeningController extends _$GlobalListeningController {
       state.status == GlobalListeningStatus.listening ||
       state.status == GlobalListeningStatus.cameraActive;
 
-  Future<void> _openCamera() async {
-    if (_isInitializingCamera ||
-        state.status == GlobalListeningStatus.cameraActive) {
-      return;
+  /// Returns true if camera is currently active.
+  bool get isCameraActive => state.status == GlobalListeningStatus.cameraActive;
+
+  /// Opens camera and returns status for tool response.
+  Future<Map<String, dynamic>> _openCameraWithStatus() async {
+    debugPrint("📷 _openCameraWithStatus() starting...");
+
+    // Check if camera is already active
+    if (state.status == GlobalListeningStatus.cameraActive) {
+      debugPrint("📷 Camera already active");
+      return {"result": "Camera is already active and streaming video frames."};
+    }
+
+    // Check if already initializing
+    if (_isInitializingCamera) {
+      debugPrint("📷 Camera already initializing");
+      return {
+        "result": "Camera is currently initializing, please wait a moment.",
+      };
     }
 
     _isInitializingCamera = true;
 
     try {
+      debugPrint("📷 Getting available cameras...");
       final cameras = await availableCameras();
+      debugPrint("📷 Found ${cameras.length} cameras");
 
-      if (cameras.isEmpty) throw Exception("No cameras available");
+      if (cameras.isEmpty) {
+        return {"error": "No cameras available on this device."};
+      }
 
       CameraController? controller;
+      String? lastError;
+
       for (final camera in cameras) {
         try {
           if (state.cameraController != null) {
@@ -196,8 +244,11 @@ class GlobalListeningController extends _$GlobalListeningController {
 
           await c.initialize();
           controller = c;
+          debugPrint("📷 Camera initialized successfully: ${camera.name}");
           break;
         } catch (e) {
+          lastError = e.toString();
+          debugPrint("📷 Camera init error: $e");
           if (kIsWeb && camera.lensDirection != CameraLensDirection.external) {
             try {
               final externalCamera = CameraDescription(
@@ -222,7 +273,8 @@ class GlobalListeningController extends _$GlobalListeningController {
       }
 
       if (controller == null) {
-        throw Exception("Failed to initialize any camera");
+        debugPrint("📷 Failed to init any camera");
+        return {"error": "Failed to initialize camera: $lastError"};
       }
 
       state = state.copyWith(
@@ -230,8 +282,13 @@ class GlobalListeningController extends _$GlobalListeningController {
         cameraController: controller,
         isCameraInitialized: true,
       );
+      debugPrint("📷 State updated to cameraActive");
 
-      // Start Frame Timer (1 FPS)
+      // Capture and send first frame IMMEDIATELY
+      debugPrint("📷 Capturing first frame...");
+      await _captureAndSendFrame();
+
+      // Then start Frame Timer (1 FPS) for subsequent frames
       _frameTimer?.cancel();
       _frameTimer = Timer.periodic(const Duration(seconds: 1), (timer) async {
         if (state.status != GlobalListeningStatus.cameraActive) {
@@ -240,11 +297,23 @@ class GlobalListeningController extends _$GlobalListeningController {
         }
         await _captureAndSendFrame();
       });
+      debugPrint("📷 Frame timer started");
+
+      return {
+        "result":
+            "Camera opened successfully. Video streaming has started at 1 frame per second.",
+      };
     } catch (e) {
-      debugPrint("Error opening camera: $e");
+      debugPrint("📷 Camera open failed: $e");
+      return {"error": "Camera initialization failed: $e"};
     } finally {
       _isInitializingCamera = false;
     }
+  }
+
+  /// Internal camera open (for programmatic use, not tool calls)
+  Future<void> _openCamera() async {
+    await _openCameraWithStatus();
   }
 
   Future<void> _closeCamera() async {
@@ -281,11 +350,13 @@ class GlobalListeningController extends _$GlobalListeningController {
       client.send(imageBytes: resizedBytes, isRealtime: true);
     } catch (_) {
       // Frame capture failed - silently continue
+      debugPrint('📸 Frame capture failed');
     }
   }
 
   // --- TTS Handling ---
   void _handleIncomingText(String newTextChunk) {
+    debugPrint('📝 Received text: $newTextChunk');
     _ttsBuffer += newTextChunk;
     if (RegExp(r'[.?!:\n](\s|$)').hasMatch(_ttsBuffer)) {
       _ttsQueue.add(_ttsBuffer.trim());
@@ -299,6 +370,7 @@ class GlobalListeningController extends _$GlobalListeningController {
 
     _isSpeaking = true;
     final textToSpeak = _ttsQueue.removeAt(0);
+    debugPrint('🔊 TTS speaking: $textToSpeak');
     final tts = ref.read(ttsServiceProvider);
 
     await tts.speak(textToSpeak);
