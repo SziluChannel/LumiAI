@@ -5,7 +5,7 @@ import 'package:lumiai/core/features/feature_controller.dart';
 import 'package:lumiai/core/services/feedback_service.dart';
 import 'package:lumiai/features/accessibility/font_size_feature.dart';
 import 'package:lumiai/features/live_chat/ui/live_chat_screen.dart';
-import 'package:lumiai/features/accessibility/color_identifier/color_identifier_screen.dart';
+import 'package:lumiai/features/home/providers/smart_camera_mode_provider.dart'; // For Provider/Enum
 import 'package:lumiai/core/l10n/app_localizations.dart';
 
 class PartialFunctionalUI extends ConsumerWidget {
@@ -23,6 +23,8 @@ class PartialFunctionalUI extends ConsumerWidget {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
+
+
         _SectionHeader(title: l10n.objectAndScene),
         _FeatureCard(
           children: [
@@ -54,11 +56,11 @@ class PartialFunctionalUI extends ConsumerWidget {
               label: l10n.colorIdentifier,
               icon: Icons.palette,
               onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const ColorIdentifierScreen(),
-                  ),
-                );
+                // Toggle Color Mode
+                final notifier = ref.read(smartCameraStateProvider.notifier);
+                notifier.setMode(ref.read(smartCameraStateProvider) == SmartCameraMode.color 
+                    ? SmartCameraMode.off 
+                    : SmartCameraMode.color);
               },
             ),
           ],
@@ -115,6 +117,21 @@ class PartialFunctionalUI extends ConsumerWidget {
               _showFindObjectDialog(context, ref, l10n);
             },
           ),
+        ),
+        const SizedBox(height: 8),
+        _FeatureCardRow(
+          left: _FeatureButton(
+            label: "Light Meter", // Todo: Localize
+            icon: Icons.lightbulb,
+            onPressed: () {
+                // Toggle Light Mode
+                final notifier = ref.read(smartCameraStateProvider.notifier);
+                notifier.setMode(ref.read(smartCameraStateProvider) == SmartCameraMode.light
+                    ? SmartCameraMode.off 
+                    : SmartCameraMode.light);
+            },
+          ),
+          right: const SizedBox(), // Placeholder for now
         ),
         const SizedBox(height: 20),
         _SectionHeader(title: l10n.chat),
