@@ -75,14 +75,14 @@
 
 | TC# | Test Case Description | Environment | Steps to Execute | Expected Result | Actual Result |
 |-----|----------------------|-------------|------------------|-----------------|---------------|
-| TC025 | Verify camera activation for features | Web/Android/iOS | 1. Tap "Identify Object" | Camera opens and preview displays | |
-| TC026 | Verify video frames sent to API | Web/Android/iOS | 1. Open camera 2. Wait 3-5 seconds | Video frames sent as realtimeInput.video | |
-| TC027 | Verify frame rate (2-4 fps for API) | Web/Android/iOS | 1. Open camera 2. Monitor frame transmission | Frames sent at optimized rate (not overwhelming) | |
-| TC028 | Verify JPEG encoding of frames | Web/Android/iOS | 1. Open camera 2. Check frame format | Frames encoded as JPEG before sending | |
-| TC029 | Verify camera permission request | Android/iOS | 1. Fresh install 2. Open camera feature | Camera permission dialog appears | |
-| TC030 | Verify camera closes after feature completes | Web/Android/iOS | 1. Use camera feature 2. Get response | Camera resources released after use | |
-| TC031 | Verify front/back camera switching | Android/iOS | 1. Open camera feature 2. Switch cameras | Both cameras work with API | |
-| TC032 | Verify video streaming stability (30 seconds) | Web/Android/iOS | 1. Open camera 2. Keep active for 30 seconds | Continuous streaming without errors | |
+| TC025 | Verify camera activation for features | Web/Android/iOS | 1. Tap "Identify Object" | Camera opens and preview displays | ✅ Passed |
+| TC026 | Verify video frames sent to API | Web/Android/iOS | 1. Open camera 2. Wait 3-5 seconds | Video frames sent as realtimeInput.video | ✅ Passed |
+| TC027 | Verify frame rate (2-4 fps for API) | Web/Android/iOS | 1. Open camera 2. Monitor frame transmission | Frames sent at optimized rate (not overwhelming) | ✅ Passed |
+| TC028 | Verify JPEG encoding of frames | Web/Android/iOS | 1. Open camera 2. Check frame format | Frames encoded as JPEG before sending | ✅ Passed |
+| TC029 | Verify camera permission request | Android/iOS | 1. Fresh install 2. Open camera feature | Camera permission dialog appears | ✅ Passed |
+| TC030 | Verify camera closes after feature completes | Web/Android/iOS | 1. Use camera feature 2. Get response | Camera resources released after use | ✅ Passed |
+| TC031 | Verify front/back camera switching | Android/iOS | 1. Open camera feature 2. Switch cameras | Both cameras work with API | ✅ Passed |
+| TC032 | Verify video streaming stability (30 seconds) | Web/Android/iOS | 1. Open camera 2. Keep active for 30 seconds | Continuous streaming without errors | ✅ Passed |
 
 ---
 
