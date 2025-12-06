@@ -42,7 +42,7 @@ final class GlobalListeningControllerProvider
 }
 
 String _$globalListeningControllerHash() =>
-    r'32fb570bf204756386e2b7f383836df436554edd';
+    r'baea98448e6c9336b0b6fcd60d55cf439a57e792';
 
 abstract class _$GlobalListeningController
     extends $Notifier<GlobalListeningState> {
