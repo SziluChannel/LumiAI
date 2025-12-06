@@ -24,15 +24,15 @@
 
 ## Test Cases
 
-### 1. Home Screen & Navigation
+## 1. Home Screen & Navigation
 
 | TC# | Test Case Description | Environment | Steps to Execute | Expected Result | Actual Result |
 |-----|----------------------|-------------|------------------|-----------------|---------------|
-| TC001 | Verify home screen loads correctly | Web/Android/iOS | 1. Launch the app | Home screen displays with main navigation elements visible | |
-| TC002 | Verify main feature buttons are visible | Web/Android/iOS | 1. Open home screen 2. Check for feature buttons | "Identify Object", "Read Text", "Describe Scene" buttons should be visible | |
-| TC003 | Verify navigation to settings | Web/Android/iOS | 1. Open home screen 2. Tap settings icon | Settings screen opens correctly | |
-| TC004 | Verify back navigation from settings | Web/Android/iOS | 1. Navigate to settings 2. Press back button | Returns to home screen | |
-| TC005 | Verify app logo/branding display | Web/Android/iOS | 1. Open home screen | LumiAI logo/branding is clearly visible | |
+| TC001 | Verify home screen loads correctly | Web/Android/iOS | 1. Launch the app | Home screen displays with main navigation elements visible | **Sikeres. A kezdőképernyő betöltődött, a navigációs sáv és az alsó menü látható.** |
+| TC002 | Verify main feature buttons are visible | Web/Android/iOS | 1. Open home screen 2. Check for feature buttons | "Identify Object", "Read Text", "Describe Scene" buttons should be visible | **Sikeres. A három fő funkció gombja ("Tárgy azonosítása", "Szöveg olvasása", "Jelenet leírása") megjelent.** |
+| TC003 | Verify navigation to settings | Web/Android/iOS | 1. Open home screen 2. Tap settings icon | Settings screen opens correctly | **Sikeres. A beállítások ikonra koppintva a Beállítások képernyő azonnal megnyílt.** |
+| TC004 | Verify back navigation from settings | Web/Android/iOS | 1. Navigate to settings 2. Press back button | Returns to home screen | **Sikeres. A vissza gomb megnyomása után visszatért a Kezdőképernyőre.** |
+| TC005 | Verify app logo/branding display | Web/Android/iOS | 1. Open home screen | LumiAI logo/branding is clearly visible | **Sikeres. A LumiAI logó (stil. „L” betű) és a márkajelzés jól látható a képernyő tetején.** |
 
 ---
 
@@ -40,13 +40,17 @@
 
 | TC# | Test Case Description | Environment | Steps to Execute | Expected Result | Actual Result |
 |-----|----------------------|-------------|------------------|-----------------|---------------|
-| TC006 | Verify light theme displays correctly | Web/Android/iOS | 1. Go to Settings 2. Select Light theme | App switches to light color scheme | |
-| TC007 | Verify dark theme displays correctly | Web/Android/iOS | 1. Go to Settings 2. Select Dark theme | App switches to dark color scheme | |
-| TC008 | Verify system theme follows OS setting | Web/Android/iOS | 1. Go to Settings 2. Select System theme 3. Change OS theme | App theme matches OS theme | |
-| TC009 | Verify High Contrast theme | Web/Android/iOS | 1. Go to Settings 2. Enable High Contrast theme | Text and elements have increased contrast | |
-| TC010 | Verify Colorblind Friendly theme | Web/Android/iOS | 1. Go to Settings 2. Enable Colorblind Friendly | Colors adjusted for colorblind accessibility | |
-| TC011 | Verify AMOLED theme (dark background) | Android (AMOLED display) | 1. Go to Settings 2. Enable AMOLED theme | True black background for AMOLED power savings | |
-| TC012 | Verify theme persistence after restart | Web/Android/iOS | 1. Set theme 2. Close app 3. Reopen app | Selected theme persists | |
+| TC006 | Verify light theme displays correctly | Web/Android/iOS | 1. Go to Settings 2. Select Light theme | App switches to light color scheme | **Sikeres. Az alkalmazás fehér háttérre és sötét betűszínre váltott.** |
+| TC007 | Verify dark theme displays correctly | Web/Android/iOS | 1. Go to Settings 2. Select Dark theme | App switches to dark color scheme | **Sikeres. Az alkalmazás sötét/szürke háttérre és világos betűszínre váltott.** |
+| TC008 | Verify system theme follows OS setting | Web/Android/iOS | 1. Go to Settings 2. Select System theme 3. Change OS theme | App theme matches OS theme | **Sikeres. A téma váltása az OS beállításainak megfelelően történt (pl. OS Dark -> App Dark).** |
+| TC009 | Verify High Contrast theme | Web/Android/iOS | 1. Go to Settings 2. Enable High Contrast theme | Text and elements have increased contrast | **Sikeres. A szövegek és az UI elemek között érezhetően megnőtt a kontraszt (pl. fekete szöveg tiszta fehér háttéren).** |
+| TC010 | Verify Colorblind Friendly theme | Web/Android/iOS | 1. Go to Settings 2. Enable Colorblind Friendly | Colors adjusted for colorblind accessibility | **Sikeres. A színezés módosult, a megkülönböztetésre használt színek helyett kontrasztos minták/színek jelentek meg.** |
+| TC011 | Verify AMOLED theme (dark background) | Android (AMOLED display) | 1. Go to Settings 2. Enable AMOLED theme | True black background for AMOLED power savings | **Sikeres. A háttér valódi feketére váltott, energiatakarékos módban.** |
+| TC012 | Verify theme persistence after restart | Web/Android/iOS | 1. Set theme 2. Close app 3. Reopen app | Selected theme persists | **Sikeres. A beállított téma (pl. Dark) az app újraindítása után is megmaradt.** |
+
+---
+
+
 
 ---
 
