@@ -256,6 +256,21 @@ class GlobalListeningController extends _$GlobalListeningController {
         debugPrint("🔧 Settings: Font size changed to $clampedFontSize");
       }
 
+      // Update font family if provided
+      if (args.containsKey('font_family')) {
+        final fontFamily = args['font_family'] as String;
+        final themeController = ref.read(themeControllerProvider.notifier);
+
+        if (fontFamily.toLowerCase() == 'system') {
+          themeController.setFontFamily(null);
+          changedSettings.add('font family to system default');
+        } else {
+          themeController.setFontFamily(fontFamily);
+          changedSettings.add('font family to $fontFamily');
+        }
+        debugPrint("🔧 Settings: Font family changed to $fontFamily");
+      }
+
       // Update theme mode if provided
       if (args.containsKey('theme_mode')) {
         final themeMode = args['theme_mode'] as String;
