@@ -3,6 +3,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:lumiai/core/network/gemini_live_client.dart';
 import 'package:lumiai/core/services/tts_service.dart';
+import 'package:lumiai/features/settings/providers/tts_settings_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:record/record.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -11,6 +12,7 @@ import 'package:image/image.dart' as img;
 import 'package:lumiai/core/utils/web_utils_export.dart';
 import 'global_listening_state.dart';
 import 'tools/camera_tools.dart';
+import 'tools/settings_tools.dart';
 
 part 'global_listening_controller.g.dart';
 
@@ -66,9 +68,10 @@ class GlobalListeningController extends _$GlobalListeningController {
         return;
       }
 
-      // 2. Connect to Gemini with Tools
+      // 2. Connect to Gemini with Tools (camera + settings)
       final client = ref.read(geminiLiveClientProvider.notifier);
-      await client.connect(tools: cameraTools);
+      final allTools = [...cameraTools, ...settingsTools];
+      await client.connect(tools: allTools);
 
       // 3. Listen to Tool Calls
       _toolCallSub = client.toolCallStream.listen(_handleToolCalls);
@@ -166,6 +169,12 @@ class GlobalListeningController extends _$GlobalListeningController {
             "response": {"result": "Camera closed successfully."},
           },
         ]);
+      } else if (name == 'update_settings') {
+        // Handle settings update
+        final result = await _handleUpdateSettings(call['args'] ?? {});
+        client.sendToolResponse([
+          {"id": id, "name": name, "response": result},
+        ]);
       } else {
         client.sendToolResponse([
           {
@@ -175,6 +184,58 @@ class GlobalListeningController extends _$GlobalListeningController {
           },
         ]);
       }
+    }
+  }
+
+  /// Handles the update_settings tool call
+  Future<Map<String, dynamic>> _handleUpdateSettings(
+    Map<String, dynamic> args,
+  ) async {
+    final settingsController = ref.read(ttsSettingsControllerProvider.notifier);
+    final List<String> changedSettings = [];
+
+    try {
+      // Update language if provided
+      if (args.containsKey('language')) {
+        final language = args['language'] as String;
+        await settingsController.setLanguage(language);
+        changedSettings.add('language to $language');
+        debugPrint("🔧 Settings: Language changed to $language");
+      }
+
+      // Update speed if provided
+      if (args.containsKey('speed')) {
+        final speed = (args['speed'] as num).toDouble();
+        // Clamp speed to valid range
+        final clampedSpeed = speed.clamp(0.5, 2.0);
+        await settingsController.setSpeed(clampedSpeed);
+        changedSettings.add('speed to ${clampedSpeed.toStringAsFixed(1)}');
+        debugPrint("🔧 Settings: Speed changed to $clampedSpeed");
+      }
+
+      // Update pitch if provided
+      if (args.containsKey('pitch')) {
+        final pitch = (args['pitch'] as num).toDouble();
+        // Clamp pitch to valid range
+        final clampedPitch = pitch.clamp(0.5, 2.0);
+        await settingsController.setPitch(clampedPitch);
+        changedSettings.add('pitch to ${clampedPitch.toStringAsFixed(1)}');
+        debugPrint("🔧 Settings: Pitch changed to $clampedPitch");
+      }
+
+      if (changedSettings.isEmpty) {
+        return {
+          "result": "No settings were changed. Please specify what to update.",
+        };
+      }
+
+      return {
+        "result":
+            "Settings updated successfully: ${changedSettings.join(', ')}",
+      };
+    } catch (e) {
+      debugPrint("🔧 Settings error: $e");
+      return {"error": "Failed to update settings: $e"};
     }
   }
 
