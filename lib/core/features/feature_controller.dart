@@ -29,6 +29,34 @@ class FeatureController extends _$FeatureController {
       requiresCamera: true,
       feedbackMessage: 'Describing scene...',
     ),
+    // New features for visually impaired users
+    FeatureAction.findObject: FeatureConfig(
+      prompt: '', // Dynamic - set at runtime with user input
+      requiresCamera: true,
+      feedbackMessage: 'Searching for object...',
+      requiresUserInput: true,
+      inputHint: 'What are you looking for?',
+    ),
+    FeatureAction.readCurrency: FeatureConfig(
+      prompt: AppPrompts.readCurrency,
+      requiresCamera: true,
+      feedbackMessage: 'Identifying money...',
+    ),
+    FeatureAction.describeClothing: FeatureConfig(
+      prompt: AppPrompts.describeClothing,
+      requiresCamera: true,
+      feedbackMessage: 'Describing clothing...',
+    ),
+    FeatureAction.readExpiryDate: FeatureConfig(
+      prompt: AppPrompts.readExpiryDate,
+      requiresCamera: true,
+      feedbackMessage: 'Reading expiry date...',
+    ),
+    FeatureAction.readMenu: FeatureConfig(
+      prompt: AppPrompts.readMenu,
+      requiresCamera: true,
+      feedbackMessage: 'Reading menu...',
+    ),
   };
 
   @override
@@ -39,6 +67,43 @@ class FeatureController extends _$FeatureController {
   /// Handles a feature action request.
   /// Opens camera if needed, sends prompt, and manages the action lifecycle.
   Future<void> handleAction(FeatureAction action) async {
+    final config = _configs[action];
+    if (config == null) return;
+
+    // For features requiring user input, use handleActionWithInput instead
+    if (config.requiresUserInput) {
+      debugPrint(
+        '⚠️ Feature $action requires user input. Use handleActionWithInput().',
+      );
+      return;
+    }
+
+    await _executeAction(action, config.prompt);
+  }
+
+  /// Handles a feature action that requires user input (like findObject).
+  Future<void> handleActionWithInput(
+    FeatureAction action,
+    String userInput,
+  ) async {
+    final config = _configs[action];
+    if (config == null) return;
+
+    // Generate dynamic prompt based on action type
+    String prompt;
+    switch (action) {
+      case FeatureAction.findObject:
+        prompt = AppPrompts.findSpecificObjectLive(userInput);
+        break;
+      default:
+        prompt = config.prompt;
+    }
+
+    await _executeAction(action, prompt);
+  }
+
+  /// Core action execution logic shared by handleAction and handleActionWithInput.
+  Future<void> _executeAction(FeatureAction action, String prompt) async {
     final config = _configs[action];
     if (config == null) return;
 
@@ -81,7 +146,7 @@ class FeatureController extends _$FeatureController {
     }
 
     // Send the prompt to Gemini
-    globalController.sendUserPrompt(config.prompt);
+    globalController.sendUserPrompt(prompt);
 
     // Note: Camera closing is handled by the AI model via tool calls
     // because the model knows when it's done with the analysis
