@@ -5,6 +5,8 @@ import 'package:lumiai/core/features/feature_controller.dart';
 import 'package:lumiai/core/services/feedback_service.dart';
 import 'package:lumiai/features/accessibility/font_size_feature.dart';
 import 'package:lumiai/features/live_chat/ui/live_chat_screen.dart';
+import 'package:lumiai/features/accessibility/color_identifier/color_identifier_screen.dart';
+import 'package:lumiai/core/l10n/app_localizations.dart';
 
 class PartialFunctionalUI extends ConsumerWidget {
   const PartialFunctionalUI({super.key});
@@ -16,22 +18,23 @@ class PartialFunctionalUI extends ConsumerWidget {
 
   Widget _buildMenu(BuildContext context, WidgetRef ref) {
     final featureController = ref.read(featureControllerProvider.notifier);
+    final l10n = AppLocalizations.of(context);
 
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        _SectionHeader(title: "Object & Scene"),
+        _SectionHeader(title: l10n.objectAndScene),
         _FeatureCard(
           children: [
             _FeatureButton(
-              label: "Identify Object",
+              label: l10n.identifyObject,
               icon: Icons.camera_alt,
               onPressed: () {
                 featureController.handleAction(FeatureAction.identifyObject);
               },
             ),
             _FeatureButton(
-              label: "Describe Scene",
+              label: l10n.describeScene,
               icon: Icons.landscape,
               onPressed: () {
                 featureController.handleAction(FeatureAction.describeScene);
@@ -39,19 +42,35 @@ class PartialFunctionalUI extends ConsumerWidget {
             ),
           ],
         ),
-        const SizedBox(height: 20),
-        _SectionHeader(title: "Text Assistance"),
+        const SizedBox(height: 10),
         _FeatureCard(
           children: [
             _FeatureButton(
-              label: "Read Text",
+              label: "Color Identifier",
+              icon: Icons.palette,
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const ColorIdentifierScreen(),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+        const SizedBox(height: 20),
+        _SectionHeader(title: l10n.textAssistance),
+        _FeatureCard(
+          children: [
+            _FeatureButton(
+              label: l10n.readText,
               icon: Icons.text_fields,
               onPressed: () {
                 featureController.handleAction(FeatureAction.readText);
               },
             ),
             _FeatureButton(
-              label: "Read Menu",
+              label: l10n.readMenu,
               icon: Icons.restaurant_menu,
               onPressed: () {
                 featureController.handleAction(FeatureAction.readMenu);
@@ -60,18 +79,18 @@ class PartialFunctionalUI extends ConsumerWidget {
           ],
         ),
         const SizedBox(height: 20),
-        _SectionHeader(title: "Daily Helpers"),
+        _SectionHeader(title: l10n.dailyHelpers),
         _FeatureCard(
           children: [
             _FeatureButton(
-              label: "Read Currency",
+              label: l10n.readCurrency,
               icon: Icons.attach_money,
               onPressed: () {
                 featureController.handleAction(FeatureAction.readCurrency);
               },
             ),
             _FeatureButton(
-              label: "Describe Clothing",
+              label: l10n.describeClothing,
               icon: Icons.checkroom,
               onPressed: () {
                 featureController.handleAction(FeatureAction.describeClothing);
@@ -83,27 +102,27 @@ class PartialFunctionalUI extends ConsumerWidget {
         _FeatureCard(
           children: [
             _FeatureButton(
-              label: "Expiry Date",
+              label: l10n.expiryDate,
               icon: Icons.calendar_today,
               onPressed: () {
                 featureController.handleAction(FeatureAction.readExpiryDate);
               },
             ),
             _FeatureButton(
-              label: "Find Object",
+              label: l10n.findObject,
               icon: Icons.search,
               onPressed: () {
-                _showFindObjectDialog(context, ref);
+                _showFindObjectDialog(context, ref, l10n);
               },
             ),
           ],
         ),
         const SizedBox(height: 20),
-        _SectionHeader(title: "Chat"),
+        _SectionHeader(title: l10n.chat),
         _FeatureCard(
           children: [
             _FeatureButton(
-              label: "Live Chat",
+              label: l10n.liveChat,
               icon: Icons.chat,
               onPressed: () {
                 Navigator.of(context).push(
@@ -119,23 +138,27 @@ class PartialFunctionalUI extends ConsumerWidget {
     );
   }
 
-  void _showFindObjectDialog(BuildContext context, WidgetRef ref) {
+  void _showFindObjectDialog(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+  ) {
     final textController = TextEditingController();
 
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Find Object'),
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n.findObjectTitle),
         content: TextField(
           controller: textController,
           autofocus: true,
-          decoration: const InputDecoration(
-            hintText: 'What are you looking for?',
-            labelText: 'Object name',
+          decoration: InputDecoration(
+            hintText: l10n.findObjectHint,
+            labelText: l10n.objectName,
           ),
           onSubmitted: (value) {
             if (value.trim().isNotEmpty) {
-              Navigator.of(context).pop();
+              Navigator.of(dialogContext).pop();
               ref
                   .read(featureControllerProvider.notifier)
                   .handleActionWithInput(
@@ -147,20 +170,20 @@ class PartialFunctionalUI extends ConsumerWidget {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: Text(l10n.cancel),
           ),
           ElevatedButton(
             onPressed: () {
               final value = textController.text.trim();
               if (value.isNotEmpty) {
-                Navigator.of(context).pop();
+                Navigator.of(dialogContext).pop();
                 ref
                     .read(featureControllerProvider.notifier)
                     .handleActionWithInput(FeatureAction.findObject, value);
               }
             },
-            child: const Text('Search'),
+            child: Text(l10n.search),
           ),
         ],
       ),

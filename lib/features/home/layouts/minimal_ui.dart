@@ -6,6 +6,7 @@ import 'package:lumiai/core/features/feature_controller.dart';
 import 'package:lumiai/features/live_chat/ui/live_chat_screen.dart';
 import 'package:lumiai/features/settings/ui/settings_screen.dart';
 import 'package:lumiai/features/accessibility/font_size_feature.dart'; // For fontSizeProvider
+import 'package:lumiai/core/l10n/app_localizations.dart';
 
 class MinimalFunctionalUI extends ConsumerWidget {
   const MinimalFunctionalUI({super.key});
@@ -13,34 +14,35 @@ class MinimalFunctionalUI extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final featureController = ref.read(featureControllerProvider.notifier);
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _MinimalMenuButton(
-          label: 'Identify Object',
+          label: l10n.identifyObject,
           icon: Icons.camera_alt,
           onPressed: () {
             featureController.handleAction(FeatureAction.identifyObject);
           },
         ),
         _MinimalMenuButton(
-          label: 'Read Text',
+          label: l10n.readText,
           icon: Icons.text_fields,
           onPressed: () {
             featureController.handleAction(FeatureAction.readText);
           },
         ),
         _MinimalMenuButton(
-          label: 'Read Currency',
+          label: l10n.readCurrency,
           icon: Icons.attach_money,
           onPressed: () {
             featureController.handleAction(FeatureAction.readCurrency);
           },
         ),
         _MinimalMenuButton(
-          label: 'Live Chat',
+          label: l10n.liveChat,
           icon: Icons.chat,
           onPressed: () {
             Navigator.of(context).push(
@@ -49,7 +51,7 @@ class MinimalFunctionalUI extends ConsumerWidget {
           },
         ),
         _MinimalMenuButton(
-          label: 'Settings',
+          label: l10n.settings,
           icon: Icons.settings,
           onPressed: () {
             Navigator.of(context).push(
