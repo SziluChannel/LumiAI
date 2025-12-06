@@ -108,6 +108,15 @@ class GlobalListeningController extends _$GlobalListeningController {
     client.send(text: prompt, isRealtime: true, turnComplete: true);
   }
 
+  /// Toggles the microphone mute state.
+  void toggleMute() {
+    state = state.copyWith(isMuted: !state.isMuted);
+    debugPrint('🎤 Microphone ${state.isMuted ? 'muted' : 'unmuted'}');
+  }
+
+  /// Returns true if microphone is muted.
+  bool get isMuted => state.isMuted;
+
   Future<void> _startMicStreaming() async {
     state = state.copyWith(status: GlobalListeningStatus.listening);
 
@@ -121,6 +130,9 @@ class GlobalListeningController extends _$GlobalListeningController {
 
     _audioStreamSub?.cancel();
     _audioStreamSub = stream.listen((data) {
+      // Skip sending audio if muted
+      if (state.isMuted) return;
+
       final client = ref.read(geminiLiveClientProvider.notifier);
       if (client.isConnected) {
         client.send(

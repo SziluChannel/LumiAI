@@ -72,7 +72,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         backgroundColor: appBarColor,
         foregroundColor: isSimplified ? Colors.white : null,
         actions: [
-          // --- TEMPORARY TOGGLE BUTTON ---
+          // --- MUTE BUTTON ---
+          IconButton(
+            icon: Icon(
+              listeningState.isMuted ? Icons.mic_off : Icons.mic,
+              color: listeningState.isMuted ? Colors.red : null,
+            ),
+            tooltip: listeningState.isMuted
+                ? 'Unmute Microphone'
+                : 'Mute Microphone',
+            onPressed: () {
+              ref.read(feedbackServiceProvider).triggerSuccessFeedback();
+              ref.read(globalListeningControllerProvider.notifier).toggleMute();
+            },
+          ),
+          // --- UI MODE TOGGLE BUTTON ---
           IconButton(
             icon: Icon(
               isSimplified ? Icons.toggle_on : Icons.toggle_off,
@@ -80,7 +94,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
             tooltip: 'Switch UI Mode',
             onPressed: () {
-              ref.read(feedbackServiceProvider).triggerSuccessFeedback(); // Haptic feedback
+              ref
+                  .read(feedbackServiceProvider)
+                  .triggerSuccessFeedback(); // Haptic feedback
               ref.read(uiModeControllerProvider.notifier).toggleMode();
             },
           ),
@@ -88,7 +104,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             icon: const Icon(Icons.settings),
             tooltip: 'Settings',
             onPressed: () {
-              ref.read(feedbackServiceProvider).triggerSuccessFeedback(); // Haptic feedback
+              ref
+                  .read(feedbackServiceProvider)
+                  .triggerSuccessFeedback(); // Haptic feedback
               Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) => const SettingsScreen()),
               );
