@@ -53,7 +53,7 @@ class PartialFunctionalUI extends ConsumerWidget {
               },
             ),
             _FeatureButton(
-              label: "Read Menu",
+              label: l10n.readMenu,
               icon: Icons.restaurant_menu,
               onPressed: () {
                 featureController.handleAction(FeatureAction.readMenu);
@@ -62,18 +62,18 @@ class PartialFunctionalUI extends ConsumerWidget {
           ],
         ),
         const SizedBox(height: 20),
-        _SectionHeader(title: "Daily Helpers"),
+        _SectionHeader(title: l10n.dailyHelpers),
         _FeatureCard(
           children: [
             _FeatureButton(
-              label: "Read Currency",
+              label: l10n.readCurrency,
               icon: Icons.attach_money,
               onPressed: () {
                 featureController.handleAction(FeatureAction.readCurrency);
               },
             ),
             _FeatureButton(
-              label: "Describe Clothing",
+              label: l10n.describeClothing,
               icon: Icons.checkroom,
               onPressed: () {
                 featureController.handleAction(FeatureAction.describeClothing);
@@ -85,17 +85,17 @@ class PartialFunctionalUI extends ConsumerWidget {
         _FeatureCard(
           children: [
             _FeatureButton(
-              label: "Expiry Date",
+              label: l10n.expiryDate,
               icon: Icons.calendar_today,
               onPressed: () {
                 featureController.handleAction(FeatureAction.readExpiryDate);
               },
             ),
             _FeatureButton(
-              label: "Find Object",
+              label: l10n.findObject,
               icon: Icons.search,
               onPressed: () {
-                _showFindObjectDialog(context, ref);
+                _showFindObjectDialog(context, ref, l10n);
               },
             ),
           ],
@@ -121,23 +121,27 @@ class PartialFunctionalUI extends ConsumerWidget {
     );
   }
 
-  void _showFindObjectDialog(BuildContext context, WidgetRef ref) {
+  void _showFindObjectDialog(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+  ) {
     final textController = TextEditingController();
 
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Find Object'),
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n.findObjectTitle),
         content: TextField(
           controller: textController,
           autofocus: true,
-          decoration: const InputDecoration(
-            hintText: 'What are you looking for?',
-            labelText: 'Object name',
+          decoration: InputDecoration(
+            hintText: l10n.findObjectHint,
+            labelText: l10n.objectName,
           ),
           onSubmitted: (value) {
             if (value.trim().isNotEmpty) {
-              Navigator.of(context).pop();
+              Navigator.of(dialogContext).pop();
               ref
                   .read(featureControllerProvider.notifier)
                   .handleActionWithInput(
@@ -149,20 +153,20 @@ class PartialFunctionalUI extends ConsumerWidget {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: Text(l10n.cancel),
           ),
           ElevatedButton(
             onPressed: () {
               final value = textController.text.trim();
               if (value.isNotEmpty) {
-                Navigator.of(context).pop();
+                Navigator.of(dialogContext).pop();
                 ref
                     .read(featureControllerProvider.notifier)
                     .handleActionWithInput(FeatureAction.findObject, value);
               }
             },
-            child: const Text('Search'),
+            child: Text(l10n.search),
           ),
         ],
       ),

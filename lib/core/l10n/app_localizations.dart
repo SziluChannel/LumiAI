@@ -38,6 +38,23 @@ class AppLocalizations {
       'objectAndScene': 'Object & Scene',
       'textAssistance': 'Text Assistance',
       'chat': 'Chat',
+      'dailyHelpers': 'Daily Helpers',
+
+      // Feature Buttons - New
+      'readMenu': 'Read Menu',
+      'readCurrency': 'Read Currency',
+      'describeClothing': 'Describe Clothing',
+      'expiryDate': 'Expiry Date',
+      'findObject': 'Find Object',
+      'findObjectTitle': 'Find Object',
+      'findObjectHint': 'What are you looking for?',
+      'objectName': 'Object name',
+      'search': 'Search',
+
+      // Accessibility - Font
+      'fontType': 'Font Type',
+      'systemDefault': 'System Default',
+      'errorLoadingFonts': 'Error loading fonts',
 
       // Settings Screen
       'settingsTitle': 'Settings',
@@ -131,6 +148,23 @@ class AppLocalizations {
       'objectAndScene': 'Tárgy és Jelenet',
       'textAssistance': 'Szöveg Segítség',
       'chat': 'Chat',
+      'dailyHelpers': 'Napi Segítők',
+
+      // Feature Buttons - New
+      'readMenu': 'Menü Olvasása',
+      'readCurrency': 'Pénz Felismerése',
+      'describeClothing': 'Ruházat Leírása',
+      'expiryDate': 'Lejárati Dátum',
+      'findObject': 'Tárgy Keresése',
+      'findObjectTitle': 'Tárgy Keresése',
+      'findObjectHint': 'Mit keresel?',
+      'objectName': 'Tárgy neve',
+      'search': 'Keresés',
+
+      // Accessibility - Font
+      'fontType': 'Betűtípus',
+      'systemDefault': 'Rendszer alapértelmezett',
+      'errorLoadingFonts': 'Hiba a betűtípusok betöltésekor',
 
       // Settings Screen
       'settingsTitle': 'Beállítások',
@@ -225,6 +259,19 @@ class AppLocalizations {
   String get objectAndScene => get('objectAndScene');
   String get textAssistance => get('textAssistance');
   String get chat => get('chat');
+  String get dailyHelpers => get('dailyHelpers');
+  String get readMenu => get('readMenu');
+  String get readCurrency => get('readCurrency');
+  String get describeClothing => get('describeClothing');
+  String get expiryDate => get('expiryDate');
+  String get findObject => get('findObject');
+  String get findObjectTitle => get('findObjectTitle');
+  String get findObjectHint => get('findObjectHint');
+  String get objectName => get('objectName');
+  String get search => get('search');
+  String get fontType => get('fontType');
+  String get systemDefault => get('systemDefault');
+  String get errorLoadingFonts => get('errorLoadingFonts');
   String get settingsTitle => get('settingsTitle');
   String get appearance => get('appearance');
   String get soundSettings => get('soundSettings');

@@ -87,17 +87,19 @@ class AccessibilitySettingsScreen extends ConsumerWidget {
               },
             ),
             const SizedBox(height: 20),
-            
+
             // Font Family Selector
-            const Text(
-              'Font Type',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Text(
+              l10n.fontType,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             themeState.when(
               data: (data) => DropdownButton<String?>(
                 isExpanded: true,
-                value: fontOptions.containsKey(data.fontFamily) ? data.fontFamily : null,
+                value: fontOptions.containsKey(data.fontFamily)
+                    ? data.fontFamily
+                    : null,
                 onChanged: (String? newFont) {
                   themeController.setFontFamily(newFont);
                 },
@@ -108,7 +110,7 @@ class AccessibilitySettingsScreen extends ConsumerWidget {
                   );
                 }).toList(),
               ),
-              error: (e, s) => Text('Error loading fonts: $e'),
+              error: (e, s) => Text('${l10n.errorLoadingFonts}: $e'),
               loading: () => const CircularProgressIndicator(),
             ),
 
