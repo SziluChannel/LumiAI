@@ -18,7 +18,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   String? _errorMessage;
   bool _isBiometricAvailable = false; // New state variable
 
-  final BiometricAuthService _biometricAuthService = BiometricAuthService();
+  // Removed direct instantiation
+
 
   @override
   void initState() {
@@ -27,14 +28,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Future<void> _checkBiometricAvailability() async {
-    final bool available = await _biometricAuthService.canCheckBiometrics();
+    final biometricService = ref.read(biometricAuthServiceProvider);
+    final bool available = await biometricService.canCheckBiometrics();
     setState(() {
       _isBiometricAvailable = available;
     });
   }
 
   Future<void> _authenticateBiometrics() async {
-    final bool authenticated = await _biometricAuthService.authenticate();
+    final biometricService = ref.read(biometricAuthServiceProvider);
+    final bool authenticated = await biometricService.authenticate();
     if (authenticated) {
       // Success Condition: Navigate to HomeScreen
       Navigator.of(context).pushReplacement(
