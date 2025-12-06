@@ -11,11 +11,13 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:record/record.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:image/image.dart' as img;
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:lumiai/core/utils/web_utils_export.dart';
 import 'global_listening_state.dart';
 import 'tools/camera_tools.dart';
 import 'tools/settings_tools.dart';
+import 'tools/email_tools.dart';
 
 part 'global_listening_controller.g.dart';
 
@@ -71,9 +73,13 @@ class GlobalListeningController extends _$GlobalListeningController {
         return;
       }
 
-      // 2. Connect to Gemini with Tools (camera + settings)
+      // 2. Connect to Gemini with Tools (camera + settings + email)
       final client = ref.read(geminiLiveClientProvider.notifier);
-      final allTools = [...cameraTools, ...settingsTools];
+      final allTools = [
+        ...cameraTools,
+        ...settingsTools,
+        ...emailTools,
+      ]; // Add emailTools
       await client.connect(tools: allTools);
 
       // 3. Listen to Tool Calls
@@ -190,6 +196,12 @@ class GlobalListeningController extends _$GlobalListeningController {
         client.sendToolResponse([
           {"id": id, "name": name, "response": result},
         ]);
+      } else if (name == 'write_email') {
+        // Handle write email
+        final result = await _handleSendEmail(call['args'] ?? {});
+        client.sendToolResponse([
+          {"id": id, "name": name, "response": result},
+        ]);
       } else {
         client.sendToolResponse([
           {
@@ -200,6 +212,57 @@ class GlobalListeningController extends _$GlobalListeningController {
         ]);
       }
     }
+  }
+
+  /// Handles the write_email tool call
+  Future<Map<String, dynamic>> _handleSendEmail(
+    Map<String, dynamic> args,
+  ) async {
+    final recipient = args['recipient'] as String?;
+    final subject = args['subject'] as String?;
+    final body = args['body'] as String?;
+
+    if (recipient == null || recipient.isEmpty) {
+      return {"error": "Recipient email is missing."};
+    }
+
+    // Basic email validation
+    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    if (!emailRegex.hasMatch(recipient)) {
+      return {"error": "Invalid email address format: $recipient"};
+    }
+
+    try {
+      final Uri emailLaunchUri = Uri(
+        scheme: 'mailto',
+        path: recipient,
+        query: _encodeQueryParameters(<String, String>{
+          'subject': subject ?? '',
+          'body': body ?? '',
+        }),
+      );
+
+      debugPrint("📧 Launching email: $emailLaunchUri");
+
+      if (await canLaunchUrl(emailLaunchUri)) {
+        await launchUrl(emailLaunchUri);
+        return {"result": "Email client opened with draft."};
+      } else {
+        return {"error": "Could not launch email client."};
+      }
+    } catch (e) {
+      debugPrint("📧 Email launch error: $e");
+      return {"error": "Failed to open email client: $e"};
+    }
+  }
+
+  String? _encodeQueryParameters(Map<String, String> params) {
+    return params.entries
+        .map(
+          (e) =>
+              '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}',
+        )
+        .join('&');
   }
 
   /// Handles the update_settings tool call
