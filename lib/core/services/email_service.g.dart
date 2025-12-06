@@ -33,7 +33,7 @@ final class EmailServiceProvider
   EmailService create() => EmailService();
 }
 
-String _$emailServiceHash() => r'292e645aa2df55e7a023d3d8944fa9b5d03ce6c6';
+String _$emailServiceHash() => r'61335d4f10518e8d3c79b8c079c02439db7840c7';
 
 abstract class _$EmailService extends $AsyncNotifier<void> {
   FutureOr<void> build();

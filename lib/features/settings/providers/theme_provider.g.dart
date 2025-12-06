@@ -135,4 +135,4 @@ final class SelectedAppThemeProvider
   }
 }
 
-String _$selectedAppThemeHash() => r'8e5e67339e87dbd6b74ba7bbcefafaef5d750c2c';
+String _$selectedAppThemeHash() => r'6d14e56cbc2ad55852d065d56f04f08b106a2d54';
