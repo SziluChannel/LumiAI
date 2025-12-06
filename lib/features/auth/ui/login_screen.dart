@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lumiai/features/home/home_screen.dart'; // Import the actual HomeScreen
 import 'package:lumiai/core/services/biometric_auth_service.dart'; // Import BiometricAuthService
 import 'package:lumiai/core/services/feedback_service.dart'; // Import FeedbackService
+import 'package:lumiai/features/daily_briefing/daily_briefing_service.dart'; // Import DailyBriefingService
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -43,6 +44,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final bool authenticated = await biometricService.authenticate();
     if (!mounted) return;
     if (authenticated) {
+      // Trigger Daily Briefing
+      ref.read(dailyBriefingServiceProvider).speakBriefing();
+      
       // Success Condition: Navigate to HomeScreen
       Navigator.of(
         context,
