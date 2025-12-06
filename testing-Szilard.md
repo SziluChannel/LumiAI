@@ -60,14 +60,14 @@
 
 | TC# | Test Case Description | Environment | Steps to Execute | Expected Result | Actual Result |
 |-----|----------------------|-------------|------------------|-----------------|---------------|
-| TC017 | Verify audio response playback | Web/Android/iOS | 1. Send voice query 2. Wait for response | Audio response plays back clearly | |
-| TC018 | Verify TTS voice matches configuration | Web/Android/iOS | 1. Configure preferred voice 2. Get response | Response uses configured voice | |
-| TC019 | Verify audio response queue handling | Web/Android/iOS | 1. Send multiple queries quickly | Responses play in order without overlap | |
-| TC020 | Verify audio playback completes fully | Web/Android/iOS | 1. Get a long response | Full response plays without cutoff | |
-| TC021 | Verify audio response during interruption | Web/Android/iOS | 1. Get response 2. Speak during response | Response interrupts for new input (if configured) | |
-| TC022 | Verify TTS speed setting applied | Web/Android/iOS | 1. Set TTS speed to 1.5x 2. Get response | Response plays faster | |
-| TC023 | Verify TTS pitch setting applied | Web/Android/iOS | 1. Adjust TTS pitch 2. Get response | Response has modified pitch | |
-| TC024 | Verify audio playback on device speaker | Android/iOS | 1. Without headphones 2. Get response | Audio plays through device speaker | |
+| TC017 | Verify audio response playback | Web/Android/iOS | 1. Send voice query 2. Wait for response | Audio response plays back clearly | ✅ Passed |
+| TC018 | Verify TTS voice matches configuration | Web/Android/iOS | 1. Configure preferred voice 2. Get response | Response uses configured voice | ✅ Passed |
+| TC019 | Verify audio response queue handling | Web/Android/iOS | 1. Send multiple queries quickly | Responses play in order without overlap | ✅ Passed |
+| TC020 | Verify audio playback completes fully | Web/Android/iOS | 1. Get a long response | Full response plays without cutoff | ✅ Passed |
+| TC021 | Verify audio response during interruption | Web/Android/iOS | 1. Get response 2. Speak during response | Response interrupts for new input (if configured) | ✅ Passed |
+| TC022 | Verify TTS speed setting applied | Web/Android/iOS | 1. Set TTS speed to 1.5x 2. Get response | Response plays faster | ✅ Passed |
+| TC023 | Verify TTS pitch setting applied | Web/Android/iOS | 1. Adjust TTS pitch 2. Get response | Response has modified pitch | ✅ Passed |
+| TC024 | Verify audio playback on device speaker | Android/iOS | 1. Without headphones 2. Get response | Audio plays through device speaker | ✅ Passed |
 
 ---
 
