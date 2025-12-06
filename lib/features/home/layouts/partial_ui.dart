@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lumiai/core/features/feature_action.dart';
 import 'package:lumiai/core/features/feature_controller.dart';
-import 'package:lumiai/core/services/tts_service.dart';
-import 'package:lumiai/features/settings/providers/tts_settings_provider.dart';
+import 'package:lumiai/core/services/feedback_service.dart';
+import 'package:lumiai/features/accessibility/font_size_feature.dart';
+import 'package:lumiai/features/live_chat/ui/live_chat_screen.dart';
 
 class PartialFunctionalUI extends ConsumerWidget {
   const PartialFunctionalUI({super.key});
@@ -15,8 +16,6 @@ class PartialFunctionalUI extends ConsumerWidget {
 
   Widget _buildMenu(BuildContext context, WidgetRef ref) {
     final featureController = ref.read(featureControllerProvider.notifier);
-    // Watch settings for the temporary sliders
-    final ttsSettings = ref.watch(ttsSettingsControllerProvider);
 
     return ListView(
       padding: const EdgeInsets.all(16),
@@ -112,9 +111,7 @@ class _FeatureButton extends ConsumerWidget {
   final IconData icon;
   final VoidCallback onPressed;
 
-  // Removed const keyword from constructor because of dynamic scaleFactor
   const _FeatureButton({
-    super.key,
     required this.label,
     required this.icon,
     required this.onPressed,
@@ -122,8 +119,8 @@ class _FeatureButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final fontSizeProvider = pr.Provider.of<FontSizeProvider>(context);
-    final double scaleFactor = fontSizeProvider.scaleFactor;
+    final fontSizeState = ref.watch(fontSizeProvider);
+    final double scaleFactor = fontSizeState.scaleFactor;
 
     return InkWell(
       onTap: () {
@@ -141,7 +138,7 @@ class _FeatureButton extends ConsumerWidget {
               size: 40 * scaleFactor,
               color: Theme.of(context).primaryColor,
             ), // Scale icon size
-            SizedBox(height: 8 * scaleFactor), // Scale spacing, removed const
+            SizedBox(height: 8 * scaleFactor), // Scale spacing
             Text(
               label,
               textAlign: TextAlign.center,
