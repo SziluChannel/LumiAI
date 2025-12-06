@@ -1,0 +1,9 @@
+# Map different author names/emails to canonical identities
+# Format: Canonical Name <canonical@email> Alias Name <alias@email>
+
+# Combine Szarvas Szilárd identities
+Szarvas Szilárd <szarvasszilard@mailbox.unideb.hu> SziluChannel <szaszilumin@gmail.com>
+Szarvas Szilárd <szarvasszilard@mailbox.unideb.hu> Szarvas Szilárd <szaszilumin@gmail.com>
+
+# Combine jobid3 identities
+jobid3 <kovacserik777@gmail.com> jobid3 <162490041+jobid3@users.noreply.github.com>

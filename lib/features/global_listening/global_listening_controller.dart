@@ -3,7 +3,10 @@ import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:lumiai/core/network/gemini_live_client.dart';
 import 'package:lumiai/core/services/tts_service.dart';
+import 'package:lumiai/features/accessibility/font_size_feature.dart';
 import 'package:lumiai/features/settings/providers/tts_settings_provider.dart';
+import 'package:lumiai/features/settings/providers/theme_provider.dart';
+import 'package:lumiai/features/settings/providers/ui_mode_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:record/record.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -105,6 +108,15 @@ class GlobalListeningController extends _$GlobalListeningController {
     client.send(text: prompt, isRealtime: true, turnComplete: true);
   }
 
+  /// Toggles the microphone mute state.
+  void toggleMute() {
+    state = state.copyWith(isMuted: !state.isMuted);
+    debugPrint('🎤 Microphone ${state.isMuted ? 'muted' : 'unmuted'}');
+  }
+
+  /// Returns true if microphone is muted.
+  bool get isMuted => state.isMuted;
+
   Future<void> _startMicStreaming() async {
     state = state.copyWith(status: GlobalListeningStatus.listening);
 
@@ -118,6 +130,9 @@ class GlobalListeningController extends _$GlobalListeningController {
 
     _audioStreamSub?.cancel();
     _audioStreamSub = stream.listen((data) {
+      // Skip sending audio if muted
+      if (state.isMuted) return;
+
       final client = ref.read(geminiLiveClientProvider.notifier);
       if (client.isConnected) {
         client.send(
@@ -191,36 +206,107 @@ class GlobalListeningController extends _$GlobalListeningController {
   Future<Map<String, dynamic>> _handleUpdateSettings(
     Map<String, dynamic> args,
   ) async {
-    final settingsController = ref.read(ttsSettingsControllerProvider.notifier);
+    final ttsController = ref.read(ttsSettingsControllerProvider.notifier);
+    final fontSizeNotifier = ref.read(fontSizeProvider.notifier);
     final List<String> changedSettings = [];
 
     try {
+      // --- TTS Settings ---
+
       // Update language if provided
       if (args.containsKey('language')) {
         final language = args['language'] as String;
-        await settingsController.setLanguage(language);
-        changedSettings.add('language to $language');
+        await ttsController.setLanguage(language);
+        final langName = language == 'hu-HU' ? 'Hungarian' : 'English';
+        changedSettings.add('language to $langName');
         debugPrint("🔧 Settings: Language changed to $language");
       }
 
       // Update speed if provided
       if (args.containsKey('speed')) {
         final speed = (args['speed'] as num).toDouble();
-        // Clamp speed to valid range
         final clampedSpeed = speed.clamp(0.5, 2.0);
-        await settingsController.setSpeed(clampedSpeed);
-        changedSettings.add('speed to ${clampedSpeed.toStringAsFixed(1)}');
+        await ttsController.setSpeed(clampedSpeed);
+        changedSettings.add(
+          'speech speed to ${clampedSpeed.toStringAsFixed(1)}',
+        );
         debugPrint("🔧 Settings: Speed changed to $clampedSpeed");
       }
 
       // Update pitch if provided
       if (args.containsKey('pitch')) {
         final pitch = (args['pitch'] as num).toDouble();
-        // Clamp pitch to valid range
         final clampedPitch = pitch.clamp(0.5, 2.0);
-        await settingsController.setPitch(clampedPitch);
-        changedSettings.add('pitch to ${clampedPitch.toStringAsFixed(1)}');
+        await ttsController.setPitch(clampedPitch);
+        changedSettings.add(
+          'voice pitch to ${clampedPitch.toStringAsFixed(1)}',
+        );
         debugPrint("🔧 Settings: Pitch changed to $clampedPitch");
+      }
+
+      // --- Display Settings ---
+
+      // Update font size if provided
+      if (args.containsKey('font_size')) {
+        final fontSize = (args['font_size'] as num).toDouble();
+        final clampedFontSize = fontSize.clamp(1.0, 2.0);
+        fontSizeNotifier.setScaleFactor(clampedFontSize);
+        final percentage = (clampedFontSize * 100).toStringAsFixed(0);
+        changedSettings.add('font size to $percentage%');
+        debugPrint("🔧 Settings: Font size changed to $clampedFontSize");
+      }
+
+      // Update theme mode if provided
+      if (args.containsKey('theme_mode')) {
+        final themeMode = args['theme_mode'] as String;
+        final themeController = ref.read(themeControllerProvider.notifier);
+        final mode = switch (themeMode) {
+          'light' => AppThemeMode.light,
+          'dark' => AppThemeMode.dark,
+          _ => AppThemeMode.system,
+        };
+        themeController.setAppThemeMode(mode);
+        // Reset custom theme when changing standard theme
+        themeController.setCustomThemeType(CustomThemeType.none);
+        changedSettings.add('theme to $themeMode mode');
+        debugPrint("🔧 Settings: Theme changed to $themeMode");
+      }
+
+      // Update accessibility theme if provided
+      if (args.containsKey('accessibility_theme')) {
+        final accessibilityTheme = args['accessibility_theme'] as String;
+        final themeController = ref.read(themeControllerProvider.notifier);
+        final customType = switch (accessibilityTheme) {
+          'high_contrast' => CustomThemeType.highContrast,
+          'colorblind' => CustomThemeType.colorblindFriendly,
+          'amoled' => CustomThemeType.amoled,
+          _ => CustomThemeType.none,
+        };
+        themeController.setCustomThemeType(customType);
+        final themeName = switch (accessibilityTheme) {
+          'high_contrast' => 'high contrast',
+          'colorblind' => 'colorblind-friendly',
+          'amoled' => 'AMOLED',
+          _ => 'normal',
+        };
+        changedSettings.add('accessibility theme to $themeName');
+        debugPrint(
+          "🔧 Settings: Accessibility theme changed to $accessibilityTheme",
+        );
+      }
+
+      // --- UI Mode ---
+
+      // Update UI mode if provided
+      if (args.containsKey('ui_mode')) {
+        final uiModeStr = args['ui_mode'] as String;
+        final uiController = ref.read(uiModeControllerProvider.notifier);
+        final mode = uiModeStr == 'simplified'
+            ? UiMode.simplified
+            : UiMode.standard;
+        uiController.setMode(mode);
+        changedSettings.add('UI to $uiModeStr mode');
+        debugPrint("🔧 Settings: UI mode changed to $uiModeStr");
       }
 
       if (changedSettings.isEmpty) {
