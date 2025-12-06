@@ -156,9 +156,24 @@ ThemeData selectedAppTheme(Ref ref) {
       // Apply font family if selected
       if (state.fontFamily != null) {
         try {
-          final textStyle = GoogleFonts.getFont(state.fontFamily!);
+          // 1. Get the TextTheme with the selected font applied
+          final fontTextTheme = GoogleFonts.getTextTheme(
+            state.fontFamily!,
+            baseTheme.textTheme,
+          );
+
+          // 2. Get a TextStyle for the font family to apply to specific overrides (like AppBar)
+          final fontTextStyle = GoogleFonts.getFont(state.fontFamily!);
+          final fontFamily = fontTextStyle.fontFamily;
+
+          // 3. Return the new Theme with updated TextTheme and AppBarTheme
           return baseTheme.copyWith(
-            textTheme: baseTheme.textTheme.apply(fontFamily: textStyle.fontFamily),
+            textTheme: fontTextTheme,
+            appBarTheme: baseTheme.appBarTheme.copyWith(
+              titleTextStyle: baseTheme.appBarTheme.titleTextStyle?.copyWith(
+                fontFamily: fontFamily,
+              ),
+            ),
           );
         } catch (e) {
           // Fallback if font not found
