@@ -42,15 +42,6 @@ class MinimalFunctionalUI extends ConsumerWidget {
           },
         ),
         _MinimalMenuButton(
-          label: 'Live Chat',
-          icon: Icons.chat,
-          onPressed: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => const LiveChatScreen()),
-            );
-          },
-        ),
-        _MinimalMenuButton(
           label: 'Settings',
           icon: Icons.settings,
           onPressed: () {
