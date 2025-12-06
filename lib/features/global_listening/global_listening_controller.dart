@@ -254,8 +254,33 @@ class GlobalListeningController extends _$GlobalListeningController {
           _ => AppThemeMode.system,
         };
         themeController.setAppThemeMode(mode);
+        // Reset custom theme when changing standard theme
+        themeController.setCustomThemeType(CustomThemeType.none);
         changedSettings.add('theme to $themeMode mode');
         debugPrint("🔧 Settings: Theme changed to $themeMode");
+      }
+
+      // Update accessibility theme if provided
+      if (args.containsKey('accessibility_theme')) {
+        final accessibilityTheme = args['accessibility_theme'] as String;
+        final themeController = ref.read(themeControllerProvider.notifier);
+        final customType = switch (accessibilityTheme) {
+          'high_contrast' => CustomThemeType.highContrast,
+          'colorblind' => CustomThemeType.colorblindFriendly,
+          'amoled' => CustomThemeType.amoled,
+          _ => CustomThemeType.none,
+        };
+        themeController.setCustomThemeType(customType);
+        final themeName = switch (accessibilityTheme) {
+          'high_contrast' => 'high contrast',
+          'colorblind' => 'colorblind-friendly',
+          'amoled' => 'AMOLED',
+          _ => 'normal',
+        };
+        changedSettings.add('accessibility theme to $themeName');
+        debugPrint(
+          "🔧 Settings: Accessibility theme changed to $accessibilityTheme",
+        );
       }
 
       // --- UI Mode ---
