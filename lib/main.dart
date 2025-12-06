@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart'; // For your API Key
 
-// ÚJ IMPORT: A témavezérlő provider importálása
-import 'package:lumiai/features/settings/providers/theme_provider.dart'; 
+// Import the theme provider
+import 'package:lumiai/features/settings/providers/theme_provider.dart';
 
-// A meglévő Home Screen importálása
-import 'package:lumiai/features/home/home_screen.dart';
+// Auth and Login
 import 'package:lumiai/features/auth/ui/login_screen.dart'; // Import LoginScreen
-import 'package:provider/provider.dart' as pr; // Alias for ChangeNotifierProvider and Provider.of
-import 'package:lumiai/features/accessibility/font_size_feature.dart'; // For FontSizeProvider
+import 'package:lumiai/features/accessibility/font_size_feature.dart'; // For fontSizeProvider
 
 Future<void> main() async {
   // 1. Ensure Flutter bindings are initialized before async code
@@ -19,52 +17,44 @@ Future<void> main() async {
   try {
     await dotenv.load(fileName: ".env");
   } catch (e) {
-    // Csak a hibát írjuk ki, ha nem találja, ne állítsa le az appot
-    print("Error loading .env file: $e"); 
+    // Only print error if not found, don't stop the app
+    print("Error loading .env file: $e");
   }
 
-  // 3. Wrap the app in ProviderScope and ChangeNotifierProvider for FontSizeProvider
-  runApp(
-    ProviderScope(
-      child: pr.ChangeNotifierProvider( // Use pr.ChangeNotifierProvider
-        create: (context) => FontSizeProvider(),
-        child: const MyApp(),
-      ),
-    ),
-  );
+  // 3. Wrap the app in ProviderScope for Riverpod
+  runApp(const ProviderScope(child: MyApp()));
 }
 
-// MyApp mostantól ConsumerWidget a Riverpod használatához
+// MyApp is a ConsumerWidget for Riverpod usage
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    
-    // Figyeljük a kiszámított teljes ThemeData objektumot.
+    // Watch the computed full ThemeData object.
     final appTheme = ref.watch(selectedAppThemeProvider);
 
-    // Figyeljük a globális fontméret skálázási faktort
-    final fontSizeProvider = pr.Provider.of<FontSizeProvider>(context); // Use pr.Provider.of
+    // Watch the global font size scale factor
+    final fontSizeState = ref.watch(fontSizeProvider);
 
     return MaterialApp(
       title: 'LumiAI',
       debugShowCheckedModeBanner: false,
-      
-      // A teljes ThemeData objektum beállítása a provider értékére.
+
+      // Set the full ThemeData object from the provider.
       theme: appTheme,
 
       // Global font size scaling for all Text widgets
       builder: (context, child) {
         return MediaQuery(
-          data: MediaQuery.of(context).copyWith(
-            textScaler: TextScaler.linear(fontSizeProvider.scaleFactor),
-          ),
+          data: MediaQuery.of(
+            context,
+          ).copyWith(textScaler: TextScaler.linear(fontSizeState.scaleFactor)),
           child: child!,
         );
       },
 
-      // Ez a fő képernyő, ami a beállított UI módot (standard/simplified) is kezeli.
+      // This is the main screen which handles the set UI mode (standard/simplified).
       home: const LoginScreen(), // Set LoginScreen as the initial screen
     );
   }

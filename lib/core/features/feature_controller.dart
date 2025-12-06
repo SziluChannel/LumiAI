@@ -44,11 +44,12 @@ class FeatureController extends _$FeatureController {
     final globalController = ref.read(
       globalListeningControllerProvider.notifier,
     );
-    final tts = ref.read(ttsServiceProvider);
+    final ttsAsyncValue = ref.read(ttsServiceProvider);
+    final tts = ttsAsyncValue.value;
 
     // Check if connected
     if (!globalController.isInitialized) {
-      tts.speak('Please wait, connecting...');
+      tts?.speak('Please wait, connecting...');
       return;
     }
 
@@ -58,7 +59,7 @@ class FeatureController extends _$FeatureController {
 
     // Provide feedback
     if (config.feedbackMessage != null) {
-      tts.speak(config.feedbackMessage!);
+      tts?.speak(config.feedbackMessage!);
     }
 
     // Open camera if required and not already open
