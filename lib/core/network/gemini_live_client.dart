@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -50,13 +49,13 @@ class GeminiLiveClient extends _$GeminiLiveClient {
     // Close existing connection to ensure a clean state
     disconnect();
 
-    print("🔌 Connecting to Gemini Live...");
+    debugPrint("🔌 Connecting to Gemini Live...");
     final uri = Uri.parse('$_baseUrl?key=$apiKey');
 
     try {
       _channel = WebSocketChannel.connect(uri);
       await _channel!.ready;
-      print("✅ WebSocket Connection Established!");
+      debugPrint("✅ WebSocket Connection Established!");
 
       _channel!.stream.listen(
         (data) {
@@ -66,27 +65,29 @@ class GeminiLiveClient extends _$GeminiLiveClient {
                 : jsonDecode(utf8.decode(data));
             _parseServerMessage(decoded);
           } catch (e, stackTrace) {
-            print("🚨 Parsing Error: $e\n$stackTrace");
+            debugPrint("🚨 Parsing Error: $e\n$stackTrace");
           }
         },
         onError: (e) {
-          print("🚨 WebSocket Stream Error: $e");
+          debugPrint("🚨 WebSocket Stream Error: $e");
           disconnect();
         },
         onDone: () {
-          print("🛑 WebSocket Connection Closed");
+          debugPrint("🛑 WebSocket Connection Closed");
           // Try to get close code and reason if available
           try {
             final closeCode = _channel?.closeCode;
             final closeReason = _channel?.closeReason;
             if (closeCode != null) {
-              print("📊 Close Code: $closeCode");
-              print("📝 Close Reason: ${closeReason ?? 'No reason provided'}");
+              debugPrint("📊 Close Code: $closeCode");
+              debugPrint(
+                "📝 Close Reason: ${closeReason ?? 'No reason provided'}",
+              );
             } else {
-              print("⚠️ No close code available");
+              debugPrint("⚠️ No close code available");
             }
           } catch (e) {
-            print("⚠️ Could not retrieve close information: $e");
+            debugPrint("⚠️ Could not retrieve close information: $e");
           }
           disconnect();
         },
@@ -114,7 +115,7 @@ class GeminiLiveClient extends _$GeminiLiveClient {
 
       _sendJson(setupMsg);
     } catch (e) {
-      print("💥 Connection Failed: $e");
+      debugPrint("💥 Connection Failed: $e");
       disconnect();
       rethrow;
     }
@@ -140,7 +141,7 @@ class GeminiLiveClient extends _$GeminiLiveClient {
     bool turnComplete = false, // Default to true for normal interactions
   }) {
     if (_channel == null) {
-      print("⚠️ Cannot send: Disconnected");
+      debugPrint("⚠️ Cannot send: Disconnected");
       return;
     }
 
@@ -242,14 +243,14 @@ class GeminiLiveClient extends _$GeminiLiveClient {
       if (_channel == null) return;
       _channel!.sink.add(jsonEncode(data));
     } catch (e) {
-      print("🚨 Send Error: $e");
+      debugPrint("🚨 Send Error: $e");
     }
   }
 
   void _parseServerMessage(Map<String, dynamic> msg) {
     try {
       if (msg.containsKey('setupComplete')) {
-        print("✅ Setup Complete - Ready");
+        debugPrint("✅ Setup Complete - Ready");
       }
 
       if (msg.containsKey('toolCall')) {
@@ -258,7 +259,7 @@ class GeminiLiveClient extends _$GeminiLiveClient {
           final functionCalls = List<Map<String, dynamic>>.from(
             toolCall['functionCalls'],
           );
-          print("🛠️ Received Tool Call: $functionCalls");
+          debugPrint("🛠️ Received Tool Call: $functionCalls");
           _toolCallController.add(functionCalls);
         }
       }
@@ -310,7 +311,7 @@ class GeminiLiveClient extends _$GeminiLiveClient {
         }
       }
     } catch (e) {
-      print("Error parsing JSON body: $e");
+      debugPrint("Error parsing JSON body: $e");
     }
   }
 

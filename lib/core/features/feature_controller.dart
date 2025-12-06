@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:lumiai/core/constants/app_prompts.dart';
 import 'package:lumiai/core/features/feature_action.dart';
 import 'package:lumiai/core/services/tts_service.dart';
@@ -55,7 +56,7 @@ class FeatureController extends _$FeatureController {
 
     // Track if camera was already open
     final wasCameraOpen = globalController.isCameraActive;
-    print("📷 Camera was already open: $wasCameraOpen");
+    debugPrint("📷 Camera was already open: $wasCameraOpen");
 
     // Provide feedback
     if (config.feedbackMessage != null) {
@@ -64,19 +65,19 @@ class FeatureController extends _$FeatureController {
 
     // Open camera if required and not already open
     if (config.requiresCamera && !wasCameraOpen) {
-      print("📷 Opening camera...");
+      debugPrint("📷 Opening camera...");
       await globalController.openCamera();
-      print("📷 Waiting for camera to be ready...");
+      debugPrint("📷 Waiting for camera to be ready...");
       await _waitForCameraReady(config.cameraWaitTimeout);
-      print("📷 Camera ready: ${globalController.isCameraActive}");
+      debugPrint("📷 Camera ready: ${globalController.isCameraActive}");
     }
 
     // Always wait for frames to be sent before prompting (frames are sent at 1 FPS)
     // This ensures the model has fresh video frames to analyze
     if (config.requiresCamera) {
-      print("📷 Waiting 10 seconds for frames to be sent...");
+      debugPrint("📷 Waiting 10 seconds for frames to be sent...");
       await Future.delayed(const Duration(seconds: 10));
-      print("📷 Done waiting, sending prompt...");
+      debugPrint("📷 Done waiting, sending prompt...");
     }
 
     // Send the prompt to Gemini
