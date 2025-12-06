@@ -188,6 +188,93 @@ flutter test test/<filename>_test.dart
 
 ---
 
+### 9. Camera Tools Tests (`camera_tools_test.dart`)
+
+| TC# | Test Case Description | Environment | Steps to Execute | Expected Result | Actual Result |
+|-----|----------------------|-------------|------------------|-----------------|---------------|
+| TC104 | Verify cameraTools is a non-empty list | Flutter test environment | 1. Run `flutter test test/camera_tools_test.dart` | cameraTools should not be empty | |
+| TC105 | Verify cameraTools has exactly one element | Flutter test environment | 1. Run `flutter test test/camera_tools_test.dart` | Length should be 1 | |
+| TC106 | Verify first element contains functionDeclarations | Flutter test environment | 1. Run `flutter test test/camera_tools_test.dart` | Key should exist | |
+| TC107 | Verify functionDeclarations is a list | Flutter test environment | 1. Run `flutter test test/camera_tools_test.dart` | Should be a list | |
+| TC108 | Verify has exactly 3 function declarations | Flutter test environment | 1. Run `flutter test test/camera_tools_test.dart` | Should have 3 tools | |
+| TC109 | Verify get_camera_status has correct name | Flutter test environment | 1. Run `flutter test test/camera_tools_test.dart` | Name should be 'get_camera_status' | |
+| TC110 | Verify get_camera_status has non-empty description | Flutter test environment | 1. Run `flutter test test/camera_tools_test.dart` | Description should not be empty | |
+| TC111 | Verify get_camera_status description mentions status | Flutter test environment | 1. Run `flutter test test/camera_tools_test.dart` | Should contain 'status' | |
+| TC112 | Verify open_camera has correct name | Flutter test environment | 1. Run `flutter test test/camera_tools_test.dart` | Name should be 'open_camera' | |
+| TC113 | Verify open_camera has non-empty description | Flutter test environment | 1. Run `flutter test test/camera_tools_test.dart` | Description should not be empty | |
+| TC114 | Verify open_camera description mentions opening camera | Flutter test environment | 1. Run `flutter test test/camera_tools_test.dart` | Should contain 'open' and 'camera' | |
+| TC115 | Verify close_camera has correct name | Flutter test environment | 1. Run `flutter test test/camera_tools_test.dart` | Name should be 'close_camera' | |
+| TC116 | Verify close_camera has non-empty description | Flutter test environment | 1. Run `flutter test test/camera_tools_test.dart` | Description should not be empty | |
+| TC117 | Verify close_camera description mentions closing | Flutter test environment | 1. Run `flutter test test/camera_tools_test.dart` | Should contain 'close' | |
+| TC118 | Verify all tools have name and description | Flutter test environment | 1. Run `flutter test test/camera_tools_test.dart` | All 3 tools should have both fields | |
+
+---
+
+### 10. Settings Tools Tests (`settings_tools_test.dart`)
+
+| TC# | Test Case Description | Environment | Steps to Execute | Expected Result | Actual Result |
+|-----|----------------------|-------------|------------------|-----------------|---------------|
+| TC119 | Verify settingsTools is a non-empty list | Flutter test environment | 1. Run `flutter test test/settings_tools_test.dart` | settingsTools should not be empty | |
+| TC120 | Verify settingsTools has exactly one element | Flutter test environment | 1. Run `flutter test test/settings_tools_test.dart` | Length should be 1 | |
+| TC121 | Verify first element contains functionDeclarations | Flutter test environment | 1. Run `flutter test test/settings_tools_test.dart` | Key should exist | |
+| TC122 | Verify functionDeclarations is a list | Flutter test environment | 1. Run `flutter test test/settings_tools_test.dart` | Should be a list | |
+| TC123 | Verify has exactly 1 function declaration | Flutter test environment | 1. Run `flutter test test/settings_tools_test.dart` | Should have 1 tool (update_settings) | |
+| TC124 | Verify update_settings has correct name | Flutter test environment | 1. Run `flutter test test/settings_tools_test.dart` | Name should be 'update_settings' | |
+| TC125 | Verify update_settings has non-empty description | Flutter test environment | 1. Run `flutter test test/settings_tools_test.dart` | Description should not be empty | |
+| TC126 | Verify update_settings has parameters object | Flutter test environment | 1. Run `flutter test test/settings_tools_test.dart` | Should have parameters key | |
+| TC127 | Verify parameters has type object | Flutter test environment | 1. Run `flutter test test/settings_tools_test.dart` | Type should be 'object' | |
+| TC128 | Verify parameters has properties | Flutter test environment | 1. Run `flutter test test/settings_tools_test.dart` | Properties should exist | |
+| TC129 | Verify has language property with enum | Flutter test environment | 1. Run `flutter test test/settings_tools_test.dart` | Should have en-US and hu-HU | |
+| TC130 | Verify has speed property (number) | Flutter test environment | 1. Run `flutter test test/settings_tools_test.dart` | Type should be number | |
+| TC131 | Verify has pitch property (number) | Flutter test environment | 1. Run `flutter test test/settings_tools_test.dart` | Type should be number | |
+| TC132 | Verify has font_size property (number) | Flutter test environment | 1. Run `flutter test test/settings_tools_test.dart` | Type should be number | |
+| TC133 | Verify has theme_mode property with enum | Flutter test environment | 1. Run `flutter test test/settings_tools_test.dart` | Should have light, dark, system | |
+| TC134 | Verify has accessibility_theme property with enum | Flutter test environment | 1. Run `flutter test test/settings_tools_test.dart` | Should have none, high_contrast, colorblind, amoled | |
+| TC135 | Verify has ui_mode property with enum | Flutter test environment | 1. Run `flutter test test/settings_tools_test.dart` | Should have standard, simplified | |
+| TC136 | Verify all properties have description | Flutter test environment | 1. Run `flutter test test/settings_tools_test.dart` | All 7 properties should have descriptions | |
+| TC137 | Verify required is an empty list | Flutter test environment | 1. Run `flutter test test/settings_tools_test.dart` | Required array should be empty | |
+
+---
+
+### 11. App Themes Tests (`app_themes_test.dart`)
+
+| TC# | Test Case Description | Environment | Steps to Execute | Expected Result | Actual Result |
+|-----|----------------------|-------------|------------------|-----------------|---------------|
+| TC138 | Verify defaultLightTheme has light brightness | Flutter test environment | 1. Run `flutter test test/app_themes_test.dart` | Brightness should be light | |
+| TC139 | Verify defaultLightTheme uses Material 3 | Flutter test environment | 1. Run `flutter test test/app_themes_test.dart` | useMaterial3 should be true | |
+| TC140 | Verify defaultLightTheme has app bar theme | Flutter test environment | 1. Run `flutter test test/app_themes_test.dart` | appBarTheme should not be null | |
+| TC141 | Verify defaultLightTheme app bar has white background | Flutter test environment | 1. Run `flutter test test/app_themes_test.dart` | backgroundColor should be white | |
+| TC142 | Verify defaultLightTheme app bar has black foreground | Flutter test environment | 1. Run `flutter test test/app_themes_test.dart` | foregroundColor should be black | |
+| TC143 | Verify defaultLightTheme app bar has no elevation | Flutter test environment | 1. Run `flutter test test/app_themes_test.dart` | Elevation should be 0 | |
+| TC144 | Verify defaultLightTheme has card theme | Flutter test environment | 1. Run `flutter test test/app_themes_test.dart` | cardTheme should not be null | |
+| TC145 | Verify defaultLightTheme has elevated button theme | Flutter test environment | 1. Run `flutter test test/app_themes_test.dart` | elevatedButtonTheme should not be null | |
+| TC146 | Verify defaultLightTheme has input decoration theme | Flutter test environment | 1. Run `flutter test test/app_themes_test.dart` | inputDecorationTheme should exist and filled=true | |
+| TC147 | Verify defaultDarkTheme has dark brightness | Flutter test environment | 1. Run `flutter test test/app_themes_test.dart` | Brightness should be dark | |
+| TC148 | Verify defaultDarkTheme uses Material 3 | Flutter test environment | 1. Run `flutter test test/app_themes_test.dart` | useMaterial3 should be true | |
+| TC149 | Verify defaultDarkTheme app bar has white foreground | Flutter test environment | 1. Run `flutter test test/app_themes_test.dart` | foregroundColor should be white | |
+| TC150 | Verify defaultDarkTheme app bar has no elevation | Flutter test environment | 1. Run `flutter test test/app_themes_test.dart` | Elevation should be 0 | |
+| TC151 | Verify highContrastTheme has dark brightness | Flutter test environment | 1. Run `flutter test test/app_themes_test.dart` | Brightness should be dark | |
+| TC152 | Verify highContrastTheme has black scaffold background | Flutter test environment | 1. Run `flutter test test/app_themes_test.dart` | scaffoldBackgroundColor should be black | |
+| TC153 | Verify highContrastTheme uses yellow accent as primary | Flutter test environment | 1. Run `flutter test test/app_themes_test.dart` | Primary should be yellowAccent | |
+| TC154 | Verify highContrastTheme has white text on background | Flutter test environment | 1. Run `flutter test test/app_themes_test.dart` | onBackground should be white | |
+| TC155 | Verify highContrastTheme uses Material 3 | Flutter test environment | 1. Run `flutter test test/app_themes_test.dart` | useMaterial3 should be true | |
+| TC156 | Verify highContrastTheme app bar has black background | Flutter test environment | 1. Run `flutter test test/app_themes_test.dart` | backgroundColor should be black | |
+| TC157 | Verify colorblindTheme has light brightness | Flutter test environment | 1. Run `flutter test test/app_themes_test.dart` | Brightness should be light | |
+| TC158 | Verify colorblindTheme uses blue as primary | Flutter test environment | 1. Run `flutter test test/app_themes_test.dart` | Primary should be blue | |
+| TC159 | Verify colorblindTheme uses deep orange as secondary | Flutter test environment | 1. Run `flutter test test/app_themes_test.dart` | Secondary should be deepOrange | |
+| TC160 | Verify colorblindTheme uses Material 3 | Flutter test environment | 1. Run `flutter test test/app_themes_test.dart` | useMaterial3 should be true | |
+| TC161 | Verify amoledTheme has dark brightness | Flutter test environment | 1. Run `flutter test test/app_themes_test.dart` | Brightness should be dark | |
+| TC162 | Verify amoledTheme has true black scaffold background | Flutter test environment | 1. Run `flutter test test/app_themes_test.dart` | scaffoldBackgroundColor should be 0xFF000000 | |
+| TC163 | Verify amoledTheme has true black background color | Flutter test environment | 1. Run `flutter test test/app_themes_test.dart` | background should be 0xFF000000 | |
+| TC164 | Verify amoledTheme has true black surface color | Flutter test environment | 1. Run `flutter test test/app_themes_test.dart` | surface should be 0xFF000000 | |
+| TC165 | Verify amoledTheme has off-white text color | Flutter test environment | 1. Run `flutter test test/app_themes_test.dart` | onBackground/onSurface should be 0xFFF2F2F2 | |
+| TC166 | Verify amoledTheme app bar has black background | Flutter test environment | 1. Run `flutter test test/app_themes_test.dart` | backgroundColor should be 0xFF000000 | |
+| TC167 | Verify amoledTheme uses Material 3 | Flutter test environment | 1. Run `flutter test test/app_themes_test.dart` | useMaterial3 should be true | |
+| TC168 | Verify all themes use Material 3 | Flutter test environment | 1. Run `flutter test test/app_themes_test.dart` | All 5 themes should have useMaterial3=true | |
+| TC169 | Verify all themes have valid color schemes | Flutter test environment | 1. Run `flutter test test/app_themes_test.dart` | All 5 themes should have non-null colorScheme | |
+
+---
+
 ## Summary Statistics
 
 | Test File | Number of Test Cases |
@@ -200,7 +287,18 @@ flutter test test/<filename>_test.dart
 | riverpod_providers_test.dart | 24 |
 | state_classes_test.dart | 23 |
 | voice_option_test.dart | 6 |
-| **Total** | **104** |
+| camera_tools_test.dart | 15 |
+| settings_tools_test.dart | 19 |
+| app_themes_test.dart | 32 |
+| **Total** | **170** |
+
+---
+
+## Test Execution Results
+
+**Last Run:** 2025-12-06
+**Command:** `flutter test`
+**Result:** ✅ **All 168 tests passed** (some test cases contain multiple assertions)
 
 ---
 
@@ -208,3 +306,4 @@ flutter test test/<filename>_test.dart
 - All tests use `flutter_test` and `flutter_riverpod` for testing
 - MockSharedPreferences is used for persistence testing
 - Tests cover state management, UI configurations, accessibility features, and utility functions
+- Camera tools, settings tools, and app themes tests validate Gemini API tool definitions and theme configurations
