@@ -54,75 +54,22 @@ class PartialFunctionalUI extends ConsumerWidget {
           ],
         ),
         const SizedBox(height: 20),
-        _SectionHeader(title: "Debug"),
+        _SectionHeader(title: "Chat"),
         _FeatureCard(
           children: [
             _FeatureButton(
-              label: "Test TTS",
-              icon: Icons.record_voice_over,
+              label: "Live Chat",
+              icon: Icons.chat,
               onPressed: () {
-                ref
-                    .read(ttsServiceProvider)
-                    .speak("This is a test of the text to speech system.");
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const LiveChatScreen(),
+                  ),
+                );
               },
             ),
           ],
         ),
-
-        // --- TEMPORARY DEBUG CONTROLS (Easy to remove) ---
-        const SizedBox(height: 10),
-        Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: Colors
-                .yellow
-                .shade100, // Distinct color to remind you to remove it
-            border: Border.all(color: Colors.orange),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                "TEMP: TTS Controls",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-              ),
-              Row(
-                children: [
-                  Text("Pitch: ${ttsSettings.pitch.toStringAsFixed(1)}"),
-                  Expanded(
-                    child: Slider(
-                      value: ttsSettings.pitch,
-                      min: 0.5,
-                      max: 2.0,
-                      divisions: 15,
-                      onChanged: (val) => ref
-                          .read(ttsSettingsControllerProvider.notifier)
-                          .setPitch(val),
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Text("Speed: ${ttsSettings.speed.toStringAsFixed(1)}"),
-                  Expanded(
-                    child: Slider(
-                      value: ttsSettings.speed,
-                      min: 0.0,
-                      max: 1.0,
-                      divisions: 10,
-                      onChanged: (val) => ref
-                          .read(ttsSettingsControllerProvider.notifier)
-                          .setSpeed(val),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-        // -------------------------------------------------
       ],
     );
   }
@@ -160,33 +107,48 @@ class _FeatureCard extends StatelessWidget {
   }
 }
 
-class _FeatureButton extends StatelessWidget {
+class _FeatureButton extends ConsumerWidget {
   final String label;
   final IconData icon;
   final VoidCallback onPressed;
 
+  // Removed const keyword from constructor because of dynamic scaleFactor
   const _FeatureButton({
+    super.key,
     required this.label,
     required this.icon,
     required this.onPressed,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final fontSizeProvider = pr.Provider.of<FontSizeProvider>(context);
+    final double scaleFactor = fontSizeProvider.scaleFactor;
+
     return InkWell(
-      onTap: onPressed,
+      onTap: () {
+        ref.read(feedbackServiceProvider).triggerSuccessFeedback();
+        onPressed();
+      },
       borderRadius: BorderRadius.circular(8),
       child: Container(
-        width: 120,
+        width: 120 * scaleFactor, // Scale button width
         padding: const EdgeInsets.symmetric(vertical: 12),
         child: Column(
           children: [
-            Icon(icon, size: 40, color: Theme.of(context).primaryColor),
-            const SizedBox(height: 8),
+            Icon(
+              icon,
+              size: 40 * scaleFactor,
+              color: Theme.of(context).primaryColor,
+            ), // Scale icon size
+            SizedBox(height: 8 * scaleFactor), // Scale spacing, removed const
             Text(
               label,
               textAlign: TextAlign.center,
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16 * scaleFactor, // Scale text size
+              ),
             ),
           ],
         ),

@@ -6,7 +6,10 @@ import 'package:flutter_dotenv/flutter_dotenv.dart'; // For your API Key
 import 'package:lumiai/features/settings/providers/theme_provider.dart'; 
 
 // A meglévő Home Screen importálása
-import 'package:lumiai/features/home/home_screen.dart'; 
+import 'package:lumiai/features/home/home_screen.dart';
+import 'package:lumiai/features/auth/ui/login_screen.dart'; // Import LoginScreen
+import 'package:provider/provider.dart' as pr; // Alias for ChangeNotifierProvider and Provider.of
+import 'package:lumiai/features/accessibility/font_size_feature.dart'; // For FontSizeProvider
 
 Future<void> main() async {
   // 1. Ensure Flutter bindings are initialized before async code
@@ -20,8 +23,15 @@ Future<void> main() async {
     print("Error loading .env file: $e"); 
   }
 
-  // 3. Wrap the app in ProviderScope
-  runApp(const ProviderScope(child: MyApp()));
+  // 3. Wrap the app in ProviderScope and ChangeNotifierProvider for FontSizeProvider
+  runApp(
+    ProviderScope(
+      child: pr.ChangeNotifierProvider( // Use pr.ChangeNotifierProvider
+        create: (context) => FontSizeProvider(),
+        child: const MyApp(),
+      ),
+    ),
+  );
 }
 
 // MyApp mostantól ConsumerWidget a Riverpod használatához
@@ -31,38 +41,31 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     
-    // Figyeljük a kiszámított ThemeMode-ot, ami olvassa a mentett beállítást.
-    final themeMode = ref.watch(materialThemeModeProvider);
+    // Figyeljük a kiszámított teljes ThemeData objektumot.
+    final appTheme = ref.watch(selectedAppThemeProvider);
+
+    // Figyeljük a globális fontméret skálázási faktort
+    final fontSizeProvider = pr.Provider.of<FontSizeProvider>(context); // Use pr.Provider.of
 
     return MaterialApp(
       title: 'LumiAI',
       debugShowCheckedModeBanner: false,
       
-      // 1. Beállítjuk a themeMode-ot a provider értékére
-      themeMode: themeMode, 
+      // A teljes ThemeData objektum beállítása a provider értékére.
+      theme: appTheme,
 
-      // 2. Világos téma (Light Theme)
-      theme: ThemeData(
-        brightness: Brightness.light,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.blue, 
-          brightness: Brightness.light,
-        ),
-        useMaterial3: true,
-      ),
-      
-      // 3. Sötét téma (Dark Theme)
-      darkTheme: ThemeData(
-        brightness: Brightness.dark,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.blue, 
-          brightness: Brightness.dark,
-        ),
-        useMaterial3: true,
-      ),
+      // Global font size scaling for all Text widgets
+      builder: (context, child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(
+            textScaler: TextScaler.linear(fontSizeProvider.scaleFactor),
+          ),
+          child: child!,
+        );
+      },
 
       // Ez a fő képernyő, ami a beállított UI módot (standard/simplified) is kezeli.
-      home: const HomeScreen(), 
+      home: const LoginScreen(), // Set LoginScreen as the initial screen
     );
   }
 }

@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lumiai/core/services/feedback_service.dart';
 
 // =========================================================
 // 1. CONFIRMATION VIEW (Image + Confirm/Retake)
@@ -200,7 +202,7 @@ class ResultView extends StatelessWidget {
 // =========================================================
 
 /// A consistent, large button style used across both views.
-class _ActionButton extends StatelessWidget {
+class _ActionButton extends ConsumerWidget {
   final String label;
   final IconData icon;
   final Color color;
@@ -214,7 +216,7 @@ class _ActionButton extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return ElevatedButton.icon(
       style: ElevatedButton.styleFrom(
         backgroundColor: color,
@@ -225,7 +227,10 @@ class _ActionButton extends StatelessWidget {
       ),
       icon: Icon(icon, size: 32),
       label: Text(label, style: const TextStyle(fontSize: 22)),
-      onPressed: onTap,
+      onPressed: () {
+        ref.read(feedbackServiceProvider).triggerSuccessFeedback();
+        onTap();
+      },
     );
   }
 }

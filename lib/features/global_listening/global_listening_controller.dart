@@ -80,7 +80,7 @@ class GlobalListeningController extends _$GlobalListeningController {
       await _startMicStreaming();
 
       // 6. Initial Greeting
-      ref.read(ttsServiceProvider).speak("What can I help you with?");
+      ref.read(ttsServiceProvider).value?.speak("What can I help you with?");
     } catch (e) {
       state = state.copyWith(
         status: GlobalListeningStatus.error,
@@ -95,7 +95,7 @@ class GlobalListeningController extends _$GlobalListeningController {
     final client = ref.read(geminiLiveClientProvider.notifier);
 
     if (!client.isConnected) {
-      ref.read(ttsServiceProvider).speak('Please wait, connecting...');
+      ref.read(ttsServiceProvider).value?.speak('Please wait, connecting...');
       return;
     }
 
@@ -370,10 +370,11 @@ class GlobalListeningController extends _$GlobalListeningController {
 
     _isSpeaking = true;
     final textToSpeak = _ttsQueue.removeAt(0);
-    debugPrint('🔊 TTS speaking: $textToSpeak');
-    final tts = ref.read(ttsServiceProvider);
+    final tts = ref.read(ttsServiceProvider).value;
 
-    await tts.speak(textToSpeak);
+    if (tts != null) {
+      await tts.speak(textToSpeak);
+    }
 
     _isSpeaking = false;
     _processTtsQueue();
