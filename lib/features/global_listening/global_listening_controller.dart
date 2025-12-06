@@ -1,192 +1,26 @@
-import 'dart:async';
-import 'package:camera/camera.dart';
-import 'package:flutter/foundation.dart';
-import 'package:lumiai/core/network/gemini_live_client.dart';
-import 'package:lumiai/core/services/tts_service.dart';
-import 'package:lumiai/features/accessibility/font_size_feature.dart';
-import 'package:lumiai/features/settings/providers/tts_settings_provider.dart';
-import 'package:lumiai/features/settings/providers/theme_provider.dart';
-import 'package:lumiai/features/settings/providers/ui_mode_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:record/record.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:image/image.dart' as img;
+import 'package:url_launcher/url_launcher.dart'; // Add url_launcher import
+import 'tools/email_tools.dart'; // Add email_tools import
 
-import 'package:lumiai/core/utils/web_utils_export.dart';
-import 'global_listening_state.dart';
-import 'tools/camera_tools.dart';
-import 'tools/settings_tools.dart';
+// ... (existing imports)
 
-part 'global_listening_controller.g.dart';
-
-@Riverpod(keepAlive: true)
-class GlobalListeningController extends _$GlobalListeningController {
-  late final AudioRecorder _audioRecorder;
-  StreamSubscription? _audioStreamSub;
-  StreamSubscription? _toolCallSub;
-  StreamSubscription? _geminiTextSub;
-  Timer? _frameTimer;
-
-  // TTS
-  String _ttsBuffer = '';
-  final List<String> _ttsQueue = [];
-  bool _isSpeaking = false;
-  bool _isInitializingCamera = false;
-
-  @override
-  GlobalListeningState build() {
-    _audioRecorder = AudioRecorder();
-
-    ref.onDispose(() {
-      _audioRecorder.dispose();
-      _audioStreamSub?.cancel();
-      _toolCallSub?.cancel();
-      _geminiTextSub?.cancel();
-      _frameTimer?.cancel();
-      state.cameraController?.dispose();
-    });
-
-    return const GlobalListeningState();
-  }
-
-  Future<void> initialize() async {
-    if (state.status != GlobalListeningStatus.idle) return;
-
-    try {
-      state = state.copyWith(status: GlobalListeningStatus.connecting);
-
-      // 1. Permissions
-      await requestWebCameraPermission();
-
-      Map<Permission, PermissionStatus> statuses = await [
-        Permission.microphone,
-        Permission.camera,
-      ].request();
-
-      if (statuses[Permission.microphone] != PermissionStatus.granted) {
-        state = state.copyWith(
-          status: GlobalListeningStatus.error,
-          errorMessage: "Microphone permission denied",
-        );
-        return;
-      }
-
-      // 2. Connect to Gemini with Tools (camera + settings)
+// Inside initialize() method:
+      // 2. Connect to Gemini with Tools (camera + settings + email)
       final client = ref.read(geminiLiveClientProvider.notifier);
-      final allTools = [...cameraTools, ...settingsTools];
+      final allTools = [...cameraTools, ...settingsTools, ...emailTools]; // Add emailTools
       await client.connect(tools: allTools);
 
-      // 3. Listen to Tool Calls
-      _toolCallSub = client.toolCallStream.listen(_handleToolCalls);
+// ... (existing code)
 
-      // 4. Listen to Text (for TTS)
-      _geminiTextSub = client.textStream.listen(_handleIncomingText);
-
-      // 5. Start Mic Streaming
-      await _startMicStreaming();
-
-      // 6. Initial Greeting
-      ref.read(ttsServiceProvider).value?.speak("What can I help you with?");
-    } catch (e) {
-      state = state.copyWith(
-        status: GlobalListeningStatus.error,
-        errorMessage: e.toString(),
-      );
-    }
-  }
-
-  /// Sends a text prompt to Gemini as if the user spoke it.
-  /// Used for button shortcuts like "Identify Object" or "Read Text".
-  void sendUserPrompt(String prompt) {
-    final client = ref.read(geminiLiveClientProvider.notifier);
-
-    if (!client.isConnected) {
-      ref.read(ttsServiceProvider).value?.speak('Please wait, connecting...');
-      return;
-    }
-
-    client.send(text: prompt, isRealtime: true, turnComplete: true);
-  }
-
-  /// Toggles the microphone mute state.
-  void toggleMute() {
-    state = state.copyWith(isMuted: !state.isMuted);
-    debugPrint('🎤 Microphone ${state.isMuted ? 'muted' : 'unmuted'}');
-  }
-
-  /// Returns true if microphone is muted.
-  bool get isMuted => state.isMuted;
-
-  Future<void> _startMicStreaming() async {
-    state = state.copyWith(status: GlobalListeningStatus.listening);
-
-    const config = RecordConfig(
-      encoder: AudioEncoder.pcm16bits,
-      sampleRate: 16000,
-      numChannels: 1,
-    );
-
-    final stream = await _audioRecorder.startStream(config);
-
-    _audioStreamSub?.cancel();
-    _audioStreamSub = stream.listen((data) {
-      // Skip sending audio if muted
-      if (state.isMuted) return;
-
-      final client = ref.read(geminiLiveClientProvider.notifier);
-      if (client.isConnected) {
-        client.send(
-          audioBytes: data,
-          audioMimeType: 'audio/pcm;rate=16000',
-          isRealtime: true,
-        );
-      }
-    });
-  }
-
-  void _handleToolCalls(List<Map<String, dynamic>> toolCalls) async {
-    final client = ref.read(geminiLiveClientProvider.notifier);
-
-    for (final call in toolCalls) {
-      final name = call['name'];
-      final id = call['id'];
-
-      if (name == 'get_camera_status') {
-        // Return current camera status
-        final isActive = state.status == GlobalListeningStatus.cameraActive;
-        debugPrint("📸 Camera status: ${isActive ? 'Active' : 'Inactive'}");
-        client.sendToolResponse([
-          {
-            "id": id,
-            "name": name,
-            "response": {
-              "is_active": isActive,
-              "status": isActive
-                  ? "Camera is already active and streaming video. You can see the video feed now - do NOT open the camera again."
-                  : "Camera is not active. You may open the camera if needed.",
-            },
-          },
-        ]);
-      } else if (name == 'open_camera') {
-        // Open camera and wait for it to complete
-        final result = await _openCameraWithStatus();
-
-        // Send final result (success or error)
-        client.sendToolResponse([
-          {"id": id, "name": name, "response": result},
-        ]);
-      } else if (name == 'close_camera') {
-        await _closeCamera();
-        client.sendToolResponse([
-          {
-            "id": id,
-            "name": name,
-            "response": {"result": "Camera closed successfully."},
-          },
-        ]);
+// Inside _handleToolCalls method:
       } else if (name == 'update_settings') {
         // Handle settings update
         final result = await _handleUpdateSettings(call['args'] ?? {});
+        client.sendToolResponse([
+          {"id": id, "name": name, "response": result},
+        ]);
+      } else if (name == 'write_email') {
+        // Handle write email
+        final result = await _handleSendEmail(call['args'] ?? {});
         client.sendToolResponse([
           {"id": id, "name": name, "response": result},
         ]);
@@ -201,6 +35,53 @@ class GlobalListeningController extends _$GlobalListeningController {
       }
     }
   }
+
+  /// Handles the write_email tool call
+  Future<Map<String, dynamic>> _handleSendEmail(Map<String, dynamic> args) async {
+    final recipient = args['recipient'] as String?;
+    final subject = args['subject'] as String?;
+    final body = args['body'] as String?;
+
+    if (recipient == null || recipient.isEmpty) {
+      return {"error": "Recipient email is missing."};
+    }
+
+    // Basic email validation
+    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    if (!emailRegex.hasMatch(recipient)) {
+      return {"error": "Invalid email address format: $recipient"};
+    }
+
+    try {
+      final Uri emailLaunchUri = Uri(
+        scheme: 'mailto',
+        path: recipient,
+        query: _encodeQueryParameters(<String, String>{
+          'subject': subject ?? '',
+          'body': body ?? '',
+        }),
+      );
+
+      debugPrint("📧 Launching email: $emailLaunchUri");
+
+      if (await canLaunchUrl(emailLaunchUri)) {
+        await launchUrl(emailLaunchUri);
+        return {"result": "Email client opened with draft."};
+      } else {
+        return {"error": "Could not launch email client."};
+      }
+    } catch (e) {
+      debugPrint("📧 Email launch error: $e");
+      return {"error": "Failed to open email client: $e"};
+    }
+  }
+
+  String? _encodeQueryParameters(Map<String, String> params) {
+    return params.entries
+        .map((e) => '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+        .join('&');
+  }
+
 
   /// Handles the update_settings tool call
   Future<Map<String, dynamic>> _handleUpdateSettings(
