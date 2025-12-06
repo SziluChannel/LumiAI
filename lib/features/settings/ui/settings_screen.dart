@@ -288,7 +288,7 @@ class SettingsScreen extends ConsumerWidget {
             trailing: CircularProgressIndicator(),
           ),
           SettingsTile(
-            title: 'Hozzáférhetőségi Téka',
+            title: 'Hozzáférhetőségi Téma',
             trailing: CircularProgressIndicator(),
           ),
         ],
@@ -338,7 +338,7 @@ class SettingsScreen extends ConsumerWidget {
             ),
             // Custom Accessibility Theme Selection
             SettingsTile(
-              title: 'Hozzáférhetőségi Téka',
+              title: 'Hozzáférhetőségi Téma',
               subtitle:
                   'Jelenlegi: ${themeState.customThemeType.name.toUpperCase()}',
               trailing: DropdownButton<CustomThemeType>(

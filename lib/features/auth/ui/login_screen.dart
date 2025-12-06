@@ -12,8 +12,12 @@ class LoginScreen extends ConsumerStatefulWidget {
 }
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
-  final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController(
+    text: 'user',
+  );
+  final TextEditingController _passwordController = TextEditingController(
+    text: 'password',
+  );
   bool _isPasswordVisible = false;
   String? _errorMessage;
   bool _isBiometricAvailable = false; // New state variable
@@ -40,13 +44,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final bool authenticated = await biometricService.authenticate();
     if (authenticated) {
       // Success Condition: Navigate to HomeScreen
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const HomeScreen()),
-      );
+      Navigator.of(
+        context,
+      ).pushReplacement(MaterialPageRoute(builder: (_) => const HomeScreen()));
     } else {
       // Failure Condition: Show SnackBar feedback
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Biometric authentication failed or canceled.')),
+        const SnackBar(
+          content: Text('Biometric authentication failed or canceled.'),
+        ),
       );
     }
   }
@@ -68,17 +74,21 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       setState(() {
         _errorMessage = null; // Clear any previous errors
       });
-      ref.read(feedbackServiceProvider).triggerSuccessFeedback(); // Trigger success haptic feedback
+      ref
+          .read(feedbackServiceProvider)
+          .triggerSuccessFeedback(); // Trigger success haptic feedback
       // Navigate to the actual HomeScreen using Navigator.of(context).pushReplacement(...)
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const HomeScreen()),
-      );
+      Navigator.of(
+        context,
+      ).pushReplacement(MaterialPageRoute(builder: (_) => const HomeScreen()));
     } else {
       // Failure Condition
       setState(() {
         _errorMessage = 'Incorrect username or password.';
       });
-      ref.read(feedbackServiceProvider).triggerErrorFeedback(); // Trigger error haptic feedback
+      ref
+          .read(feedbackServiceProvider)
+          .triggerErrorFeedback(); // Trigger error haptic feedback
       // The Semantics(liveRegion: true) widget will ensure this error is announced.
     }
   }
@@ -86,9 +96,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Login'),
-      ),
+      appBar: AppBar(title: const Text('Login')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -120,33 +128,39 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   button: true, // Mark it as a button for screen readers
                   child: IconButton(
                     icon: Icon(
-                      _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                      _isPasswordVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off,
                     ),
                     onPressed: () {
                       setState(() {
                         _isPasswordVisible = !_isPasswordVisible;
                       });
-                      ref.read(feedbackServiceProvider).triggerSuccessFeedback(); // Trigger success haptic feedback on toggle
+                      ref
+                          .read(feedbackServiceProvider)
+                          .triggerSuccessFeedback(); // Trigger success haptic feedback on toggle
                     },
                   ),
                 ),
               ),
               textInputAction: TextInputAction.done,
               autofillHints: const [AutofillHints.password],
-              onSubmitted: (_) => _login(), // Allow login on keyboard done action
+              onSubmitted: (_) =>
+                  _login(), // Allow login on keyboard done action
             ),
             const SizedBox(height: 24.0),
             // Error Reporting (Live Region):
             // The error message text must be wrapped in a Semantics widget with liveRegion: true.
             if (_errorMessage != null)
               Semantics(
-                liveRegion: true, // Ensures immediate announcement by screen readers
+                liveRegion:
+                    true, // Ensures immediate announcement by screen readers
                 child: Text(
                   _errorMessage!,
                   style: const TextStyle(color: Colors.red, fontSize: 16.0),
                   textAlign: TextAlign.center,
                 ),
-            ),
+              ),
             const SizedBox(height: 24.0),
             // Login Button
             SizedBox(
@@ -165,7 +179,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 height: 48.0, // WCAG recommended minimum tappable size
                 child: ElevatedButton.icon(
                   icon: const Icon(Icons.fingerprint, size: 24.0),
-                  label: const Text('Login with Fingerprint/Face ID', style: TextStyle(fontSize: 18.0)),
+                  label: const Text(
+                    'Login with Fingerprint/Face ID',
+                    style: TextStyle(fontSize: 18.0),
+                  ),
                   onPressed: _authenticateBiometrics,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Theme.of(context).colorScheme.secondary,
