@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lumiai/core/constants/app_themes.dart';
 import 'package:lumiai/core/services/tts_service.dart';
 import 'package:lumiai/core/services/feedback_service.dart';
 import 'package:lumiai/features/settings/providers/haptic_feedback_provider.dart';
