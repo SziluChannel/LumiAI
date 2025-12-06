@@ -47,7 +47,7 @@ final class FeatureControllerProvider
   }
 }
 
-String _$featureControllerHash() => r'8719a448a13708d5313b417a329f5316028c22fd';
+String _$featureControllerHash() => r'f2773751819da6ee06bed2efcc42f830a1499d2a';
 
 /// Central controller for handling feature actions triggered by UI buttons.
 /// Manages camera lifecycle and prompt sending for each feature.

@@ -18,6 +18,7 @@ TTS (Text-to-Speech) Settings:
 Display Settings:
 - Font Size: "Make text bigger" / "Larger text" / "Nagyobb betűk" -> increase font_size
 - Font Size: "Make text smaller" / "Smaller text" / "Kisebb betűk" -> decrease font_size
+- Font Family: "Change font to Roboto" / "Use Open Sans" / "Milyen betűtípusok vannak?" -> font_family
 - Theme: "Dark mode" / "Sötét mód" -> theme_mode: "dark"
 - Theme: "Light mode" / "Világos mód" -> theme_mode: "light"
 
@@ -32,6 +33,7 @@ UI Mode:
 - "Standard mode" / "Full mode" / "Teljes nézet" -> ui_mode: "standard"
 
 IMPORTANT: Only pass the parameters that the user explicitly wants to change.
+When user asks about available fonts/options, respond verbally with the list, don't call this tool.
 """,
         "parameters": {
           "type": "object",
@@ -58,6 +60,21 @@ IMPORTANT: Only pass the parameters that the user explicitly wants to change.
               "type": "number",
               "description":
                   "Font scale factor from 1.0 (normal) to 2.0 (maximum). Use 1.2 for slightly larger, 1.5 for large, 2.0 for maximum size.",
+            },
+            "font_family": {
+              "type": "string",
+              "description":
+                  "The font family to use for the app. Available options: 'Roboto' (clean, modern), 'Open Sans' (friendly, readable), 'Lato' (elegant), 'Montserrat' (bold, geometric), 'Oswald' (condensed, impactful), 'Merriweather' (serif, classic), 'Source Code Pro' (monospace). Use 'system' to reset to device default.",
+              "enum": [
+                "system",
+                "Roboto",
+                "Open Sans",
+                "Lato",
+                "Montserrat",
+                "Oswald",
+                "Merriweather",
+                "Source Code Pro",
+              ],
             },
             "theme_mode": {
               "type": "string",

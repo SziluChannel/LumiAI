@@ -52,6 +52,52 @@ class PartialFunctionalUI extends ConsumerWidget {
                 featureController.handleAction(FeatureAction.readText);
               },
             ),
+            _FeatureButton(
+              label: "Read Menu",
+              icon: Icons.restaurant_menu,
+              onPressed: () {
+                featureController.handleAction(FeatureAction.readMenu);
+              },
+            ),
+          ],
+        ),
+        const SizedBox(height: 20),
+        _SectionHeader(title: "Daily Helpers"),
+        _FeatureCard(
+          children: [
+            _FeatureButton(
+              label: "Read Currency",
+              icon: Icons.attach_money,
+              onPressed: () {
+                featureController.handleAction(FeatureAction.readCurrency);
+              },
+            ),
+            _FeatureButton(
+              label: "Describe Clothing",
+              icon: Icons.checkroom,
+              onPressed: () {
+                featureController.handleAction(FeatureAction.describeClothing);
+              },
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        _FeatureCard(
+          children: [
+            _FeatureButton(
+              label: "Expiry Date",
+              icon: Icons.calendar_today,
+              onPressed: () {
+                featureController.handleAction(FeatureAction.readExpiryDate);
+              },
+            ),
+            _FeatureButton(
+              label: "Find Object",
+              icon: Icons.search,
+              onPressed: () {
+                _showFindObjectDialog(context, ref);
+              },
+            ),
           ],
         ),
         const SizedBox(height: 20),
@@ -72,6 +118,54 @@ class PartialFunctionalUI extends ConsumerWidget {
           ],
         ),
       ],
+    );
+  }
+
+  void _showFindObjectDialog(BuildContext context, WidgetRef ref) {
+    final textController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Find Object'),
+        content: TextField(
+          controller: textController,
+          autofocus: true,
+          decoration: const InputDecoration(
+            hintText: 'What are you looking for?',
+            labelText: 'Object name',
+          ),
+          onSubmitted: (value) {
+            if (value.trim().isNotEmpty) {
+              Navigator.of(context).pop();
+              ref
+                  .read(featureControllerProvider.notifier)
+                  .handleActionWithInput(
+                    FeatureAction.findObject,
+                    value.trim(),
+                  );
+            }
+          },
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              final value = textController.text.trim();
+              if (value.isNotEmpty) {
+                Navigator.of(context).pop();
+                ref
+                    .read(featureControllerProvider.notifier)
+                    .handleActionWithInput(FeatureAction.findObject, value);
+              }
+            },
+            child: const Text('Search'),
+          ),
+        ],
+      ),
     );
   }
 }
