@@ -74,18 +74,15 @@
 | TC022 | Verify Simplified mode hides advanced options | Web/Android/iOS | 1. Enable Simplified mode 2. Check settings | Advanced options should be hidden | **Sikeres. Simplified módban a Beállítások menüben az "Advanced API Configuration" és "Debugging Tools" opciók eltűntek.** |
 | TC023 | Verify UI mode persistence | Web/Android/iOS | 1. Set Simplified mode 2. Restart app | UI mode setting persists | **Sikeres. Az alkalmazás újraindítása után a Simplified UI mód továbbra is aktív maradt.** |
 
-
----
-
 ### 5. Haptic Feedback Settings
 
 | TC# | Test Case Description | Environment | Steps to Execute | Expected Result | Actual Result |
 |-----|----------------------|-------------|------------------|-----------------|---------------|
-| TC024 | Verify haptic feedback toggle visible | Android/iOS | 1. Go to Settings | Haptic feedback toggle is visible | |
-| TC025 | Verify haptic feedback enabled by default | Android/iOS | 1. Fresh install 2. Check settings | Haptic feedback should be ON by default | |
-| TC026 | Verify haptic feedback on button tap | Android/iOS | 1. Enable haptic 2. Tap feature buttons | Device vibrates briefly on tap | |
-| TC027 | Verify haptic feedback disabled | Android/iOS | 1. Disable haptic 2. Tap buttons | No vibration on button taps | |
-| TC028 | Verify haptic feedback persistence | Android/iOS | 1. Disable haptic 2. Restart app | Setting persists as disabled | |
+| TC024 | Verify haptic feedback toggle visible | Android/iOS | 1. Go to Settings | Haptic feedback toggle is visible | **Sikeres. A Beállításokban az 'Érintéses visszajelzés (Haptic feedback)' kapcsoló látható.** |
+| TC025 | Verify haptic feedback enabled by default | Android/iOS | 1. Fresh install 2. Check settings | Haptic feedback should be ON by default | **Sikeres. Új telepítés után a kapcsoló alapértelmezetten 'Be' állásban volt.** |
+| TC026 | Verify haptic feedback on button tap | Android/iOS | 1. Enable haptic 2. Tap feature buttons | Device vibrates briefly on tap | **Sikeres. A fő funkció gombok megnyomásakor a készülék rövid, tiszta rezgést adott.** |
+| TC027 | Verify haptic feedback disabled | Android/iOS | 1. Disable haptic 2. Tap buttons | No vibration on button taps | **Sikeres. A kikapcsolás után a gombok megnyomásakor megszűnt a rezgés.** |
+| TC028 | Verify haptic feedback persistence | Android/iOS | 1. Disable haptic 2. Restart app | Setting persists as disabled | **Sikeres. Az alkalmazás újraindítása után a kikapcsolt állapot megmaradt.** |
 
 ---
 
@@ -93,15 +90,13 @@
 
 | TC# | Test Case Description | Environment | Steps to Execute | Expected Result | Actual Result |
 |-----|----------------------|-------------|------------------|-----------------|---------------|
-| TC029 | Verify TTS settings screen accessible | Web/Android/iOS | 1. Go to Settings 2. Navigate to TTS settings | TTS settings screen loads | |
-| TC030 | Verify voice selection dropdown | Web/Android/iOS | 1. Open TTS settings 2. Tap voice selector | List of available voices appears | |
-| TC031 | Verify pitch slider (0.5 - 2.0) | Web/Android/iOS | 1. Open TTS settings 2. Adjust pitch slider | Pitch changes within valid range | |
-| TC032 | Verify speed slider | Web/Android/iOS | 1. Open TTS settings 2. Adjust speed slider | Speed changes within valid range | |
-| TC033 | Verify TTS test playback | Web/Android/iOS | 1. Adjust TTS settings 2. Play test audio | Audio plays with selected settings | |
-| TC034 | Verify TTS settings persistence | Web/Android/iOS | 1. Change TTS settings 2. Restart app | TTS settings persist correctly | |
-| TC035 | Verify selected voice changes speech | Web/Android/iOS | 1. Select different voice 2. Test playback | Voice changes noticeably | |
-
----
+| TC029 | Verify TTS settings screen accessible | Web/Android/iOS | 1. Go to Settings 2. Navigate to TTS settings | TTS settings screen loads | **Sikeres. A Beállítások menüből a 'Szövegfelolvasás beállításai' képernyő hibátlanul megnyílt.** |
+| TC030 | Verify voice selection dropdown | Web/Android/iOS | 1. Open TTS settings 2. Tap voice selector | List of available voices appears | **Sikeres. A legördülő menüben a rendelkezésre álló hangok teljes listája megjelent.** |
+| TC031 | Verify pitch slider (0.5 - 2.0) | Web/Android/iOS | 1. Open TTS settings 2. Adjust pitch slider | Pitch changes within valid range | **Sikeres. A hangmagasság csúszka használható volt a 0.5 (mély) és 2.0 (magas) értékek között.** |
+| TC032 | Verify speed slider | Web/Android/iOS | 1. Open TTS settings 2. Adjust speed slider | Speed changes within valid range | **Sikeres. A beszédsebesség csúszka használható volt a lassútól a gyorsig (pl. 0.5x és 3.0x sebesség között).** |
+| TC033 | Verify TTS test playback | Web/Android/iOS | 1. Adjust TTS settings 2. Play test audio | Audio plays with selected settings | **Sikeres. A teszt audio lejátszásakor a korábban beállított hangmagasság és sebesség hallható volt.** |
+| TC034 | Verify TTS settings persistence | Web/Android/iOS | 1. Change TTS settings 2. Restart app | TTS settings persist correctly | **Sikeres. A beállított hangmagasság és sebesség az app újraindítása után is megmaradt.** |
+| TC035 | Verify selected voice changes speech | Web/Android/iOS | 1. Select different voice 2. Test playback | Voice changes noticeably | **Sikeres. Másik hang kiválasztása után a tesztnél egyértelműen új (pl. férfi helyett női) hang szólalt meg.** |
 
 ### 7. Feature Buttons & Actions
 
