@@ -1,8 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
-import 'package:camera_platform_interface/src/types/camera_description.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lumiai/core/services/feedback_service.dart';
@@ -15,10 +14,11 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import '../../settings/ui/settings_screen_test.mocks.dart';
 
 // --- Mock Camera Platform ---
-class MockCameraPlatform extends CameraPlatform with MockPlatformInterfaceMixin {
+class MockCameraPlatform extends CameraPlatform
+    with MockPlatformInterfaceMixin {
   @override
   Future<List<CameraDescription>> availableCameras() async {
-    print('MockCameraPlatform.availableCameras called');
+    debugPrint('MockCameraPlatform.availableCameras called');
     return [
       const CameraDescription(
         name: 'test_camera',
@@ -72,32 +72,32 @@ class MockCameraPlatform extends CameraPlatform with MockPlatformInterfaceMixin 
   Stream<CameraClosingEvent> onCameraClosing(int cameraId) {
     return const Stream.empty();
   }
-  
+
   @override
   Stream<CameraErrorEvent> onCameraError(int cameraId) {
-     return const Stream.empty();
+    return const Stream.empty();
   }
-  
+
   @override
   Stream<VideoRecordedEvent> onVideoRecordedEvent(int cameraId) {
     return const Stream.empty();
   }
-  
+
   @override
   Stream<DeviceOrientationChangedEvent> onDeviceOrientationChanged() {
     return const Stream.empty();
   }
 
   @override
-  Stream<CameraImageData> onStreamedFrameAvailable(int cameraId, {dynamic options}) {
-     return const Stream.empty();
+  Stream<CameraImageData> onStreamedFrameAvailable(
+    int cameraId, {
+    dynamic options,
+  }) {
+    return const Stream.empty();
   }
 
   @override
-  Future<void> startImageStream(
-    int cameraId, {
-    int? maxVideoDuration,
-  }) async {}
+  Future<void> startImageStream(int cameraId, {int? maxVideoDuration}) async {}
 
   @override
   Future<void> stopImageStream(int cameraId) async {}
@@ -113,10 +113,12 @@ void main() {
 
     // Register Mock Camera Platform
     CameraPlatform.instance = MockCameraPlatform();
-    
+
     // Default stubs
     when(mockTtsService.speak(any)).thenAnswer((_) async {});
-    when(mockFeedbackService.triggerSelectionFeedback()).thenAnswer((_) async {});
+    when(
+      mockFeedbackService.triggerSelectionFeedback(),
+    ).thenAnswer((_) async {});
   });
 
   Widget createSubject() {
@@ -126,28 +128,28 @@ void main() {
         feedbackServiceProvider.overrideWithValue(mockFeedbackService),
         fontSizeProvider.overrideWith(() => FontSizeNotifier()),
       ],
-      child: const MaterialApp(
-        home: ColorIdentifierScreen(),
-      ),
+      child: const MaterialApp(home: ColorIdentifierScreen()),
     );
   }
 
-  testWidgets('renders camera preview and overlay', (WidgetTester tester) async {
+  testWidgets('renders camera preview and overlay', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(createSubject());
-    
+
     // Expect loading initially
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
 
     // Allow async init to complete
     await tester.pump(const Duration(milliseconds: 500));
-    await tester.pump(); 
+    await tester.pump();
 
     // If init succeeded, logic proceeds.
     // If it failed/crashed, we might see error or still loading.
-    
+
     // NOTE: Because we don't fully simulate the frame stream delivering images,
     // the UI might stay in a state where CameraPreview is shown but "Detecting..." is static.
-    
+
     // If we crash with "Bad state: No element", it happens before this check.
   });
 }
