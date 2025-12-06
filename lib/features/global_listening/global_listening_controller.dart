@@ -1,12 +1,14 @@
 import 'dart:async';
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:lumiai/core/network/gemini_live_client.dart';
 import 'package:lumiai/core/services/tts_service.dart';
 import 'package:lumiai/features/accessibility/font_size_feature.dart';
 import 'package:lumiai/features/settings/providers/tts_settings_provider.dart';
 import 'package:lumiai/features/settings/providers/theme_provider.dart';
 import 'package:lumiai/features/settings/providers/ui_mode_provider.dart';
+import 'package:lumiai/features/settings/providers/language_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:record/record.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -267,13 +269,34 @@ class GlobalListeningController extends _$GlobalListeningController {
     try {
       // --- TTS Settings ---
 
-      // Update language if provided
+      // Update language if provided (TTS Language)
       if (args.containsKey('language')) {
         final language = args['language'] as String;
         await ttsController.setLanguage(language);
-        final langName = language == 'hu-HU' ? 'Hungarian' : 'English';
-        changedSettings.add('language to $langName');
-        debugPrint("🔧 Settings: Language changed to $language");
+        final langName = switch (language) {
+          'hu-HU' => 'Hungarian',
+          'zh-CN' => 'Chinese',
+          _ => 'English',
+        };
+        changedSettings.add('voice language to $langName');
+        debugPrint("🔧 Settings: TTS Language changed to $language");
+      }
+
+      // Update app language if provided (UI Language)
+      if (args.containsKey('app_language')) {
+        final appLanguage = args['app_language'] as String;
+        final languageController = ref.read(
+          languageControllerProvider.notifier,
+        );
+
+        if (appLanguage == 'hu') {
+          languageController.setLocale(const Locale('hu'));
+          changedSettings.add('app language to Hungarian');
+        } else if (appLanguage == 'en') {
+          languageController.setLocale(const Locale('en'));
+          changedSettings.add('app language to English');
+        }
+        debugPrint("🔧 Settings: App Language changed to $appLanguage");
       }
 
       // Update speed if provided
