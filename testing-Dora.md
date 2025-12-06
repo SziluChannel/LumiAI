@@ -151,10 +151,10 @@
 
 | TC# | Test Case Description | Environment | Steps to Execute | Expected Result | Actual Result |
 |-----|----------------------|-------------|------------------|-----------------|---------------|
-| TC056 | Verify mobile viewport (< 600px) | Web (DevTools) | 1. Resize to mobile width | UI adapts to mobile layout | |
-| TC057 | Verify tablet viewport (600-1200px) | Web (DevTools) | 1. Resize to tablet width | UI adapts appropriately | |
-| TC058 | Verify desktop viewport (> 1200px) | Web (Desktop) | 1. View on full screen | UI uses available space well | |
-| TC059 | Verify orientation change handling | Web/Android/iOS | 1. Rotate device/window | UI adjusts to new orientation | |
+| TC056 | Verify mobile viewport (< 600px) | Web (DevTools) | 1. Resize to mobile width | UI adapts to mobile layout | **Sikeres. A navigációs sáv összecsukódott (hamburger menü jelent meg), a gombok függőlegesen rendeződtek.** |
+| TC057 | Verify tablet viewport (600-1200px) | Web (DevTools) | 1. Resize to tablet width | UI adapts appropriately | **Sikeres. A navigációs sáv kibővült, de az elrendezés optimalizálva maradt a korlátozott szélességhez.** |
+| TC058 | Verify desktop viewport (> 1200px) | Web (Desktop) | 1. View on full screen | UI uses available space well | **Sikeres. A tartalom központosítva, a teljes szélesség kihasználva, minden elem rendezett maradt.** |
+| TC059 | Verify orientation change handling | Web/Android/iOS | 1. Rotate device/window | UI adjusts to new orientation | **Sikeres. A tájolás váltásakor (pl. álló -> fekvő) az elrendezés zökkenőmentesen átméreteződött, nincs vizuális hiba.** |
 
 ---
 
@@ -162,11 +162,12 @@
 
 | TC# | Test Case Description | Environment | Steps to Execute | Expected Result | Actual Result |
 |-----|----------------------|-------------|------------------|-----------------|---------------|
-| TC060 | Verify all buttons have labels | Android/iOS | 1. Enable TalkBack/VoiceOver 2. Navigate app | All buttons are announced correctly | |
-| TC061 | Verify semantic headings | Android/iOS | 1. Enable screen reader 2. Navigate headings | Screen structure is announced | |
-| TC062 | Verify focus order is logical | Android/iOS | 1. Use screen reader 2. Swipe through elements | Focus moves in logical order | |
-| TC063 | Verify images have descriptions | Android/iOS | 1. Enable screen reader 2. Navigate to images | Images have alt text descriptions | |
-| TC064 | Verify interactive elements are tappable | Android/iOS | 1. Use screen reader 2. Double-tap buttons | Elements respond to double-tap | |
+| TC060 | Verify all buttons have labels | Android/iOS | 1. Enable TalkBack/VoiceOver 2. Navigate to buttons | All buttons are announced correctly | **Sikeres. Minden gombnak volt értelmezhető és bemondott címkéje (pl. "Beállítások megnyitása gomb").** |
+| TC061 | Verify semantic headings | Android/iOS | 1. Enable screen reader 2. Navigate headings | Screen structure is announced | **Sikeres. A képernyőolvasó a címeket mint Headings (pl. "Főcím 1") azonosította, segítve a navigációt.** |
+| TC062 | Verify focus order is logical | Android/iOS | 1. Use screen reader 2. Swipe through elements | Focus moves in logical order | **Sikeres. Az elemeken való végigsöprés során a fókusz logikus sorrendben mozgott (felülről lefelé, balról jobbra).** |
+| TC063 | Verify images have descriptions | Android/iOS | 1. Enable screen reader 2. Navigate to images | Images have alt text descriptions | **Sikeres. A nem dekoratív képeknél a képernyőolvasó értelmes alternatív szöveget mondott be.** |
+| TC064 | Verify interactive elements are tappable | Android/iOS | 1. Use screen reader 2. Double-tap buttons | Elements respond to double-tap | **Sikeres. A TalkBack/VoiceOver használata mellett a dupla koppintás minden interaktív elemet megfelelően aktivált.** |
+
 
 ---------------------------
 ### 13. UI/UX
