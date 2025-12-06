@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lumiai/features/settings/ui/smtp_settings_dialog.dart';
 import 'package:lumiai/features/settings/providers/theme_provider.dart';
 import 'package:lumiai/features/settings/providers/ui_mode_provider.dart';
 import 'package:lumiai/features/settings/providers/tts_settings_provider.dart';
@@ -72,6 +73,21 @@ class SettingsScreen extends ConsumerWidget {
           _buildHapticFeedbackSetting(context, ref),
 
           const Divider(height: 32),
+
+          // ------------------------------------------
+          // 📧 EMAIL SETTINGS
+          // ------------------------------------------
+          const SectionHeader(title: 'Email Settings'),
+          SettingsTile(
+            title: 'Configure Email Server',
+            trailing: const Icon(Icons.email_outlined),
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (context) => const SmtpSettingsDialog(),
+              );
+            },
+          ),
 
           // ------------------------------------------
           // ℹ️ INFORMÁCIÓ

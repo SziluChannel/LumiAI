@@ -6,7 +6,7 @@ final List<Map<String, dynamic>> emailTools = [
       {
         "name": "write_email",
         "description": """
-Drafts and opens an email in the user's default email client.
+Sends an email directly using the configured SMTP server.
 Use this tool when the user asks to send an email.
 
 You MUST ask for the following information if not provided:
@@ -17,7 +17,7 @@ You MUST ask for the following information if not provided:
 If the user provides a name instead of an email (e.g., "Send email to John"), ask for the email address.
 If the email address seems invalid (missing @ or domain), ask the user to confirm or correct it.
 
-After gathering the info, call this tool to open the email app.
+After gathering the info, call this tool to send the email immediately.
 """,
         "parameters": {
           "type": "object",

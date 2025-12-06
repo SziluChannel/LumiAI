@@ -35,7 +35,7 @@ class MinimalFunctionalUI extends ConsumerWidget {
           },
         ),
         _MinimalMenuButton(
-          label: 'Read Currency',
+          label: l10n.readCurrency,
           icon: Icons.attach_money,
           onPressed: () {
             featureController.handleAction(FeatureAction.readCurrency);
