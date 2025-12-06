@@ -135,14 +135,14 @@
 
 | TC# | Test Case Description | Environment | Steps to Execute | Expected Result | Actual Result |
 |-----|----------------------|-------------|------------------|-----------------|---------------|
-| TC057 | Verify response latency (< 3 seconds) | Web/Android/iOS | 1. Ask simple question 2. Measure response time | Response starts within 3 seconds | |
-| TC058 | Verify audio streaming latency | Web/Android/iOS | 1. Speak continuously 2. Check for lag | Minimal delay in audio transmission | |
-| TC059 | Verify video frame processing speed | Web/Android/iOS | 1. Open camera 2. Check frame rate consistency | Consistent frame processing | |
-| TC060 | Verify memory usage over time | Web/Android/iOS | 1. Use app for 10 minutes 2. Monitor memory | No significant memory growth | |
-| TC061 | Verify CPU usage during streaming | Web/Android/iOS | 1. Stream audio/video 2. Monitor CPU | Reasonable CPU usage (< 50%) | |
-| TC062 | Verify battery impact (mobile) | Android/iOS | 1. Use app for 15 minutes 2. Check battery | Acceptable battery consumption | |
-| TC063 | Verify simultaneous audio+video streaming | Web/Android/iOS | 1. Speak while camera is active | Both streams work without interference | |
-| TC064 | Verify app responsiveness during API calls | Web/Android/iOS | 1. Make API call 2. Try other UI actions | UI remains responsive | |
+| TC057 | Verify response latency (< 3 seconds) | Web/Android/iOS | 1. Ask simple question 2. Measure response time | Response starts within 3 seconds | ✅ Passed |
+| TC058 | Verify audio streaming latency | Web/Android/iOS | 1. Speak continuously 2. Check for lag | Minimal delay in audio transmission | ✅ Passed |
+| TC059 | Verify video frame processing speed | Web/Android/iOS | 1. Open camera 2. Check frame rate consistency | Consistent frame processing | ✅ Passed |
+| TC060 | Verify memory usage over time | Web/Android/iOS | 1. Use app for 10 minutes 2. Monitor memory | No significant memory growth | ✅ Passed |
+| TC061 | Verify CPU usage during streaming | Web/Android/iOS | 1. Stream audio/video 2. Monitor CPU | Reasonable CPU usage (< 50%) | ✅ Passed |
+| TC062 | Verify battery impact (mobile) | Android/iOS | 1. Use app for 15 minutes 2. Check battery | Acceptable battery consumption | ✅ Passed |
+| TC063 | Verify simultaneous audio+video streaming | Web/Android/iOS | 1. Speak while camera is active | Both streams work without interference | ✅ Passed |
+| TC064 | Verify app responsiveness during API calls | Web/Android/iOS | 1. Make API call 2. Try other UI actions | UI remains responsive | ✅ Passed |
 
 ---
 
@@ -150,12 +150,12 @@
 
 | TC# | Test Case Description | Environment | Steps to Execute | Expected Result | Actual Result |
 |-----|----------------------|-------------|------------------|-----------------|---------------|
-| TC065 | Verify open_camera tool declaration | Web/Android/iOS | 1. Check session setup | open_camera tool is declared in setup | |
-| TC066 | Verify AI requests open_camera tool | Web/Android/iOS | 1. Ask "What do you see?" (camera closed) | AI requests to open camera via tool | |
-| TC067 | Verify tool response handling | Web/Android/iOS | 1. AI requests camera 2. Camera opens 3. Check tool response | Tool response sent back to API | |
-| TC068 | Verify tool success response format | Web/Android/iOS | 1. Camera opens successfully | Tool response indicates success | |
-| TC069 | Verify tool error response format | Web/Android/iOS | 1. Camera fails to open | Tool response includes error message | |
-| TC070 | Verify camera is ready after tool call | Web/Android/iOS | 1. AI calls open_camera 2. Camera opens | Frames start transmitting after camera ready | |
+| TC065 | Verify open_camera tool declaration | Web/Android/iOS | 1. Check session setup | open_camera tool is declared in setup | ✅ Passed |
+| TC066 | Verify AI requests open_camera tool | Web/Android/iOS | 1. Ask "What do you see?" (camera closed) | AI requests to open camera via tool | ✅ Passed |
+| TC067 | Verify tool response handling | Web/Android/iOS | 1. AI requests camera 2. Camera opens 3. Check tool response | Tool response sent back to API | ✅ Passed |
+| TC068 | Verify tool success response format | Web/Android/iOS | 1. Camera opens successfully | Tool response indicates success | ✅ Passed |
+| TC069 | Verify tool error response format | Web/Android/iOS | 1. Camera fails to open | Tool response includes error message | ✅ Passed |
+| TC070 | Verify camera is ready after tool call | Web/Android/iOS | 1. AI calls open_camera 2. Camera opens | Frames start transmitting after camera ready | ✅ Passed |
 
 ---
 
