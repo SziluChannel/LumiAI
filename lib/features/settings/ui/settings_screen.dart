@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lumiai/features/settings/providers/theme_provider.dart';
@@ -90,10 +91,149 @@ class SettingsScreen extends ConsumerWidget {
             title: 'Visszajelzés Küldése',
             trailing: const Icon(Icons.mail_outline),
             onTap: () {
-              // TODO: Itt lehetne elindítani egy emailt
+              ref.read(feedbackServiceProvider).triggerSuccessFeedback();
+              _showFeedbackDialog(context);
             },
           ),
         ],
+      ),
+    );
+  }
+
+  // --- Feedback Dialog ---
+  void _showFeedbackDialog(BuildContext context) {
+    final nameController = TextEditingController();
+    final emailController = TextEditingController();
+    final messageController = TextEditingController();
+    String selectedCategory = 'Általános';
+
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: const Text('Visszajelzés Küldése'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Name field
+                TextField(
+                  controller: nameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Név (opcionális)',
+                    hintText: 'Add meg a neved',
+                    prefixIcon: Icon(Icons.person_outline),
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // Email field
+                TextField(
+                  controller: emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: const InputDecoration(
+                    labelText: 'Email (opcionális)',
+                    hintText: 'pelda@email.com',
+                    prefixIcon: Icon(Icons.email_outlined),
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // Category dropdown
+                DropdownButtonFormField<String>(
+                  value: selectedCategory,
+                  decoration: const InputDecoration(
+                    labelText: 'Kategória',
+                    prefixIcon: Icon(Icons.category_outlined),
+                  ),
+                  items: const [
+                    DropdownMenuItem(
+                      value: 'Általános',
+                      child: Text('Általános'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'Hibajelentés',
+                      child: Text('Hibajelentés'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'Funkció kérés',
+                      child: Text('Funkció kérés'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'Használhatóság',
+                      child: Text('Használhatóság'),
+                    ),
+                    DropdownMenuItem(value: 'Egyéb', child: Text('Egyéb')),
+                  ],
+                  onChanged: (value) {
+                    if (value != null) {
+                      setState(() => selectedCategory = value);
+                    }
+                  },
+                ),
+                const SizedBox(height: 16),
+
+                // Message field
+                TextField(
+                  controller: messageController,
+                  maxLines: 5,
+                  decoration: const InputDecoration(
+                    labelText: 'Üzenet *',
+                    hintText: 'Írd le a visszajelzésed...',
+                    alignLabelWithHint: true,
+                    prefixIcon: Padding(
+                      padding: EdgeInsets.only(bottom: 80),
+                      child: Icon(Icons.message_outlined),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Mégse'),
+            ),
+            FilledButton(
+              onPressed: () {
+                // For now, just show a success message
+                final message = messageController.text.trim();
+                if (message.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Kérlek, írj egy üzenetet!'),
+                      backgroundColor: Colors.orange,
+                    ),
+                  );
+                  return;
+                }
+
+                // Close the dialog
+                Navigator.of(context).pop();
+
+                // Show success message
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                      'Köszönjük a visszajelzést! (Még nincs elküldve)',
+                    ),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+
+                // Debug print the feedback (for now)
+                debugPrint('📧 Feedback submitted:');
+                debugPrint('  Name: ${nameController.text}');
+                debugPrint('  Email: ${emailController.text}');
+                debugPrint('  Category: $selectedCategory');
+                debugPrint('  Message: $message');
+              },
+              child: const Text('Küldés'),
+            ),
+          ],
+        ),
       ),
     );
   }
