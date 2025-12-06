@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lumiai/features/settings/providers/theme_provider.dart';
 
 // I. Font Size State
 class FontSizeState {
@@ -36,6 +37,7 @@ final fontSizeProvider = NotifierProvider<FontSizeNotifier, FontSizeState>(
 );
 
 // IV. The Settings UI (AccessibilitySettingsScreen)
+// IV. The Settings UI (AccessibilitySettingsScreen)
 class AccessibilitySettingsScreen extends ConsumerWidget {
   const AccessibilitySettingsScreen({super.key});
 
@@ -43,10 +45,24 @@ class AccessibilitySettingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final fontSizeState = ref.watch(fontSizeProvider);
     final fontSizeNotifier = ref.read(fontSizeProvider.notifier);
+    final themeState = ref.watch(themeControllerProvider);
+    final themeController = ref.read(themeControllerProvider.notifier);
+
+    // Popular Google Fonts to choose from
+    final Map<String?, String> fontOptions = {
+      null: 'System Default',
+      'Roboto': 'Roboto',
+      'Open Sans': 'Open Sans',
+      'Lato': 'Lato',
+      'Montserrat': 'Montserrat',
+      'Oswald': 'Oswald',
+      'Merriweather': 'Merriweather (Serif)',
+      'Source Code Pro': 'Source Code Pro (Monospace)',
+    };
 
     return Scaffold(
       appBar: AppBar(title: const Text('Accessibility Settings')),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -69,6 +85,32 @@ class AccessibilitySettingsScreen extends ConsumerWidget {
               },
             ),
             const SizedBox(height: 20),
+            
+            // Font Family Selector
+            const Text(
+              'Font Type',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            themeState.when(
+              data: (data) => DropdownButton<String?>(
+                isExpanded: true,
+                value: fontOptions.containsKey(data.fontFamily) ? data.fontFamily : null,
+                onChanged: (String? newFont) {
+                  themeController.setFontFamily(newFont);
+                },
+                items: fontOptions.entries.map((entry) {
+                  return DropdownMenuItem<String?>(
+                    value: entry.key,
+                    child: Text(entry.value),
+                  );
+                }).toList(),
+              ),
+              error: (e, s) => Text('Error loading fonts: $e'),
+              loading: () => const CircularProgressIndicator(),
+            ),
+
+            const SizedBox(height: 20),
             const Divider(),
             const SizedBox(height: 20),
             // Implementation Example (ScaledTextWidget) demonstration
@@ -79,7 +121,7 @@ class AccessibilitySettingsScreen extends ConsumerWidget {
             const ScaledTextWidget(
               text:
                   'This is an example text that will scale with the slider. '
-                  'Observe how its size changes based on your selection.',
+                  'Observe how its size AND font changes based on your selection.',
               baseFontSize: 16.0,
             ),
             const ScaledTextWidget(

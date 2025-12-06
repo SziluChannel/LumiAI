@@ -1,5 +1,7 @@
 import 'dart:ui' show PlatformDispatcher;
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lumiai/core/constants/app_themes.dart'; // Import custom themes
@@ -22,25 +24,30 @@ enum CustomThemeType {
 class ThemeState {
   final AppThemeMode appThemeMode;
   final CustomThemeType customThemeType;
+  final String? fontFamily; // Null means system default
 
   const ThemeState({
     this.appThemeMode = AppThemeMode.system,
     this.customThemeType = CustomThemeType.none,
+    this.fontFamily,
   });
 
   ThemeState copyWith({
     AppThemeMode? appThemeMode,
     CustomThemeType? customThemeType,
+    String? fontFamily,
   }) {
     return ThemeState(
       appThemeMode: appThemeMode ?? this.appThemeMode,
       customThemeType: customThemeType ?? this.customThemeType,
+      fontFamily: fontFamily ?? this.fontFamily,
     );
   }
 }
 
 const _kAppThemeModeKey = 'app_theme_mode';
 const _kCustomThemeTypeKey = 'custom_theme_type';
+const _kFontFamilyKey = 'font_family';
 
 @Riverpod(keepAlive: true)
 class ThemeController extends _$ThemeController {
@@ -53,6 +60,7 @@ class ThemeController extends _$ThemeController {
 
     final savedAppModeString = _prefs.getString(_kAppThemeModeKey);
     final savedCustomThemeString = _prefs.getString(_kCustomThemeTypeKey);
+    final savedFontFamily = _prefs.getString(_kFontFamilyKey);
 
     final initialAppThemeMode = savedAppModeString == null
         ? AppThemeMode.system
@@ -71,6 +79,7 @@ class ThemeController extends _$ThemeController {
     return ThemeState(
       appThemeMode: initialAppThemeMode,
       customThemeType: initialCustomThemeType,
+      fontFamily: savedFontFamily,
     );
   }
 
@@ -84,6 +93,17 @@ class ThemeController extends _$ThemeController {
   void setCustomThemeType(CustomThemeType type) async {
     state = AsyncValue.data(state.value!.copyWith(customThemeType: type));
     await _prefs.setString(_kCustomThemeTypeKey, type.name);
+  }
+
+  // Set font family
+  void setFontFamily(String? fontFamily) async {
+    // If null is passed, we revert to system default
+    state = AsyncValue.data(state.value!.copyWith(fontFamily: fontFamily));
+    if (fontFamily == null) {
+      await _prefs.remove(_kFontFamilyKey);
+    } else {
+      await _prefs.setString(_kFontFamilyKey, fontFamily);
+    }
   }
 }
 
@@ -110,29 +130,44 @@ ThemeData selectedAppTheme(Ref ref) {
 
   return themeState.when(
     data: (state) {
-      if (state.customThemeType != CustomThemeType.none) {
-        // Ha custom téma van kiválasztva, azt használjuk
-        return switch (state.customThemeType) {
-          CustomThemeType.highContrast => AppThemes.highContrastTheme,
-          CustomThemeType.colorblindFriendly => AppThemes.colorblindTheme,
-          CustomThemeType.amoled => AppThemes.amoledTheme,
-          _ => ThemeData.light(useMaterial3: true), // Fallback
-        };
+      ThemeData baseTheme;
+
+      if (state.customThemeType == CustomThemeType.highContrast) {
+        baseTheme = AppThemes.highContrastTheme;
+      } else if (state.customThemeType == CustomThemeType.colorblindFriendly) {
+        baseTheme = AppThemes.colorblindTheme;
+      } else if (state.customThemeType == CustomThemeType.amoled) {
+        baseTheme = AppThemes.amoledTheme;
       } else {
-        // Ha nincs custom téma, akkor a standard light/dark/system logikát követjük
-        return switch (state.appThemeMode) {
-          AppThemeMode.light => AppThemes.defaultLightTheme,
-          AppThemeMode.dark => AppThemes.defaultDarkTheme,
-          AppThemeMode.system =>
-            PlatformDispatcher.instance.platformBrightness == Brightness.dark
-                ? AppThemes.defaultDarkTheme
-                : AppThemes.defaultLightTheme,
-        };
+        // Standard theme logic
+        if (state.appThemeMode == AppThemeMode.light) {
+          baseTheme = AppThemes.defaultLightTheme;
+        } else if (state.appThemeMode == AppThemeMode.dark) {
+          baseTheme = AppThemes.defaultDarkTheme;
+        } else {
+          // System
+          final brightness = PlatformDispatcher.instance.platformBrightness;
+          baseTheme = brightness == Brightness.dark
+              ? AppThemes.defaultDarkTheme
+              : AppThemes.defaultLightTheme;
+        }
       }
+
+      // Apply font family if selected
+      if (state.fontFamily != null) {
+        try {
+          final textStyle = GoogleFonts.getFont(state.fontFamily!);
+          return baseTheme.copyWith(
+            textTheme: baseTheme.textTheme.apply(fontFamily: textStyle.fontFamily),
+          );
+        } catch (e) {
+          // Fallback if font not found
+          return baseTheme;
+        }
+      }
+      return baseTheme;
     },
-    loading: () =>
-        AppThemes.defaultLightTheme, // Alapértelmezett betöltés alatt
-    error: (_, __) =>
-        AppThemes.defaultLightTheme, // Alapértelmezett hiba esetén
+    loading: () => AppThemes.defaultLightTheme,
+    error: (_, __) => AppThemes.defaultLightTheme,
   );
 }
