@@ -15,7 +15,7 @@ class FeedbackService {
   Future<void> triggerSuccessFeedback() async {
     final isEnabled = await _ref.read(hapticFeedbackControllerProvider.future);
     if (isEnabled) {
-      HapticFeedback.lightImpact();
+      await HapticFeedback.lightImpact();
     }
   }
 
@@ -23,7 +23,7 @@ class FeedbackService {
   Future<void> triggerErrorFeedback() async {
     final isEnabled = await _ref.read(hapticFeedbackControllerProvider.future);
     if (isEnabled) {
-      HapticFeedback.heavyImpact();
+      await HapticFeedback.heavyImpact();
     }
   }
 }
