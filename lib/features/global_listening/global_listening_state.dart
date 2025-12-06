@@ -13,12 +13,14 @@ class GlobalListeningState {
   final String? errorMessage;
   final CameraController? cameraController;
   final bool isCameraInitialized;
+  final bool isMuted;
 
   const GlobalListeningState({
     this.status = GlobalListeningStatus.idle,
     this.errorMessage,
     this.cameraController,
     this.isCameraInitialized = false,
+    this.isMuted = false,
   });
 
   GlobalListeningState copyWith({
@@ -26,12 +28,14 @@ class GlobalListeningState {
     String? errorMessage,
     CameraController? cameraController,
     bool? isCameraInitialized,
+    bool? isMuted,
   }) {
     return GlobalListeningState(
       status: status ?? this.status,
       errorMessage: errorMessage ?? this.errorMessage,
       cameraController: cameraController ?? this.cameraController,
       isCameraInitialized: isCameraInitialized ?? this.isCameraInitialized,
+      isMuted: isMuted ?? this.isMuted,
     );
   }
 }
