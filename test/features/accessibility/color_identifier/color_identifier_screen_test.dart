@@ -99,6 +99,15 @@ class MockCameraPlatform extends CameraPlatform
 
   @override
   Future<void> stopImageStream(int cameraId) async {}
+
+  // Add missing method to satisfy supportsImageStreaming check
+  @override
+  bool supportsImageStreaming() => true;
+
+  // Add missing buildPreview method
+  @override
+  Widget buildPreview(int cameraId) =>
+      const SizedBox(width: 100, height: 100, child: Placeholder());
 }
 
 void main() {
