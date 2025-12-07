@@ -162,11 +162,23 @@ flutter test test/<filename>_test.dart
 
 ### 5. Font Size Provider Tests (`font_size_provider_test.dart`)
 
-| TC# | Test Description |
-|-----|------------------|
-| TC079-081 | Default scaleFactor, min/max bounds |
-| TC082-084 | Custom scaleFactor, copyWith behavior |
-| TC085-093 | FontSizeNotifier setScaleFactor bounds checking |
+| TC# | Test Description | Expected Result | Actual Result |
+|-----|------------------|-----------------|---------------|
+| TC076 | Default constructor has scaleFactor of 1.0 | `FontSizeState().scaleFactor == 1.0` | ✅ PASS - Default is 1.0 |
+| TC077 | minScaleFactor is 1.0 | `FontSizeState.minScaleFactor == 1.0` | ✅ PASS - Minimum bound |
+| TC078 | maxScaleFactor is 2.0 | `FontSizeState.maxScaleFactor == 2.0` | ✅ PASS - Maximum bound |
+| TC079 | Constructor accepts custom scaleFactor | `FontSizeState(scaleFactor: 1.5).scaleFactor == 1.5` | ✅ PASS - Custom value set |
+| TC080 | copyWith updates scaleFactor | `state.copyWith(scaleFactor: 1.8).scaleFactor == 1.8` | ✅ PASS - Updated to 1.8 |
+| TC081 | copyWith with no arguments returns equivalent | `state.copyWith().scaleFactor == state.scaleFactor` | ✅ PASS - Original preserved |
+| TC082 | Initial scaleFactor is 1.0 (provider) | `fontSizeProvider.scaleFactor == 1.0` | ✅ PASS - Provider initial value |
+| TC083 | setScaleFactor updates value within bounds | Set 1.5 → `scaleFactor == 1.5` | ✅ PASS - Value updated |
+| TC084 | setScaleFactor accepts minimum value | Set 1.0 → `scaleFactor == 1.0` | ✅ PASS - Minimum accepted |
+| TC085 | setScaleFactor accepts maximum value | Set 2.0 → `scaleFactor == 2.0` | ✅ PASS - Maximum accepted |
+| TC086 | setScaleFactor ignores value below minimum | Set 1.5 then 0.5 → remains 1.5 | ✅ PASS - Below min ignored |
+| TC087 | setScaleFactor ignores value above maximum | Set 1.5 then 2.5 → remains 1.5 | ✅ PASS - Above max ignored |
+| TC088 | setScaleFactor ignores negative values | Set -1.0 → remains 1.0 | ✅ PASS - Negative ignored |
+| TC089 | setScaleFactor ignores zero | Set 0 → remains 1.0 | ✅ PASS - Zero ignored |
+| TC090 | setScaleFactor accepts values in valid range | [1.0, 1.2, 1.4, 1.6, 1.8, 2.0] all accepted | ✅ PASS - All valid values work |
 
 ---
 
