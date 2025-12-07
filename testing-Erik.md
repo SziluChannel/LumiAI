@@ -364,18 +364,18 @@ flutter test test/<filename>_test.dart
 
 ### 18. Settings Screen Tests (`features/settings/ui/settings_screen_test.dart`)
 
-| TC# | Test Description |
-|-----|------------------|
-| TC190 | Renders all settings sections (English) |
-| TC191 | Renders UI mode setting (English) |
-| TC192 | Renders Theme settings (English) |
-| TC193 | Renders TTS settings (English) |
-| TC194 | Renders Haptic Feedback setting (English) |
-| TC195 | Renders all settings sections (Hungarian) |
-| TC196 | Renders UI mode setting (Hungarian) |
-| TC197 | Renders Theme settings (Hungarian) |
-| TC198 | Renders TTS settings (Hungarian) |
-| TC199 | Renders Haptic Feedback setting (Hungarian) |
+| TC# | Test Description | Expected Result | Actual Result |
+|-----|------------------|-----------------|---------------|
+| TC187 | Renders all settings sections (EN) | ListView, at least 4 SettingsTile widgets | ✅ PASS - All sections rendered |
+| TC188 | Renders UI mode setting (EN) | 'UI Mode', 'Standard View' | ✅ PASS - UI mode found |
+| TC189 | Renders Theme settings (EN) | 'Theme Mode', 'SYSTEM', 'Accessibility Theme', 'NONE' | ✅ PASS - Theme settings found |
+| TC190 | Renders TTS settings (EN) | 'Voice', 'English (US)', 'Pitch', 2 Sliders | ✅ PASS - TTS settings found |
+| TC191 | Renders Haptic Feedback setting (EN) | At least 1 Switch widget | ✅ PASS - Switch found |
+| TC192 | Renders all settings sections (HU) | ListView, at least 4 SettingsTile widgets | ✅ PASS - All sections rendered |
+| TC193 | Renders UI mode setting (HU) | 'Felület Módja', 'Standard nézet' | ✅ PASS - Hungarian text |
+| TC194 | Renders Theme settings (HU) | 'Téma Mód', 'SYSTEM', 'Hozzáférhetőségi Téma', 'NONE' | ✅ PASS - Hungarian text |
+| TC195 | Renders TTS settings (HU) | 'Hang', 'English (US)', 'Hangmagasság', 2 Sliders | ✅ PASS - Hungarian TTS labels |
+| TC196 | Renders Haptic Feedback setting (HU) | At least 1 Switch widget | ✅ PASS - Switch found |
 
 ---
 
