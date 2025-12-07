@@ -260,12 +260,31 @@ flutter test test/<filename>_test.dart
 
 ### 10. State Classes Tests (`state_classes_test.dart`)
 
-| TC# | Test Description |
-|-----|------------------|
-| TC142-147 | TtsSettingsState copyWith tests |
-| TC148-152 | ThemeState copyWith tests |
-| TC153-159 | GlobalListeningState copyWith tests |
-| TC160-164 | LiveChatState copyWith tests |
+| TC# | Test Description | Expected Result | Actual Result |
+|-----|------------------|-----------------|---------------|
+| TC139 | TtsSettingsState default values | pitch=1.5, speed=1.0, voice='en-US-Wavenet-F' | ✅ PASS - Defaults correct |
+| TC140 | TtsSettingsState copyWith pitch only | pitch=2.0, others unchanged | ✅ PASS - Only pitch updated |
+| TC141 | TtsSettingsState copyWith speed only | speed=1.5, others unchanged | ✅ PASS - Only speed updated |
+| TC142 | TtsSettingsState copyWith voice only | voice='en-US-Wavenet-A', others unchanged | ✅ PASS - Only voice updated |
+| TC143 | TtsSettingsState copyWith all fields | All 3 fields updated | ✅ PASS - All updated |
+| TC144 | TtsSettingsState copyWith no args | Returns equivalent state | ✅ PASS - State preserved |
+| TC145 | ThemeState default values | appThemeMode=system, customThemeType=none | ✅ PASS - Defaults correct |
+| TC146 | ThemeState copyWith appThemeMode only | appThemeMode=dark, customThemeType unchanged | ✅ PASS - Only mode updated |
+| TC147 | ThemeState copyWith customThemeType only | customThemeType=amoled, appThemeMode unchanged | ✅ PASS - Only theme updated |
+| TC148 | ThemeState copyWith both fields | Both fields updated | ✅ PASS - Both updated |
+| TC149 | ThemeState copyWith no args | Returns equivalent state | ✅ PASS - State preserved |
+| TC150 | GlobalListeningState default values | status=idle, errorMessage=null, cameraController=null, isCameraInitialized=false | ✅ PASS - Defaults correct |
+| TC151 | GlobalListeningState copyWith status | status=listening, others unchanged | ✅ PASS - Only status updated |
+| TC152 | GlobalListeningState copyWith errorMessage | errorMessage='Connection failed', others unchanged | ✅ PASS - Only error updated |
+| TC153 | GlobalListeningState copyWith isCameraInitialized | isCameraInitialized=true, others unchanged | ✅ PASS - Only camera flag updated |
+| TC154 | GlobalListeningState copyWith multiple | status=cameraActive, isCameraInitialized=true | ✅ PASS - Multiple updated |
+| TC155 | GlobalListeningState copyWith no args | Returns equivalent state | ✅ PASS - State preserved |
+| TC156 | LiveChatState default values | status=idle, messages=null, errorMessage=null | ✅ PASS - Defaults correct |
+| TC157 | LiveChatState copyWith status | status=streaming, others unchanged | ✅ PASS - Only status updated |
+| TC158 | LiveChatState copyWith messages | messages='Hello, world!', others unchanged | ✅ PASS - Only messages updated |
+| TC159 | LiveChatState copyWith errorMessage | errorMessage='Network error', others unchanged | ✅ PASS - Only error updated |
+| TC160 | LiveChatState copyWith all fields | All 3 fields updated | ✅ PASS - All updated |
+| TC161 | LiveChatState copyWith no args | Returns equivalent state | ✅ PASS - State preserved |
 
 ---
 
