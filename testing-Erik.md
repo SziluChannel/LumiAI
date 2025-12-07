@@ -203,11 +203,32 @@ flutter test test/<filename>_test.dart
 
 ### 8. Riverpod Providers Tests (`riverpod_providers_test.dart`)
 
-| TC# | Test Description |
-|-----|------------------|
-| TC099-107 | UiMode enum and controller tests |
-| TC108-112 | HapticFeedbackController tests |
-| TC113-122 | ThemeController with app mode and custom themes |
+| TC# | Test Description | Expected Result | Actual Result |
+|-----|------------------|-----------------|---------------|
+| TC096 | UiMode enum has expected values | Length=2, contains standard, simplified | ✅ PASS - 2 enum values |
+| TC097 | UiMode standard is first value | `standard.index == 0` | ✅ PASS - Index 0 |
+| TC098 | UiMode simplified is second value | `simplified.index == 1` | ✅ PASS - Index 1 |
+| TC099 | UiModeController initial state is standard | No saved pref → `UiMode.standard` | ✅ PASS - Default standard |
+| TC100 | UiModeController loads saved preference | Saved 'simplified' → `UiMode.simplified` | ✅ PASS - Loads from SharedPrefs |
+| TC101 | setMode updates state to simplified | `setMode(simplified)` → state is simplified | ✅ PASS - State updated |
+| TC102 | setMode updates state to standard | `setMode(standard)` → state is standard | ✅ PASS - State updated |
+| TC103 | toggleMode switches standard → simplified | From standard, toggleMode → simplified | ✅ PASS - Toggle works |
+| TC104 | toggleMode switches simplified → standard | From simplified, toggleMode → standard | ✅ PASS - Toggle works |
+| TC105 | HapticFeedbackController initial is true | No saved pref → `true` | ✅ PASS - Default enabled |
+| TC106 | HapticFeedbackController loads saved false | Saved false → `false` | ✅ PASS - Loads from SharedPrefs |
+| TC107 | HapticFeedbackController loads saved true | Saved true → `true` | ✅ PASS - Loads from SharedPrefs |
+| TC108 | setHapticFeedback updates to false | `setHapticFeedback(false)` → state is false | ✅ PASS - State updated |
+| TC109 | setHapticFeedback updates to true | `setHapticFeedback(true)` → state is true | ✅ PASS - State updated |
+| TC110 | AppThemeMode enum has 3 values | light, dark, system | ✅ PASS - 3 enum values |
+| TC111 | CustomThemeType enum has 4 values | none, highContrast, colorblindFriendly, amoled | ✅ PASS - 4 enum values |
+| TC112 | ThemeController initial state | `appThemeMode=system, customThemeType=none` | ✅ PASS - Defaults applied |
+| TC113 | ThemeController loads saved app theme mode | Saved 'dark' → `AppThemeMode.dark` | ✅ PASS - Loaded correctly |
+| TC114 | ThemeController loads saved custom theme | Saved 'amoled' → `CustomThemeType.amoled` | ✅ PASS - Loaded correctly |
+| TC115 | ThemeController loads both preferences | Saved light+highContrast → both loaded | ✅ PASS - Both values loaded |
+| TC116 | setAppThemeMode updates state | `setAppThemeMode(dark)` → dark | ✅ PASS - State updated |
+| TC117 | setCustomThemeType updates state | `setCustomThemeType(colorblindFriendly)` → colorblindFriendly | ✅ PASS - State updated |
+| TC118 | Handles invalid saved app theme mode | Saved 'invalid_mode' → falls back to system | ✅ PASS - Graceful fallback |
+| TC119 | Handles invalid saved custom theme | Saved 'invalid_type' → falls back to none | ✅ PASS - Graceful fallback |
 
 ---
 
