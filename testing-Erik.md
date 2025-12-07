@@ -342,10 +342,10 @@ flutter test test/<filename>_test.dart
 
 ### 16. Daily Briefing Service Tests (`features/daily_briefing/daily_briefing_service_test.dart`)
 
-| TC# | Test Description |
-|-----|------------------|
-| TC182 | speakBriefing calls TTS with weather and quote |
-| TC183 | Handles weather API failure gracefully |
+| TC# | Test Description | Expected Result | Actual Result |
+|-----|------------------|-----------------|---------------|
+| TC179 | speakBriefing calls TTS with weather and quote | TTS.speak called with 'Good...', '25 degrees', 'clear sky', 'daily quote' | ✅ PASS - All content spoken |
+| TC180 | Handles weather API failure gracefully | TTS.speak called with "couldn't fetch the weather" | ✅ PASS - Error handled gracefully |
 
 ---
 
