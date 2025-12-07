@@ -195,9 +195,9 @@ flutter test test/<filename>_test.dart
 
 ### 7. Persistence Tests (`persistence_test.dart`)
 
-| TC# | Test Description |
-|-----|------------------|
-| TC098 | TTS settings persist across container rebuilds |
+| TC# | Test Description | Expected Result | Actual Result |
+|-----|------------------|-----------------|---------------|
+| TC095 | TTS settings persist across container rebuilds | Set pitch=1.8 → destroy container → new container → pitch=1.8 | ✅ PASS - SharedPreferences persists value |
 
 ---
 
