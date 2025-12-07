@@ -303,11 +303,11 @@ flutter test test/<filename>_test.dart
 
 ### 12. Color Utils Tests (`core/utils/color_utils_test.dart`)
 
-| TC# | Test Description |
-|-----|------------------|
-| TC171 | Returns exact match for palette colors |
-| TC172 | Returns closest match for slightly off colors |
-| TC173 | Returns correct color for mixed values |
+| TC# | Test Description | Expected Result | Actual Result |
+|-----|------------------|-----------------|---------------|
+| TC168 | Returns exact match for palette colors | Black=#000000, White=#FFFFFF, Red=#FF0000, Blue=#0000FF | ✅ PASS - All exact matches |
+| TC169 | Returns closest match for slightly off colors | #050505→'Black', #FE0505→'Red' | ✅ PASS - Closest colors found |
+| TC170 | Returns correct color for mixed values | #FF2000→'Red', #FF9000→'Orange' | ✅ PASS - Correct nearest match |
 
 ---
 
