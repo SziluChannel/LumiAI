@@ -59,26 +59,26 @@ flutter test test/<filename>_test.dart
 
 ### 1. AppPrompts Tests (`app_prompts_test.dart`)
 
-| TC# | Test Description |
-|-----|------------------|
-| TC001 | systemInstruction is non-empty |
-| TC002 | systemInstruction contains key instructions |
-| TC003 | identifyObject is non-empty |
-| TC004 | identifyObject contains spatial guidance |
-| TC005 | identifyObjectLive is non-empty |
-| TC006 | identifyObjectLive indicates camera is open |
-| TC007 | describeScene is non-empty |
-| TC008 | describeScene requests scene description |
-| TC009 | readText is non-empty |
-| TC010 | readText mentions reading text |
-| TC011 | findSpecificObject returns non-empty string |
-| TC012 | findSpecificObject includes object name |
-| TC013 | findSpecificObject includes quotes around name |
-| TC014 | findSpecificObject works with various objects |
-| TC015 | findSpecificObject contains location instruction |
-| TC016 | findSpecificObject asks for relative position |
-| TC017 | findSpecificObject handles empty string |
-| TC018 | findSpecificObject handles special characters |
+| TC# | Test Description | Expected Result | Actual Result |
+|-----|------------------|-----------------|---------------|
+| TC001 | systemInstruction is non-empty | `AppPrompts.systemInstruction.isNotEmpty == true` | ✅ PASS - String contains ~1400 chars with AI assistant instructions |
+| TC002 | systemInstruction contains key instructions | Contains "visually impaired" AND "camera" | ✅ PASS - Both substrings found in systemInstruction |
+| TC003 | identifyObject is non-empty | `AppPrompts.identifyObject.isNotEmpty == true` | ✅ PASS - "Describe the main object or scene..." |
+| TC004 | identifyObject contains spatial guidance | Contains "spatial" | ✅ PASS - "Mention spatial layout if relevant" |
+| TC005 | identifyObjectLive is non-empty | `AppPrompts.identifyObjectLive.isNotEmpty == true` | ✅ PASS - Live camera prompt instructions |
+| TC006 | identifyObjectLive indicates camera is open | Contains "camera is already open" | ✅ PASS - "The camera is already open and streaming" |
+| TC007 | describeScene is non-empty | `AppPrompts.describeScene.isNotEmpty == true` | ✅ PASS - Scene description prompt text |
+| TC008 | describeScene requests scene description | Contains "describe" (case-insensitive) | ✅ PASS - "describe the scene RIGHT NOW" |
+| TC009 | readText is non-empty | `AppPrompts.readText.isNotEmpty == true` | ✅ PASS - Text reading instructions |
+| TC010 | readText mentions reading text | Contains "read" AND "text" (case-insensitive) | ✅ PASS - "read any visible text RIGHT NOW" |
+| TC011 | findSpecificObject returns non-empty string | `findSpecificObject('keys').isNotEmpty == true` | ✅ PASS - Returns location prompt with object |
+| TC012 | findSpecificObject includes object name | `findSpecificObject('keys')` contains "keys" | ✅ PASS - "Locate the 'keys' in this image" |
+| TC013 | findSpecificObject includes quotes around name | `findSpecificObject('my wallet')` contains "'my wallet'" | ✅ PASS - Object wrapped in single quotes |
+| TC014 | findSpecificObject works with various objects | phone, glasses, remote control, water bottle all included | ✅ PASS - All 4 objects found in their prompts |
+| TC015 | findSpecificObject contains location instruction | Contains "locate" (case-insensitive) | ✅ PASS - "Locate the '...' in this image" |
+| TC016 | findSpecificObject asks for relative position | Contains "camera position" (case-insensitive) | ✅ PASS - "relative to the camera position" |
+| TC017 | findSpecificObject handles empty string | Returns non-empty string containing "''" | ✅ PASS - Returns "Locate the '' in this image..." |
+| TC018 | findSpecificObject handles special characters | `findSpecificObject("mom's ring")` contains "mom's ring" | ✅ PASS - Special characters preserved in output |
 
 ---
 
