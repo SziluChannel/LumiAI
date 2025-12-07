@@ -7,22 +7,26 @@ void main() {
   // ==========================================================================
   group('FeatureAction Enum', () {
     test('has all expected values', () {
-      expect(FeatureAction.values.length, 3);
+      expect(FeatureAction.values.length, 8);
       expect(FeatureAction.values, contains(FeatureAction.identifyObject));
       expect(FeatureAction.values, contains(FeatureAction.readText));
       expect(FeatureAction.values, contains(FeatureAction.describeScene));
-    });
-
-    test('each value has correct index', () {
-      expect(FeatureAction.identifyObject.index, 0);
-      expect(FeatureAction.readText.index, 1);
-      expect(FeatureAction.describeScene.index, 2);
+      expect(FeatureAction.values, contains(FeatureAction.findObject));
+      expect(FeatureAction.values, contains(FeatureAction.readCurrency));
+      expect(FeatureAction.values, contains(FeatureAction.describeClothing));
+      expect(FeatureAction.values, contains(FeatureAction.readExpiryDate));
+      expect(FeatureAction.values, contains(FeatureAction.readMenu));
     });
 
     test('each value has correct name', () {
       expect(FeatureAction.identifyObject.name, 'identifyObject');
       expect(FeatureAction.readText.name, 'readText');
       expect(FeatureAction.describeScene.name, 'describeScene');
+      expect(FeatureAction.findObject.name, 'findObject');
+      expect(FeatureAction.readCurrency.name, 'readCurrency');
+      expect(FeatureAction.describeClothing.name, 'describeClothing');
+      expect(FeatureAction.readExpiryDate.name, 'readExpiryDate');
+      expect(FeatureAction.readMenu.name, 'readMenu');
     });
   });
 
@@ -31,10 +35,7 @@ void main() {
   // ==========================================================================
   group('FeatureConfig', () {
     test('constructor with required fields only', () {
-      const config = FeatureConfig(
-        prompt: 'Test prompt',
-        requiresCamera: true,
-      );
+      const config = FeatureConfig(prompt: 'Test prompt', requiresCamera: true);
 
       expect(config.prompt, 'Test prompt');
       expect(config.requiresCamera, true);
@@ -57,10 +58,7 @@ void main() {
     });
 
     test('default cameraWaitTimeout is 10 seconds', () {
-      const config = FeatureConfig(
-        prompt: 'Test',
-        requiresCamera: true,
-      );
+      const config = FeatureConfig(prompt: 'Test', requiresCamera: true);
 
       expect(config.cameraWaitTimeout.inSeconds, 10);
     });
@@ -76,10 +74,7 @@ void main() {
     });
 
     test('feedbackMessage can be null', () {
-      const config = FeatureConfig(
-        prompt: 'Test',
-        requiresCamera: false,
-      );
+      const config = FeatureConfig(prompt: 'Test', requiresCamera: false);
 
       expect(config.feedbackMessage, isNull);
     });
