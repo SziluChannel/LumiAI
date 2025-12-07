@@ -184,12 +184,12 @@ flutter test test/<filename>_test.dart
 
 ### 6. Image Utils Tests (`image_utils_test.dart`)
 
-| TC# | Test Description |
-|-----|------------------|
-| TC094 | compressImageBytes resizes large images |
-| TC095 | compressImageBytes does NOT resize small images |
-| TC096 | compressImageBytes handles PNG with transparency |
-| TC097 | compressImageBytes throws for maxDim <= 0 |
+| TC# | Test Description | Expected Result | Actual Result |
+|-----|------------------|-----------------|---------------|
+| TC091 | compressImageBytes resizes large images | 2000x1500 → 1024xN (width=1024, height<1500) | ✅ PASS - Resized to 1024 width |
+| TC092 | compressImageBytes does NOT resize small | 500x400 → 500x400 unchanged | ✅ PASS - Original size preserved |
+| TC093 | compressImageBytes handles PNG with transparency | 800x600 PNG with alpha → valid JPEG output | ✅ PASS - encodeJpg succeeds |
+| TC094 | compressImageBytes throws for maxDim <= 0 | `compressImageBytes(bytes, maxDim: 0)` → ArgumentError | ✅ PASS - Throws ArgumentError |
 
 ---
 
