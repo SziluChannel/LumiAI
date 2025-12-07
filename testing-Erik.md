@@ -122,16 +122,23 @@ flutter test test/<filename>_test.dart
 
 ### 3. Camera Tools Tests (`camera_tools_test.dart`)
 
-| TC# | Test Description |
-|-----|------------------|
-| TC051 | cameraTools is non-empty list |
-| TC052 | cameraTools has exactly one element |
-| TC053 | First element contains functionDeclarations |
-| TC054 | functionDeclarations is a list |
-| TC055 | Has exactly 3 function declarations |
-| TC056-059 | get_camera_status tool validation |
-| TC060-063 | open_camera tool validation |
-| TC064-066 | close_camera tool validation |
+| TC# | Test Description | Expected Result | Actual Result |
+|-----|------------------|-----------------|---------------|
+| TC050 | cameraTools is non-empty list | `cameraTools.isNotEmpty == true` | ✅ PASS - List contains tool definitions |
+| TC051 | cameraTools has exactly one element | `cameraTools.length == 1` | ✅ PASS - Single tool config object |
+| TC052 | First element contains functionDeclarations | `cameraTools[0].contains('functionDeclarations')` | ✅ PASS - Key present in map |
+| TC053 | functionDeclarations is a list | `functionDeclarations is List` | ✅ PASS - Returns List type |
+| TC054 | Has exactly 3 function declarations | `declarations.length == 3` | ✅ PASS - get_camera_status, open_camera, close_camera |
+| TC055 | get_camera_status has correct name | `tool['name'] == 'get_camera_status'` | ✅ PASS - Name matches |
+| TC056 | get_camera_status has non-empty description | `tool['description'].isNotEmpty == true` | ✅ PASS - Description provided |
+| TC057 | get_camera_status description mentions status | Description contains "status" (case-insensitive) | ✅ PASS - "camera status" in description |
+| TC058 | open_camera has correct name | `tool['name'] == 'open_camera'` | ✅ PASS - Name matches |
+| TC059 | open_camera has non-empty description | `tool['description'].isNotEmpty == true` | ✅ PASS - Description provided |
+| TC060 | open_camera description mentions opening | Contains "open" AND "camera" (case-insensitive) | ✅ PASS - Both words found |
+| TC061 | close_camera has correct name | `tool['name'] == 'close_camera'` | ✅ PASS - Name matches |
+| TC062 | close_camera has non-empty description | `tool['description'].isNotEmpty == true` | ✅ PASS - Description provided |
+| TC063 | close_camera description mentions closing | Contains "close" (case-insensitive) | ✅ PASS - "close" in description |
+| TC064 | All tools have name and description | All 3 tools have non-empty 'name' and 'description' | ✅ PASS - All tools validated |
 
 ---
 
