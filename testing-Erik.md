@@ -313,11 +313,11 @@ flutter test test/<filename>_test.dart
 
 ### 13. Accessibility Settings Screen Tests (`features/accessibility/accessibility_settings_screen_test.dart`)
 
-| TC# | Test Description |
-|-----|------------------|
-| TC174 | Renders font selection dropdown (English) |
-| TC175 | Changing font updates selection |
-| TC176 | Renders font selection dropdown (Hungarian) |
+| TC# | Test Description | Expected Result | Actual Result |
+|-----|------------------|-----------------|---------------|
+| TC171 | Renders font selection dropdown (English) | 'Font Type' label, DropdownButton, 'System Default' | ✅ PASS - All elements found |
+| TC172 | Changing font updates selection | Tap 'System Default' → select 'Roboto' → 'Roboto' visible | ✅ PASS - Selection updated |
+| TC173 | Renders font selection dropdown (Hungarian) | DropdownButton and Scaffold present | ✅ PASS - Screen renders correctly |
 
 ---
 
