@@ -234,9 +234,27 @@ flutter test test/<filename>_test.dart
 
 ### 9. Settings Tools Tests (`settings_tools_test.dart`)
 
-| TC# | Test Description |
-|-----|------------------|
-| TC123-141 | update_settings tool structure and parameters |
+| TC# | Test Description | Expected Result | Actual Result |
+|-----|------------------|-----------------|---------------|
+| TC120 | settingsTools is non-empty list | `settingsTools.isNotEmpty == true` | ✅ PASS - List contains tool definitions |
+| TC121 | settingsTools has exactly one element | `settingsTools.length == 1` | ✅ PASS - Single tool config object |
+| TC122 | First element contains functionDeclarations | `settingsTools[0].contains('functionDeclarations')` | ✅ PASS - Key present |
+| TC123 | functionDeclarations is a list | `declarations is List` | ✅ PASS - Returns List type |
+| TC124 | Has exactly 1 function declaration | `declarations.length == 1` | ✅ PASS - update_settings only |
+| TC125 | update_settings has correct name | `tool['name'] == 'update_settings'` | ✅ PASS - Name matches |
+| TC126 | update_settings has non-empty description | `tool['description'].isNotEmpty` | ✅ PASS - Description provided |
+| TC127 | Has parameters object | `tool.contains('parameters') && isMap` | ✅ PASS - Parameters defined |
+| TC128 | Parameters has type object | `params['type'] == 'object'` | ✅ PASS - Type is 'object' |
+| TC129 | Parameters has properties | `params.contains('properties') && isMap` | ✅ PASS - Properties defined |
+| TC130 | Has language property with enum | type='string', enum contains 'en-US', 'hu-HU' | ✅ PASS - Language options |
+| TC131 | Has speed property | type='number' | ✅ PASS - Speed is number |
+| TC132 | Has pitch property | type='number' | ✅ PASS - Pitch is number |
+| TC133 | Has font_size property | type='number' | ✅ PASS - Font size is number |
+| TC134 | Has theme_mode property with enum | type='string', enum: light, dark, system | ✅ PASS - Theme options |
+| TC135 | Has accessibility_theme property | type='string', enum: none, high_contrast, colorblind, amoled | ✅ PASS - A11y themes |
+| TC136 | Has ui_mode property with enum | type='string', enum: standard, simplified | ✅ PASS - UI modes |
+| TC137 | All properties have description | All entries have non-empty 'description' | ✅ PASS - All documented |
+| TC138 | Required is empty list | `params['required'].isEmpty` | ✅ PASS - No required params |
 
 ---
 
