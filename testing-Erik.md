@@ -144,12 +144,19 @@ flutter test test/<filename>_test.dart
 
 ### 4. FeatureConfig Tests (`feature_config_test.dart`)
 
-| TC# | Test Description |
-|-----|------------------|
-| TC067 | FeatureAction enum has 8 values |
-| TC068 | All FeatureAction values present |
-| TC069 | Each value has correct name |
-| TC070-078 | FeatureConfig constructor and field tests |
+| TC# | Test Description | Expected Result | Actual Result |
+|-----|------------------|-----------------|---------------|
+| TC065 | FeatureAction enum has 8 values | `FeatureAction.values.length == 8` | ✅ PASS - 8 enum values present |
+| TC066 | All FeatureAction values present | Contains: identifyObject, readText, describeScene, findObject, readCurrency, describeClothing, readExpiryDate, readMenu | ✅ PASS - All 8 values found |
+| TC067 | Each value has correct name | `identifyObject.name == 'identifyObject'`, etc. | ✅ PASS - All 8 names match |
+| TC068 | Constructor with required fields only | prompt='Test prompt', requiresCamera=true, feedbackMessage=null, timeout=10s | ✅ PASS - Defaults applied correctly |
+| TC069 | Constructor with all fields | prompt='Full prompt', requiresCamera=false, feedbackMessage='Starting...', timeout=5s | ✅ PASS - All fields set correctly |
+| TC070 | Default cameraWaitTimeout is 10 seconds | `cameraWaitTimeout.inSeconds == 10` | ✅ PASS - Default 10 seconds |
+| TC071 | Custom cameraWaitTimeout is respected | timeout=30s → `cameraWaitTimeout.inSeconds == 30` | ✅ PASS - Custom value applied |
+| TC072 | feedbackMessage can be null | `feedbackMessage == null` when not provided | ✅ PASS - Null allowed |
+| TC073 | feedbackMessage can be set | `feedbackMessage == 'Processing your request...'` | ✅ PASS - Custom message set |
+| TC074 | requiresCamera false configuration | `requiresCamera == false` | ✅ PASS - Voice-only config |
+| TC075 | requiresCamera true configuration | `requiresCamera == true` | ✅ PASS - Camera required config |
 
 ---
 
