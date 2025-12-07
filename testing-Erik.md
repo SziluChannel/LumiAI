@@ -331,12 +331,12 @@ flutter test test/<filename>_test.dart
 
 ### 15. Login Screen Tests (`features/auth/ui/login_screen_test.dart`)
 
-| TC# | Test Description |
-|-----|------------------|
-| TC178 | Renders login screen elements |
-| TC179 | Shows error message on invalid credentials |
-| TC180 | Shows biometric login button when available |
-| TC181 | Password visibility toggle works |
+| TC# | Test Description | Expected Result | Actual Result |
+|-----|------------------|-----------------|---------------|
+| TC175 | Renders login screen elements | 2x 'Login', 2x TextField, Username, Password, ElevatedButton | ✅ PASS - All elements found |
+| TC176 | Shows error message on invalid credentials | 'Incorrect username or password.' + triggerErrorFeedback | ✅ PASS - Error shown, feedback called |
+| TC177 | Shows biometric login button when available | 'Login with Fingerprint/Face ID' when biometrics=true | ✅ PASS - Button visible |
+| TC178 | Password visibility toggle works | obscureText: true→false after tap, triggerSuccessFeedback | ✅ PASS - Toggle works, feedback called |
 
 ---
 
