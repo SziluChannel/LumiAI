@@ -290,9 +290,14 @@ flutter test test/<filename>_test.dart
 
 ### 11. Voice Option Tests (`voice_option_test.dart`)
 
-| TC# | Test Description |
-|-----|------------------|
-| TC165-170 | VoiceOption constructor and edge cases |
+| TC# | Test Description | Expected Result | Actual Result |
+|-----|------------------|-----------------|---------------|
+| TC162 | Constructor sets name correctly | `VoiceOption(name: 'Test Voice', ...).name == 'Test Voice'` | ✅ PASS - Name set correctly |
+| TC163 | Constructor sets identifier correctly | `VoiceOption(..., identifier: 'test-id').identifier == 'test-id'` | ✅ PASS - Identifier set correctly |
+| TC164 | Can create with US English voice | name='Woman 1 (US)', identifier='en-US-Wavenet-F' | ✅ PASS - Both fields set |
+| TC165 | Can create different voice configurations | 3 voices with A/B/C identifiers | ✅ PASS - All 3 created correctly |
+| TC166 | Name and identifier can be empty | name='', identifier='' | ✅ PASS - Empty strings allowed |
+| TC167 | Name and identifier can contain special chars | name='Voice (Special) - Test', identifier='custom/voice_id-123' | ✅ PASS - Special chars preserved |
 
 ---
 
