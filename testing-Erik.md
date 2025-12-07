@@ -351,14 +351,14 @@ flutter test test/<filename>_test.dart
 
 ### 17. Privacy Policy Screen Tests (`features/settings/ui/privacy_policy_screen_test.dart`)
 
-| TC# | Test Description |
-|-----|------------------|
-| TC184 | Renders privacy policy screen content (English) |
-| TC185 | Shows accepted state when already accepted (English) |
-| TC186 | Changes to accepted after tapping accept (English) |
-| TC187 | Renders privacy policy screen content (Hungarian) |
-| TC188 | Shows accepted state when already accepted (Hungarian) |
-| TC189 | Changes to accepted after tapping accept (Hungarian) |
+| TC# | Test Description | Expected Result | Actual Result |
+|-----|------------------|-----------------|---------------|
+| TC181 | Renders privacy policy screen content (EN) | 'Privacy Policy', ScrollView, 'I Accept' | ✅ PASS - All elements found |
+| TC182 | Shows accepted state when already accepted (EN) | 'Accepted' + check icon | ✅ PASS - Accepted state shown |
+| TC183 | Changes to accepted after tapping accept (EN) | 'I Accept' → tap → 'Accepted' | ✅ PASS - State changes |
+| TC184 | Renders privacy policy screen content (HU) | 'Adatvédelmi Nyilatkozat', ScrollView, 'Elfogadom' | ✅ PASS - Hungarian text |
+| TC185 | Shows accepted state when already accepted (HU) | 'Elfogadva' + check icon | ✅ PASS - Accepted state shown |
+| TC186 | Changes to accepted after tapping accept (HU) | 'Elfogadom' → tap → 'Elfogadva' | ✅ PASS - State changes |
 
 ---
 
