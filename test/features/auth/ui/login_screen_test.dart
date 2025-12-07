@@ -19,38 +19,43 @@ void main() {
     mockFeedbackService = MockFeedbackService();
 
     // Default mock behavior
-    when(mockBiometricAuthService.canCheckBiometrics())
-        .thenAnswer((_) async => false);
-    when(mockFeedbackService.triggerSuccessFeedback())
-        .thenAnswer((_) async => {});
-    when(mockFeedbackService.triggerErrorFeedback())
-        .thenAnswer((_) async => {});
+    when(
+      mockBiometricAuthService.canCheckBiometrics(),
+    ).thenAnswer((_) async => false);
+    when(
+      mockFeedbackService.triggerSuccessFeedback(),
+    ).thenAnswer((_) async => {});
+    when(
+      mockFeedbackService.triggerErrorFeedback(),
+    ).thenAnswer((_) async => {});
   });
 
   Widget createSubject() {
     return ProviderScope(
       overrides: [
-        biometricAuthServiceProvider.overrideWithValue(mockBiometricAuthService),
+        biometricAuthServiceProvider.overrideWithValue(
+          mockBiometricAuthService,
+        ),
         feedbackServiceProvider.overrideWithValue(mockFeedbackService),
       ],
-      child: const MaterialApp(
-        home: LoginScreen(),
-      ),
+      child: const MaterialApp(home: LoginScreen()),
     );
   }
 
   testWidgets('renders login screen elements', (WidgetTester tester) async {
     await tester.pumpWidget(createSubject());
 
-    expect(find.text('Login'), findsOneWidget); // AppBar title
+    // AppBar title has "Login" and login button has "Login" - so 2 instances
+    expect(find.text('Login'), findsNWidgets(2));
     expect(find.byType(TextField), findsNWidgets(2)); // Username and Password
     expect(find.text('Username'), findsOneWidget);
     expect(find.text('Password'), findsOneWidget);
     expect(find.byType(ElevatedButton), findsOneWidget); // Login button
   });
 
-  testWidgets('shows error message on invalid credentials',
-      (WidgetTester tester) async {
+  testWidgets('shows error message on invalid credentials', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(createSubject());
 
     // Enter invalid credentials
@@ -64,15 +69,18 @@ void main() {
 
     // Verify error message
     expect(find.text('Incorrect username or password.'), findsOneWidget);
-    
+
     // Verify error feedback triggered
     verify(mockFeedbackService.triggerErrorFeedback()).called(1);
   });
 
-  testWidgets('shows biometric login button when available', (WidgetTester tester) async {
+  testWidgets('shows biometric login button when available', (
+    WidgetTester tester,
+  ) async {
     // Setup mock to return true for biometrics
-    when(mockBiometricAuthService.canCheckBiometrics())
-        .thenAnswer((_) async => true);
+    when(
+      mockBiometricAuthService.canCheckBiometrics(),
+    ).thenAnswer((_) async => true);
 
     await tester.pumpWidget(createSubject());
     await tester.pumpAndSettle(); // Wait for future builder/init state
@@ -80,29 +88,35 @@ void main() {
     expect(find.text('Login with Fingerprint/Face ID'), findsOneWidget);
   });
 
-   testWidgets('password visibility toggle works', (WidgetTester tester) async {
+  testWidgets('password visibility toggle works', (WidgetTester tester) async {
     await tester.pumpWidget(createSubject());
 
-    final passwordFieldFinder = find.bySemanticsLabel('Password');
-    final toggleButtonFinder = find.byIcon(Icons.visibility_off);
+    // Find the password TextField directly by looking for the one with obscureText
+    final textFields = tester
+        .widgetList<TextField>(find.byType(TextField))
+        .toList();
+    // The password field is the second TextField (after username)
+    final passwordTextField = textFields[1];
 
     // Initial state: obscured
-    expect(
-      tester.widget<TextField>(find.descendant(of: passwordFieldFinder, matching: find.byType(TextField))).obscureText,
-      isTrue
-    );
+    expect(passwordTextField.obscureText, isTrue);
+
+    final toggleButtonFinder = find.byIcon(Icons.visibility_off);
 
     // Tap toggle
     await tester.tap(toggleButtonFinder);
     await tester.pump();
 
+    // Get the updated password TextField
+    final updatedTextFields = tester
+        .widgetList<TextField>(find.byType(TextField))
+        .toList();
+    final updatedPasswordField = updatedTextFields[1];
+
     // New state: visible
-     expect(
-      tester.widget<TextField>(find.descendant(of: passwordFieldFinder, matching: find.byType(TextField))).obscureText,
-      isFalse
-    );
-    
+    expect(updatedPasswordField.obscureText, isFalse);
+
     // Verify success feedback triggered on toggle
     verify(mockFeedbackService.triggerSuccessFeedback()).called(1);
   });
-} 
+}
